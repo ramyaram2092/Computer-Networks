@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void send_http(char* host, char* msg, char* resp, size_t len);
 
