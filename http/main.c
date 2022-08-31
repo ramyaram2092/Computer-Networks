@@ -21,11 +21,8 @@ int main(int argc, char* argv[]) {
   /*
     STUDENT CODE HERE
    */
-
-// I think verb and path needs to be concatinated and sent as the second argument 
-
-  char *header="HTTP/1.0\r\n\r\n";
-  char *message=(char *) malloc(strlen(verb)+strlen(path)+strlen(header)+1);
+  char* header="HTTP/1.0\r\n\r\n";
+  char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+1);
   strcpy(message,verb);
   strcat(message,path);
   strcat(message,header);
