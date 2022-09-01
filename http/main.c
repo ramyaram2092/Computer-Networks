@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
   strcpy(message,verb);
   strcat(message,path);
   strcat(message,header);
-
+  printf("\n Message is %s", message); 
   char response[4096];
   send_http(host,message,response,4096);
   printf("%s\n", response);
