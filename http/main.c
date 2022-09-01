@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
   /*
     STUDENT CODE HERE
    */
-  char* header=" HTTP/1.0\r\n\r\n";
+  char* header=" HTTP/1.0\r\n";
   char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+strlen(host)+10);
   strcpy(message,verb);
   strcat(message," ");
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
   strcat(message,"Host:");
   strcat(message,host);
   strcat(message,"\r\n\r\n");
+
   printf("\n Host is %s",host);
   printf("\n Message is %s", message); 
   char response[4096];
