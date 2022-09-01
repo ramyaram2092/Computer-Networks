@@ -28,6 +28,9 @@ int main(int argc, char* argv[]) {
   strcat(message," ");
   strcat(message,path);
   strcat(message,header);
+  strcat(message,"Host:");
+  strcat(message,host);
+  stcat(message,"\r\n\r\n");
   printf("\n Host is %s",host);
   printf("\n Message is %s", message); 
   char response[4096];
