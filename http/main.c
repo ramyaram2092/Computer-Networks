@@ -31,8 +31,6 @@ int main(int argc, char* argv[]) {
   strcat(message,host);
   strcat(message,"\r\n\r\n");
 
-  printf("\n Host is %s",host);
-  printf("\n Message is %s", message); 
   char response[4096];
   send_http(host,message,response,4096);
   printf("%s\n", response);
