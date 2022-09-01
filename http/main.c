@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     STUDENT CODE HERE
    */
   char* header=" HTTP/1.0\r\n\r\n";
-  char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+1);
+  char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+strlen(host)+10);
   strcpy(message,verb);
   strcat(message," ");
   strcat(message,path);
