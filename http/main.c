@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
   char* header=" HTTP/1.1\r\n\r\n";
   char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+1);
   strcpy(message,verb);
+  strcat(message," ");
   strcat(message,path);
   strcat(message,header);
   printf("\n Host is %s",host);
