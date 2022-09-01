@@ -22,13 +22,12 @@ int main(int argc, char* argv[]) {
   /*
     STUDENT CODE HERE
    */
-  char* header=" HTTP/1.0\r\n";
+  char* header=" HTTP/1.0\r\nHost:";
   char* message=(char*) malloc(strlen(verb)+strlen(path)+strlen(header)+strlen(host)+10);
   strcpy(message,verb);
   strcat(message," ");
   strcat(message,path);
   strcat(message,header);
-  strcat(message,"Host:");
   strcat(message,host);
   strcat(message,"\r\n\r\n");
 
