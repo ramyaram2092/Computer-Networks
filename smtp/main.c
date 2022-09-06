@@ -42,12 +42,14 @@ int main(int argc, char* argv[]) {
    FILE *fp;
    fp=fopen(filepath,"r");
    char buff[1000];
-  
+   char message[1000];
    while(fgets(buff,1000,fp)!=NULL) 
    {
-      printf("The message content is %s",buff);
+      strcat(message,buff);
+      printf("The message content is %s",message);
+
    }
-   strcat(buff,"\r\n.\r\n");
+   strcat(message,"\r\n.\r\n");
 
    
    printf(" RCPT is %s",rcpt);
@@ -63,7 +65,7 @@ int main(int argc, char* argv[]) {
    send_smtp(socket,"DATA \n",response,4096);
    printf("\n DATA response is %s",response);
    printf("\n message read from the file is %s",buff);
-   send_smtp(socket,buff,response,4096);
+   send_smtp(socket,message,response,4096);
    fclose(fp);
    printf("\n final response is %s",response);
   
