@@ -46,14 +46,11 @@ int main(int argc, char* argv[]) {
    while(fgets(buff,1000,fp)!=NULL) 
    {
       strcat(message,buff);
-      printf("The message content is %s",message);
-
    }
    strcat(message,"\r\n.\r\n");
 
    
-   printf(" RCPT is %s",rcpt);
-   printf(" Filepath is %s",filepath);
+
    int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
    char response[4096];
    send_smtp(socket,"HELO iu.edu \n",response,4096);
