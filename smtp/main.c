@@ -54,17 +54,16 @@ int main(int argc, char* argv[]) {
    int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
    char response[4096];
    send_smtp(socket,"HELO iu.edu \n",response,4096);
-   printf("\n HELO Response is %s",response);
+   printf("\n%s",response);
    send_smtp(socket,mailfrom_cmd,response,4096);
-   printf(" \n MAIL FROM Response is %s",response);
+   printf(" \n%s",response);
    send_smtp(socket,recptTo_cmd,response,4096);
-   printf("\n RCPT TO response is %s",response);
+   printf("\n%s",response);
    send_smtp(socket,"DATA \n",response,4096);
-   printf("\n DATA response is %s",response);
-   printf("\n message read from the file is %s",message);
+   printf("\n%s",response);
    send_smtp(socket,message,response,4096);
    fclose(fp);
-   printf("\n final response is %s",response);
+   printf("\n%s",response);
   
   return 0;
 }
