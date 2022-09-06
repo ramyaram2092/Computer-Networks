@@ -42,7 +42,11 @@ int main(int argc, char* argv[]) {
    FILE *fp;
    fp=fopen(filepath,"r");
    char buff[1000];
-   fgets(buff,1000,fp);
+   if(fgets(buff,1000,fp)==NULL)
+   {
+     printf("Issue with the email.txt file");
+     return -1;
+   }
    strcat(buff,"\r\n.\r\n");
 
    
@@ -51,17 +55,18 @@ int main(int argc, char* argv[]) {
    int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
    char response[4096];
    send_smtp(socket,"HELO iu.edu \n",response,4096);
-   printf("HELO Response is %s",response);
+   printf("\n HELO Response is %s",response);
    send_smtp(socket,mailfrom_cmd,response,4096);
-   printf(" MAIL FROM Response is %s",response);
+   printf(" \n MAIL FROM Response is %s",response);
    send_smtp(socket,recptTo_cmd,response,4096);
-   printf("RCPT TO response is %s",response);
+   printf("\n RCPT TO response is %s",response);
    send_smtp(socket,"DATA \n",response,4096);
-   printf("DATA response is %s",response);
+   printf("\n DATA response is %s",response);
+   printf("\n message read from the file is %s",buff)
    send_smtp(socket,buff,response,4096);
-      fclose(fp);
+   fclose(fp);
 
-   printf("final response is %s",response);
+   printf("\n final response is %s",response);
 
 
 
