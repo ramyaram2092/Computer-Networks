@@ -28,8 +28,13 @@ int main(int argc, char* argv[]) {
    printf(" Filepath is %s",filepath);
    int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
    char response[4096];
-   send_smtp(socket,"HELO iu.edu \n",response,1024);
+   send_smtp(socket,"HELO iu.edu \n",response,4096);
+   printf("HELO Response is %s",response);
+   send_smtp(socket,"mail from: <rramasam@iu.edu> \n",response,4096);
    printf("Response is %s",response);
+   send_smtp(socket,"rcpt to:<rramasam@iu.edu> \n",response,4096);
+   printf("Response is %s",response);
+
 
   
   return 0;
