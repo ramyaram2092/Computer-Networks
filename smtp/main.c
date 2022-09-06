@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
    FILE *fp;
    fp=fopen(filepath,"r");
    char buff[1000];
-   fgets(buff,1000, FILE* fp);
+   fgets(buff,1000, (FILE*)fp);
    fclose(fp);
    strcat(buff,"\r\n.\r\n");
 
