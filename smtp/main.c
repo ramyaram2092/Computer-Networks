@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
    printf(" MAIL FROM Response is %s",response);
    send_smtp(socket,recptTo_cmd,response,4096);
    printf("RCPT TO response is %s",response);
-  //  send_smtp(socket,"DATA",response,4096);
+   send_smtp(socket,"DATA",response,4096);
   //  printf("DATA response is %s",response);
    send_smtp(socket,"This is test data.\r\n.\r\n ",response,4096);
    printf("final response is %s",response);
