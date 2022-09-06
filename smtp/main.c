@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
   /* 
      STUDENT CODE HERE
    */
-
+  
    char *mailfrom= "mail from: <";
    char *delimiter="> \n";
    char *mailfrom_cmd=(char* )malloc(strlen(mailfrom)+strlen(delimiter)+strlen(rcpt)+10);
@@ -39,6 +39,13 @@ int main(int argc, char* argv[]) {
    strcat(recptTo_cmd,rcpt);
    strcat(recptTo_cmd,delimiter);
 
+   FILE *fp;
+   fp=fopen(filepath,"r");
+   char buff[1000];
+   fgets(buff,1000, FILE* fp);
+   fclose(fp);
+   strcat(buff,"\r\n.\r\n");
+
    
    printf(" RCPT is %s",rcpt);
    printf(" Filepath is %s",filepath);
@@ -52,7 +59,7 @@ int main(int argc, char* argv[]) {
    printf("RCPT TO response is %s",response);
    send_smtp(socket,"DATA \n",response,4096);
    printf("DATA response is %s",response);
-   send_smtp(socket,"This is test data.\r\n.\r\n ",response,4096);
+   send_smtp(socket,buff,response,4096);
    printf("final response is %s",response);
 
 
