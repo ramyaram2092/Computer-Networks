@@ -29,14 +29,15 @@ int main(int argc, char* argv[]) {
    char *delimiter="> \n";
    char *mailfrom_cmd=(char* )malloc(strlen(mailfrom)+strlen(delimiter)+strlen(rcpt)+10);
    strcpy(mailfrom_cmd,mailfrom);
-   strcpy(mailfrom_cmd,rcpt);
-   strcpy(mailfrom_cmd,delimiter);
+   strcat(mailfrom_cmd,rcpt);
+   strcat(mailfrom_cmd,delimiter);
+   
 
    char *recptTo="rcpt to:<";
    char *recptTo_cmd=(char* )malloc(strlen(recptTo)+strlen(delimiter)+strlen(rcpt)+10);
    strcpy(recptTo_cmd,recptTo);
-   strcpy(recptTo_cmd,rcpt);
-   strcpy(recptTo_cmd,delimiter);
+   strcat(recptTo_cmd,rcpt);
+   strcat(recptTo_cmd,delimiter);
 
    
    printf(" RCPT is %s",rcpt);
