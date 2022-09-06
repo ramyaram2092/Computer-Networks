@@ -42,8 +42,7 @@ int main(int argc, char* argv[]) {
    FILE *fp;
    fp=fopen(filepath,"r");
    char buff[1000];
-   fgets(buff,1000, (FILE*)fp);
-   fclose(fp);
+   fgets(buff,1000,fp);
    strcat(buff,"\r\n.\r\n");
 
    
@@ -60,6 +59,8 @@ int main(int argc, char* argv[]) {
    send_smtp(socket,"DATA \n",response,4096);
    printf("DATA response is %s",response);
    send_smtp(socket,buff,response,4096);
+      fclose(fp);
+
    printf("final response is %s",response);
 
 
