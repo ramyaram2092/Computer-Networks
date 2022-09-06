@@ -24,6 +24,11 @@ int main(int argc, char* argv[]) {
   /* 
      STUDENT CODE HERE
    */
+   int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
+   char response[4096];
+   send_smtp(socket,"HELO iu.edu \n",response,1024);
+   printf("%s",response);
+
   
   return 0;
 }
