@@ -24,16 +24,37 @@ int main(int argc, char* argv[]) {
   /* 
      STUDENT CODE HERE
    */
+
+   char *mailfrom= "mail from: <";
+   char *delimiter="> \n";
+   char *mailfrom_cmd=(char *)malloc(strlen(mailfrom)+strlen(delimiter)+strlen(rcpt)+10);
+   strcpy(mailfrom_cmd,mailfrom);
+   strcpy(mailfrom_cmd,rcpt);
+   strcpy(mailfrom_cmd,delimiter);
+
+   char *recptTo="rcpt to:<";
+   char *recptTo_cmd=(char *)malloc(strlen(recptTo)+strlen(delimiter)+strlen(rcpt)+10);
+   strcpy(recptTo_cmd,recptTo);
+   strcpy(recptTo_cmd,rcpt);
+   strcpy(recptTo_cmd,delimiter);
+
+   
    printf(" RCPT is %s",rcpt);
    printf(" Filepath is %s",filepath);
    int socket= connect_smtp("lunar.open.sice.indiana.edu",25);
    char response[4096];
    send_smtp(socket,"HELO iu.edu \n",response,4096);
    printf("HELO Response is %s",response);
-   send_smtp(socket,"mail from: <rramasam@iu.edu> \n",response,4096);
-   printf("Response is %s",response);
-   send_smtp(socket,"rcpt to:<rramasam@iu.edu> \n",response,4096);
-   printf("Response is %s",response);
+   send_smtp(socket,mailfrom_cmd,response,4096);
+   printf(" MAIL FROM Response is %s",response);
+   send_smtp(socket,recptTo_cmd,response,4096);
+   printf("RCPT TO response is %s",response);
+   send_smtp(socket,"DATA",response,4096);
+   printf("DATA response is %s",response);
+   send_smtp(socket,"This is test data \r\n . \r\n ",response,4096);
+   printf("final response is %s",response);
+
+
 
 
   
