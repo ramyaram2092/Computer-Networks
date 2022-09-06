@@ -62,10 +62,9 @@ int main(int argc, char* argv[]) {
    printf("\n RCPT TO response is %s",response);
    send_smtp(socket,"DATA \n",response,4096);
    printf("\n DATA response is %s",response);
-   printf("\n message read from the file is %s",buff)
+   printf("\n message read from the file is %s",buff);
    send_smtp(socket,buff,response,4096);
    fclose(fp);
-
    printf("\n final response is %s",response);
 
 
