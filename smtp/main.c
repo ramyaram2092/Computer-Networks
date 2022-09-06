@@ -42,10 +42,10 @@ int main(int argc, char* argv[]) {
    FILE *fp;
    fp=fopen(filepath,"r");
    char buff[1000];
-   if(fgets(buff,1000,fp)==NULL)
+  
+   while(fgets(buff,1000,fp)!=NULL) 
    {
-     printf("Issue with the email.txt file");
-     return -1;
+      printf("The message content is %s",buff);
    }
    strcat(buff,"\r\n.\r\n");
 
@@ -66,10 +66,6 @@ int main(int argc, char* argv[]) {
    send_smtp(socket,buff,response,4096);
    fclose(fp);
    printf("\n final response is %s",response);
-
-
-
-
   
   return 0;
 }
