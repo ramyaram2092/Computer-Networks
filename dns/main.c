@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
   // printf("\n Host : %s",host);
   // printf("\n Port: %s",port);
   struct addrinfo *hints;
+  hints=(struct addrinfo*)malloc(sizeof(struct addrinfo));
   hints->ai_flags=AI_PASSIVE;
   hints->ai_family=PF_UNSPEC;
   hints->ai_socktype=SOCK_STREAM;
