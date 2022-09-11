@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
   struct addrinfo *response;
   response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
   
-  getaddrinfo(host,port, &hints,response);
+  getaddrinfo(host,port, &hints,&response);
   printf("I sucessfully contacted the server");
   return 0;
 }
