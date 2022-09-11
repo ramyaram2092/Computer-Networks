@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
       struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
       raw_addr= &(tmp->sin_addr);
       inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
-      printf("IPv4 %s",buffer);
+      printf("IPv4 %s\n",buffer);
 
 
     }
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
       struct sockaddr_in6* tmp=(struct sockaddr_in6*)iterator->ai_addr;
       raw_addr=&(tmp->sin6_addr);
       inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
-      printf("\nIPv6 %s\n",buffer);
+      printf("IPv6 %s\n",buffer);
     }
     iterator=iterator->ai_next;
     
