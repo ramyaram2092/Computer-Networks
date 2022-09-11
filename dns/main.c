@@ -14,12 +14,13 @@ int main(int argc, char* argv[]) {
     return -1;
   }
   char* host = argv[1];
-  long port = atoi(argv[2]);
-
-  char* process=(char*) port;
+  long process = atoi(argv[2]);
+  char buff[128];
+  int n=snprintf(buff,128,"%ld",process);
+  char* port=buff;
 
   printf("\n Host : %s",host);
-  printf("\n Port: %s",process);
+  printf("\n Port: %s",port);
   
 
   return 0;
