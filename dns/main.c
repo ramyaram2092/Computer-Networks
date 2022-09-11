@@ -18,7 +18,7 @@ int getaddrinfo(const char *restrict node,
 //     struct addrinfo *ai_next;
 //   };
 // /*
-  Use the `getaddrinfo` and `inet_ntop` functions to convert a string host and
+ /* Use the `getaddrinfo` and `inet_ntop` functions to convert a string host and
   integer port into a string dotted ip address and port.
  */
 int main(int argc, char* argv[]) {
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   hints->ai_family=PF_UNSPEC;
   hints->ai_socktype=SOCK_STREAM;
   hints->ai_protocol=IPPROTO_TCP;
-  
+
   struct addrinfo **response;
     
   
