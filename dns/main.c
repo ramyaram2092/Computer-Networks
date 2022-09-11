@@ -21,10 +21,10 @@ int main(int argc, char* argv[]) {
     return -1;
   }
   char* host = argv[1];
-  long process = atoi(argv[2]); // atoi=> char* to integer
-  char buff[128];
-  snprintf(buff,128,"%ld",process);
-  char* port=buff;
+  char* port = argv[2]; // atoi=> char* to integer
+  // char buff[128];
+  // snprintf(buff,128,"%ld",process);
+  // char* port=buff;
  
    
   // printf("\n Host : %s",host);
