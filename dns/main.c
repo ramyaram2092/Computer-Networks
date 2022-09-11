@@ -47,18 +47,25 @@ int main(int argc, char* argv[]) {
   while(iterator!=NULL)
   {
     void * raw_addr;
+    char buffer[4096];
+
     if(iterator->ai_family==AF_INET)// Address is IPv4
     {
       struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
       raw_addr= &(tmp->sin_addr);
+      inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
+      printf("%n IPv4 %s",buffer);
+
 
     }
     else // Address is IPv6
     {
       struct sockaddr_in6* tmp=(struct sockaddr_in6*)iterator->ai_addr;
       raw_addr=&(tmp->sin6_addr);
+      inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
+      printf("%n IPv6 %s",buffer);
     }
-
+    
 
   }
   
