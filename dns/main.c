@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
       inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
       printf("\nIPv6 %s",buffer);
     }
+    iterator=iterator->ai_next;
     
 
   }
