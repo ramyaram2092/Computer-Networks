@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
   char* process=(char*) port;
 
   printf("\n Host : %s",host);
-  printf("\n Port: %s",port);
+  printf("\n Port: %s",process);
   
 
   return 0;
