@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   struct addrinfo **response;
     
   
-  getaddrinfo(host,port,addrinfo hints,response);
+  getaddrinfo(host,port, hints,response);
   printf("I sucessfully contacted the server");
   return 0;
 }
