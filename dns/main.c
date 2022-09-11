@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     }
     else // Address is IPv6
     {
-      struct sockaddr_in6* tmp=(struct soackaddr_in6*)iterator->ai_addr;
+      struct sockaddr_in6* tmp=(struct sockaddr_in6*)iterator->ai_addr;
       raw_addr=&(tmp->sin6_addr);
     }
 
