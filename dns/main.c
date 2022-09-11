@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   //-> indirection
   struct addrinfo *iterator=response;
   
-  while(iterator!=null)
+  while(iterator!=NULL)
   {
     void * raw_addr;
     if(iterator->ai_family==AF_INET)// Address is IPv4
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
       struct sockaddr_in6* tmp=(struct soackaddr_in6*)iterator->ai_addr;
       raw_addr=&(tmp->sin6_addr);
     }
-    
+
 
   }
   
