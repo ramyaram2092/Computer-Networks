@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include<sys/socket.h>
+#include<netdb.h>
 
 /*
   Use the `getaddrinfo` and `inet_ntop` functions to convert a string host and
@@ -13,10 +16,11 @@ int main(int argc, char* argv[]) {
   char* host = argv[1];
   long port = atoi(argv[2]);
 
-  /*
-    STUDENT CODE HERE
-   */
+  char* process=(char*) port;
 
+  printf("\n Host : %s",host);
+  printf("\n Port: %s",port);
+  
 
   return 0;
 }
