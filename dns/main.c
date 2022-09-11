@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
   // int n=snprintf(buff,128,"%ld",process);
   // char* port=buff;
   char buff [128];
-_itoa_s(process,buff,sizeof(buff),10)
+_itoa_s(process,buff,sizeof(buff),10);
 
   printf("\n Host : %s",host);
   printf("\n Port: %s",buff);
