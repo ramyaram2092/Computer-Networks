@@ -205,7 +205,7 @@ void client_tcp(char* host, long port)
   }
 
   // Try to send a message to server
-   if((send(clientSocket,"Hi this is Client. Nice to meet you \n",14,0))<0)
+   if((sendTo(clientSocket,"Hi this is Client. Nice to meet you \n",100,0,(struct sockaddr*)&server, sizeof(server)))<0)
    {
     printf("\n Sending message from client failed\n ");
    }
