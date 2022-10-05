@@ -143,7 +143,7 @@ void  server_tcp(char* iface, long port)
       printf("\n Unable to accept the client packet");
    }
    else{
-    printf("\n Suceessfully accepted the client packet from %d", inet_ntoa(client.sin_addr));
+    printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
    }
 
    if((send(clientSocket,"Hi this is server\n",14,0))<0)
