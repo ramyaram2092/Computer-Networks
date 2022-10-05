@@ -1,6 +1,8 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include <stdio.h>
+#include<string.h>
+
 
 #define BACKLOG 10
 void  server_udp(char* iface, long port);
@@ -96,10 +98,11 @@ void  server_tcp(char* iface, long port)
   }
 
    memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+
   // assign ip and port
 
   server.sin_family=AF_INET; // address family IPV4 or 6
-  server.sin_addr.s_addr= INADDR_ANY  // takes default ip-> local ip
+  server.sin_addr.s_addr= INADDR_ANY ;// takes default ip-> local ip
   server.sin_port=(int)port;
 
 
@@ -126,13 +129,13 @@ void  server_tcp(char* iface, long port)
 
   int clientLen= sizeof(client);
   // accept the incoming packet from client 
-   clientSocket=accept(serverSocket, (struct sockaddr*) &client, & clientLen );
-   if(clientPacket<0)
+   clientSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
+   if(clientSocket<0)
    {
       printf("\n Unable to accept the client packet");
    }
    else{
-    printf("\n Suceessfully accepted the client packet from %n", inet_ntoa(client.sin_addr));
+    printf("\n Suceessfully accepted the client packet from %d", inet_ntoa(client.sin_addr));
    }
 
    if((send(clientSocket,"Hi this is server\n",14,0))<0)
@@ -159,11 +162,11 @@ void client_tcp(char* host, long port)
    struct addrinfor* response;
    
    
-   server.ai_family=AF_INET;
-   server.ai_socktype=SOCK_STREAM;
-   server.ai_protocol=IPPROTO_TCP;
+  //  server.ai_family=AF_INET;
+  //  server.ai_socktype=SOCK_STREAM;
+  //  server.ai_protocol=IPPROTO_TCP;
 
-   getaddrinfo(host,port,&server,&response);
+  //  getaddrinfo(host,port,&server,&response);
    printf("\n This is client program");
 
 
