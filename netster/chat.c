@@ -6,6 +6,9 @@
 #include<netdb.h>
 #include<string.h>
 #include<header.h>
+#include<unistd.h>
+#include <arpa/inet.h>
+
 
 
 #define BACKLOG 10
@@ -166,9 +169,9 @@ void client_tcp(char* host, long port)
 {
    int serverSocket, clientSocket;
   //  struct sockaddr_in server,client;
-   char buffer[128];
-   struct addrinfo server;
-   struct addrinfor* response;
+  //  char buffer[128];
+  //  struct addrinfo server;
+  //  struct addrinfor* response;
    
    
   //  server.ai_family=AF_INET;
