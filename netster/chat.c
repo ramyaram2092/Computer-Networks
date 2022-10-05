@@ -201,13 +201,13 @@ void client_tcp(char* host, long port)
   }
   else
   {
-    printf("connected to server");
+    printf("\nconnected to server\n ");
   }
 
   // Try to send a message to server
 
 
-  close (clientSocket);
+  // close (clientSocket);
 
 
 
