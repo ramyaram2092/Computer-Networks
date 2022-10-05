@@ -31,7 +31,7 @@ void chat_client(char* host, long port, int use_udp) {
     }
     else
     {
-        client_udp(host,port);
+        // client_udp(host,port);
     }
   
 }
