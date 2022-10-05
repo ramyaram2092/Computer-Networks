@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include<netdb.h>
+#include<string.h>
 
 
 #define BACKLOG 10
