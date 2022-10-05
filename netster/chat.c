@@ -1,4 +1,5 @@
 # include<sys/socket.h>
+#include<netinet/in.h>
 
 #define BACKLOG 10
 void  server_udp(char* iface, long port);
