@@ -166,7 +166,7 @@ void  server_tcp(char* iface, long port)
 
 void client_tcp(char* host, long port)
 {
-   int serverSocket, clientSocket;
+  //  int serverSocket, clientSocket;
   //  struct sockaddr_in server,client;
   //  char buffer[128];
   //  struct addrinfo server;
