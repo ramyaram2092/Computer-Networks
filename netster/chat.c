@@ -130,7 +130,7 @@ void  server_tcp(char* iface, long port)
     printf("\n Server is listening to socket");
   }
 
-  int clientLen= sizeof(client);
+  socklen_t clientLen= sizeof(client);
   // accept the incoming packet from client 
    clientSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
    if(clientSocket<0)
