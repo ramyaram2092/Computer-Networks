@@ -11,7 +11,12 @@
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
 void  client_tcp(char* host, long port);
-
+const char *inet_ntop(int af, const void *restrict src,
+                      char *restrict dst, socklen_t size);
+int getaddrinfo(const char *restrict node,
+                const char *restrict service,
+                const struct addrinfo *restrict hints,
+                struct addrinfo **restrict res);
 
 /*
  *  Here is the starting point for your netster part.1 definitions. Add the 
