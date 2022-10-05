@@ -42,26 +42,26 @@ void chat_client(char* host, long port, int use_udp) {
  */
 void  server_udp(char* iface, long port)
 {
-    int socket_fd, new_fd; // listen on sockfd, new connection on new_fd
-    struct sockaddr_in server_addr; // my address information
-    struct sockaddr_in client_addr; // client's address information
+    // int socket_fd, new_fd; // listen on sockfd, new connection on new_fd
+    // struct sockaddr_in server_addr; // my address information
+    // struct sockaddr_in client_addr; // client's address information
 
-    if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) 
-    {
-        perror("socket");
-        exit(1);
-    }
-    server_addr.sin_family = AF_INET; // host byte order
-    server_addr.sin_port = htons(port); // short, network byte order
-    server_addr.sin_addr.s_addr = INADDR_ANY; // auto. filled with local IP
-    memset(&(server_addr.sin_zero), '\0', 8); // zero the rest of the struct
+    // if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) 
+    // {
+    //     perror("socket");
+    //     exit(1);
+    // }
+    // server_addr.sin_family = AF_INET; // host byte order
+    // server_addr.sin_port = htons(port); // short, network byte order
+    // server_addr.sin_addr.s_addr = INADDR_ANY; // auto. filled with local IP
+    // memset(&(server_addr.sin_zero), '\0', 8); // zero the rest of the struct
 
-    if (bind(socket_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) 
-    {
-        perror("bind");
-        exit(1);
-    }
-    printf("\n Hello, I am a server");
+    // if (bind(socket_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in)) == -1) 
+    // {
+    //     perror("bind");
+    //     exit(1);
+    // }
+    // printf("\n Hello, I am a server");
 
 }
 
