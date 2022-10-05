@@ -183,18 +183,21 @@ void client_tcp(char* host, long port)
     printf("\n Client Socket created Successfully\n ");
   }
    
-  memset(&client,0,sizeof(client)); // appending zero ?  Read about it
+  
 
   // assign ip and port
+  
 
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= inet_addr(host);
   server.sin_port=(int)port;
 
+  memset(&server,0,sizeof(client)); // appending zero ?  Read about it
+
   //connect client socket with  server socket 
   if((connect(clientSocket,(struct sockaddr*)server, sizeof(server) ))<0)
   {
-    printlf("\n Connection with server failed");
+    printf("\n Connection with server failed");
   }
   else
   {
