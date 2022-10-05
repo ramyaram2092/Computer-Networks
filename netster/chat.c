@@ -11,8 +11,8 @@
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
 void  client_tcp(char* host, long port);
-const char *inet_ntop(int af, const void *restrict src,
-                      char *restrict dst, socklen_t size);
+char *inet_ntoa(struct in_addr in);
+
 int getaddrinfo(const char *restrict node,
                 const char *restrict service,
                 const struct addrinfo *restrict hints,
