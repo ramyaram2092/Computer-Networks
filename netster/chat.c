@@ -84,7 +84,7 @@ void  server_tcp(char* iface, long port)
 
   // create socket 
   serverSocket=socket(AF_INET,SOCK_STREAM,0);
-  if(socket==-1)
+  if(serverSocket==-1)
   {
     printf("\n server socket creation failed");
   }
@@ -113,7 +113,7 @@ void  server_tcp(char* iface, long port)
 
 
   // listen to the socket connection 
-  if(listen(serverSocket,5)<0) // the no 5 is subjected to change. no of requests that can be queued
+  if(listen(serverSocket,3)<0) // the no 5 is subjected to change. no of requests that can be queued
   {
     printf("\n Listening failed");
   }
