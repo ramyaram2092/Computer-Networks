@@ -94,7 +94,7 @@ void  server_udp(char* iface, long port)
  */
 void  server_tcp(char* iface, long port)
 {
-  int serverSocket, clientSocket;
+  int serverSocket, newSocket;
   struct sockaddr_in server,client;
 
   // create socket 
@@ -121,6 +121,7 @@ void  server_tcp(char* iface, long port)
   if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))<0)
   {
     printf("\n Error in socket binding \n ");
+    exit(0);
   }
   else
   {
@@ -139,10 +140,10 @@ void  server_tcp(char* iface, long port)
   }
 
   socklen_t clientLen= sizeof(client);
-  
+
   // accept the incoming packet from client 
-   clientSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
-   if(clientSocket<0)
+   newSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
+   if(newSocket<0)
    {
       printf("\n Unable to accept the client packet\n ");
    }
@@ -150,7 +151,7 @@ void  server_tcp(char* iface, long port)
     printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
    }
 
-   if((send(clientSocket,"Hi this is server\n",14,0))<0)
+   if((send(newSocket,"Hi this is server\n",14,0))<0)
    {
     printf("\n Sending message from server failed\n ");
    }
@@ -158,7 +159,7 @@ void  server_tcp(char* iface, long port)
    {
     printf("\n message sent successfully\n ");
    }
-   close(clientSocket);
+   close(newSocket);
 
    close (serverSocket);
     
@@ -167,19 +168,44 @@ void  server_tcp(char* iface, long port)
 
 void client_tcp(char* host, long port)
 {
-  //  int serverSocket, clientSocket;
-  //  struct sockaddr_in server,client;
-  //  char buffer[128];
-  //  struct addrinfo server;
-  //  struct addrinfor* response;
-   
-   
-  //  server.ai_family=AF_INET;
-  //  server.ai_socktype=SOCK_STREAM;
-  //  server.ai_protocol=IPPROTO_TCP;
+   int clientSocket;
+   struct sockaddr_in server;
 
-  //  getaddrinfo(host,port,&server,&response);
-   printf("\n This is client program");
+  //create socket
+  clientSocket=socket(AF_INET,SOCK_STREAM,0);
+  if(clientSocket<0)
+  {
+    printf("\n Client socket creation failed \n");
+    exit(0);
+  }
+  else
+  {
+    printf("\n Client Socket created Successfully\n ");
+  }
+   
+  memset(&client,0,sizeof(client)); // appending zero ?  Read about it
+
+  // assign ip and port
+
+  server.sin_family=AF_INET; // address family IPV4 or 6
+  server.sin_addr.s_addr= inet_addr(host);
+  server.sin_port=(int)port;
+
+  //connect client socket with  server socket 
+  if((connect(clientSocket,(struct sockaddr*)server, sizeof(server) ))<0)
+  {
+    printlf("\n Connection with server failed");
+  }
+  else
+  {
+    printf("connected to server");
+  }
+
+  // Try to send a message to server
+
+
+  close (clientSocket);
+
 
 
 }
