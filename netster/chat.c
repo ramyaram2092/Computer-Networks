@@ -1,6 +1,10 @@
 # include<sys/socket.h>
 
 #define BACKLOG 10
+void  server_udp(char* iface, long port);
+void  server_tcp(char* iface, long port);
+void client_tcp(char* host, long port);
+
 
 /*
  *  Here is the starting point for your netster part.1 definitions. Add the 
@@ -27,7 +31,7 @@ void chat_client(char* host, long port, int use_udp) {
     }
     else
     {
-        cluent_udp(host,port);
+        client_udp(host,port);
     }
   
 }
