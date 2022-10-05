@@ -201,10 +201,19 @@ void client_tcp(char* host, long port)
   }
   else
   {
-    printf("\nconnected to server\n ");
+    printf("\n connected successfully to server\n ");
   }
 
   // Try to send a message to server
+   if((send(clientSocket,"Hi this is Client. Nice to meet you \n",14,0))<0)
+   {
+    printf("\n Sending message from client failed\n ");
+   }
+   else
+   {
+    printf("\n message sent from client  successfully\n ");
+   }
+
 
 
   // close (clientSocket);
