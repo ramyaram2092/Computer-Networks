@@ -102,7 +102,7 @@ void  server_tcp(char* iface, long port)
 
 
   //bind the socket with the server ip and port 
-  if ((bind(serverSocket,(struct sockaddr*) & server, sizeOf(server)))<0)
+  if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))<0)
   {
     printf("Error in socket binding");
   }
@@ -122,7 +122,7 @@ void  server_tcp(char* iface, long port)
     printf("\n Server is listening to socket");
   }
 
-  int clientLen= sizeOf(client);
+  int clientLen= sizeof(client);
   // accept the incoming packet from client 
    clientSocket=accept(serverSocket, (struct sockaddr*) &client, & clientLen );
    if(clientPacket<0)
