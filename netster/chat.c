@@ -18,6 +18,14 @@ void chat_server(char* iface, long port, int use_udp) {
 }
 
 void chat_client(char* host, long port, int use_udp) {
+  if(use_udp==0)
+    {
+        client_tcp(host,port);
+    }
+    else
+    {
+        cluent_udp(host,port);
+    }
   
 }
 
@@ -64,7 +72,92 @@ void  server_udp(char* iface, long port)
  */
 void  server_tcp(char* iface, long port)
 {
+  int serverSocket, clientSocket;
+  struct sockaddr_in server,client;
+
+  // create socket 
+  serverSocket=socket(AF_INET,SOCK_STREAM,0);
+  if(socket==-1)
+  {
+    printf("\n server socket creation failed");
+  }
+  else
+  {
+    printf("\n Server Socket created Successfully");
+  }
+
+   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+  // assign ip and port
+
+  server.sin_family=AF_INET; // address family IPV4 or 6
+  server.sin_addr.s_addr= INADDR_ANY  // takes default ip-> local ip
+  server.sin_port=(int)port;
+
+
+  //bind the socket with the server ip and port 
+  if ((bind(serverSocket,(struct sockaddr*) & server, sizeOf(server)))<0)
+  {
+    printf("Error in socket binding");
+  }
+  else
+  {
+    printf("Socket successfully binded to server ");
+  }
+
+
+  // listen to the socket connection 
+  if(listen(serverSocket,5)<0) // the no 5 is subjected to change. no of requests that can be queued
+  {
+    printf("\n Listening failed");
+  }
+  else
+  {
+    printf("\n Server is listening to socket");
+  }
+
+  int clientLen= sizeOf(client);
+  // accept the incoming packet from client 
+   clientSocket=accept(serverSocket, (struct sockaddr*) &client, & clientLen );
+   if(clientPacket<0)
+   {
+      printf("\n Unable to accept the client packet");
+   }
+   else{
+    printf("\n Suceessfully accepted the client packet from %n", inet_ntoa(client.sin_addr));
+   }
+
+   if((send(clientSocket,"Hi this is server\n",14,0))<0)
+   {
+    printf("Sending message from server failed");
+   }
+   else
+   {
+    printf("message sent successfully");
+   }
+   close(clientSocket);
+
+   close (serverSocket);
     
+}
+
+
+void client_tcp(char* host, long port)
+{
+   int serverSocket, clientSocket;
+  //  struct sockaddr_in server,client;
+   char buffer[128];
+   struct addrinfo server;
+   struct addrinfor* response;
+   
+   
+   server.ai_family=AF_INET;
+   server.ai_socktype=SOCK_STREAM;
+   server.ai_protocol=IPPROTO_TCP;
+
+   getaddrinfo(host,port,&server,&response);
+   printf("\n This is client program");
+
+
 }
 
 
@@ -125,3 +218,85 @@ void  server_tcp(char* iface, long port)
 // close(new_fd);
 // }
 // return
+
+
+
+
+
+/******************************************************
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include<sys/socket.h>
+#include<netdb.h>
+#include <arpa/inet.h>
+
+const char *inet_ntop(int af, const void *restrict src,
+                      char *restrict dst, socklen_t size);
+int getaddrinfo(const char *restrict node,
+                const char *restrict service,
+                const struct addrinfo *restrict hints,
+                struct addrinfo **restrict res);
+
+ /* Use the `getaddrinfo` and `inet_ntop` functions to convert a string host and
+  integer port into a string dotted ip address and port.
+ */
+// int main(int argc, char* argv[]) {
+//   if (argc != 3) {
+//     printf("Invalid arguments - %s <host> <port>", argv[0]);
+//     return -1;
+//   }
+//   char* host = argv[1];
+//   char* port = argv[2]; // atoi=> char* to integer
+//   // char buff[128];
+//   // snprintf(buff,128,"%ld",process);
+//   // char* port=buff;
+ 
+   
+//   // printf("\n Host : %s",host);
+//   // printf("\n Port: %s",port);
+//   struct addrinfo hints;
+//   // hints=(struct addrinfo*)malloc(sizeof(struct addrinfo));
+//   hints.ai_flags=AI_PASSIVE;
+//   hints.ai_family=PF_UNSPEC;
+//   hints.ai_socktype=SOCK_STREAM;
+//   hints.ai_protocol=IPPROTO_TCP;
+
+//   struct addrinfo *response;
+//   response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
+  
+//   getaddrinfo(host,port, &hints,&response);
+//   // printf("I sucessfully contacted the server");
+//   //-> indirection
+//   struct addrinfo *iterator=response;
+  
+//   while(iterator!=NULL)
+//   {
+//     void * raw_addr;
+//     char buffer[4096];
+
+//     if(iterator->ai_family==AF_INET)// Address is IPv4
+//     {
+//       struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
+//       raw_addr= &(tmp->sin_addr);
+//       inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
+//       printf("IPv4 %s\n",buffer);
+
+
+//     }
+//     else // Address is IPv6
+//     {
+//       struct sockaddr_in6* tmp=(struct sockaddr_in6*)iterator->ai_addr;
+//       raw_addr=&(tmp->sin6_addr);
+//       inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
+//       printf("IPv6 %s\n",buffer);
+//     }
+//     iterator=iterator->ai_next;
+    
+
+//   }
+  
+
+
+//   return 0;
+// }
