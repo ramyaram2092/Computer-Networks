@@ -201,7 +201,7 @@ void client_tcp(char* host, long port)
   }
   else
   {
-    printf("\n connected successfully to server\n ");
+    printf("\n Finally connected successfully to server\n ");
   }
 
   // Try to send a message to server
