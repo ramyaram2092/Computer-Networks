@@ -101,11 +101,11 @@ void  server_tcp(char* iface, long port)
   serverSocket=socket(AF_INET,SOCK_STREAM,0);
   if(serverSocket==-1)
   {
-    printf("\n server socket creation failed");
+    printf("\n server socket creation failed \n");
   }
   else
   {
-    printf("\n Server Socket created Successfully");
+    printf("\n Server Socket created Successfully\n ");
   }
 
    memset(&server,0,sizeof(server)); // appending zero ?  Read about it
@@ -120,30 +120,31 @@ void  server_tcp(char* iface, long port)
   //bind the socket with the server ip and port 
   if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))<0)
   {
-    printf("Error in socket binding");
+    printf("\n Error in socket binding \n ");
   }
   else
   {
-    printf("Socket successfully binded to server ");
+    printf("\n Socket successfully binded to server\n ");
   }
 
 
   // listen to the socket connection 
   if(listen(serverSocket,3)<0) // the no 5 is subjected to change. no of requests that can be queued
   {
-    printf("\n Listening failed");
+    printf("\n Listening failed\n ");
   }
   else
   {
-    printf("\n Server is listening to socket");
+    printf("\n Server is listening to socket\n ");
   }
 
   socklen_t clientLen= sizeof(client);
+  
   // accept the incoming packet from client 
    clientSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
    if(clientSocket<0)
    {
-      printf("\n Unable to accept the client packet");
+      printf("\n Unable to accept the client packet\n ");
    }
    else{
     printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
@@ -151,11 +152,11 @@ void  server_tcp(char* iface, long port)
 
    if((send(clientSocket,"Hi this is server\n",14,0))<0)
    {
-    printf("Sending message from server failed");
+    printf("\n Sending message from server failed\n ");
    }
    else
    {
-    printf("message sent successfully");
+    printf("\n message sent successfully\n ");
    }
    close(clientSocket);
 
