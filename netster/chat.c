@@ -192,10 +192,10 @@ void client_tcp(char* host, long port)
   server.sin_addr.s_addr= inet_addr(host);
   server.sin_port=(int)port;
 
-  memset(&server,0,sizeof(client)); // appending zero ?  Read about it
+  memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   //connect client socket with  server socket 
-  if((connect(clientSocket,(struct sockaddr*)server, sizeof(server) ))<0)
+  if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
   {
     printf("\n Connection with server failed");
   }
