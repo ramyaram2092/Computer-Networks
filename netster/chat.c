@@ -203,6 +203,8 @@ void client_tcp(char* host, long port)
   {
     printf("\n Finally connected successfully to server\n ");
   }
+  printf("\n I am coming here though? ");
+
 
   // Try to send a message to server
    if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
