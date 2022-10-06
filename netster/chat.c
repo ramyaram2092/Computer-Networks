@@ -223,8 +223,7 @@ void client_tcp(char* host, long port)
       printf("send command is the issue \n ");
 
       // Try to send a message to server
-      char message[4096];
-      message="Hi";
+      char message[4096]="hi";
       printf("message command is the issue \n ");
 
       // recv(clientSocket,message,strlen(message),0);
