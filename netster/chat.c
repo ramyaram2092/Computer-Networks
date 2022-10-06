@@ -257,20 +257,7 @@ void client_tcp(char* host, long port)
 
 
 
-for (ai = aiList; ai != NULL; ai=ai->ai_next) { // try connecting to resolved addrs
-if ((sd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1) {
-… an error occurred …
-}
-if (connect(sd, ai->ai_addr, ai->ai_addrlen) != 0) {
-… an error occurred …
-} else {
-break;
-}
-}
-if ((numbytes=recv(sd, buf, MAXDATASIZE-1, 0)) == -1) {
-perror("recv");
-exit(1);
-}
+
 
 
 
