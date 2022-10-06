@@ -226,7 +226,7 @@ void client_tcp(char* host, long port)
       char* message="Hi";
       printf("message command is the issue \n ");
 
-      if((send(clientSocket,message,strlen(message),0))<0)
+      if((sendto(clientSocket,message,strlen(message),0))<0)
       {
         printf("\n Sending message from client failed\n ");
         exit(0);
