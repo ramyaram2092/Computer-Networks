@@ -192,15 +192,15 @@ void client_tcp(char* host, long port)
 
   //create socket
   clientSocket=socket(AF_INET,SOCK_STREAM,0);
-  // if(clientSocket<0)
-  // {
-  //   printf("\n Client socket creation failed \n");
-  //   exit(0);
-  // }
-  // else
-  // {
-  //   printf("\n Client Socket created Successfully\n ");
-  // }
+  if(clientSocket<0)
+  {
+    printf("\n Client socket creation failed \n");
+    exit(0);
+  }
+  else
+  {
+    printf("\n Client Socket created Successfully\n ");
+  }
    
   printf("Hi darling\n ");
 
@@ -216,18 +216,18 @@ void client_tcp(char* host, long port)
   {
       printf("Hello darling\n ");
 
-      // if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
-      // {
-      //   printf("\n Connection with server failed \n ");
-      //   exit(0);
+      if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
+      {
+        printf("\n Connection with server failed \n ");
+        exit(0);
 
-      // }
-      // else
-      // {
-      //   printf("\n Finally connected successfully to server \n ");
-      //   printf("\n I coem here \n  ");
+      }
+      else
+      {
+        printf("\n Finally connected successfully to server \n ");
+        printf("\n I coem here \n  ");
 
-      // }
+      }
       printf("\n I am coming here though? ");
 
 
@@ -248,7 +248,7 @@ void client_tcp(char* host, long port)
    printf("\n I am coming here ");
 
 
-  close (clientSocket);
+  // close (clientSocket);
 
 
 
