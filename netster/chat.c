@@ -207,7 +207,7 @@ void client_tcp(char* host, long port)
   // assign ip and port
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= inet_addr(host);
-  server.sin_port=(int)port;
+  server.sin_port=port;
 
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
@@ -222,13 +222,10 @@ void client_tcp(char* host, long port)
         exit(0);
 
       }
-      else
-      {
-        printf("\n Finally connected successfully to server \n ");
-        printf("\n I coem here \n  ");
+      
+      printf("\n Finally connected successfully to server \n ");
+      printf("\n I coem here \n  ");
 
-      }
-      printf("\n I am coming here though? ");
 
 
       // Try to send a message to server
@@ -239,10 +236,9 @@ void client_tcp(char* host, long port)
         exit(0);
 
       }
-      else
-      {
-        printf("\n message sent from client  successfully\n ");
-      }
+      
+      printf("\n message sent from client  successfully\n ");
+      
   }
 
    printf("\n I am coming here ");
