@@ -227,13 +227,9 @@ void client_tcp(char* host, long port)
       printf("Hello darling\n ");
       printf("send command is the issue \n ");
 
-
-
-
-
       // Try to send a message to server
-    
-      if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
+      char * messgae="Hi this is Client. Nice to meet you ";
+      if((send(clientSocket,message,strlen(message),0))<0)
       {
         printf("\n Sending message from client failed\n ");
         exit(0);
