@@ -97,10 +97,11 @@ void  server_tcp(char* iface, long port)
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
   char client_message[4096];
+  printf("\n Port : %ld",port);
 
   // create socket 
   serverSocket=socket(AF_INET,SOCK_STREAM,0);
-  if(serverSocket==-1)
+  if(serverSocket<0)
   {
     printf("\n server socket creation failed \n");
   }
@@ -115,7 +116,7 @@ void  server_tcp(char* iface, long port)
 
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= INADDR_ANY ;// takes default ip-> local ip
-  server.sin_port=(int)port;
+  server.sin_port=port;
 
 
   //bind the socket with the server ip and port 
@@ -186,6 +187,7 @@ void client_tcp(char* host, long port)
 {
    int clientSocket;
    struct sockaddr_in server;
+   printf("\n Port : %ld",port);
 
   //create socket
   clientSocket=socket(AF_INET,SOCK_STREAM,0);
@@ -199,12 +201,12 @@ void client_tcp(char* host, long port)
     printf("\n Client Socket created Successfully\n ");
   }
    
-  printf("Hi darling\n ");
+  // printf("Hi darling\n ");
 
   // assign ip and port
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= inet_addr(host);
-  server.sin_port=htons(port);
+  server.sin_port=port;
 
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
