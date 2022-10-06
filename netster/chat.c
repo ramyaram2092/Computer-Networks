@@ -227,9 +227,9 @@ void client_tcp(char* host, long port)
       message="Hi";
       printf("message command is the issue \n ");
 
-      recv(clientSocket,message,strlen(message),0);
-      printf("Message from server  is % s"message);
-         message="Hello";
+      // recv(clientSocket,message,strlen(message),0);
+      // printf("Message from server  is % s"message);
+      //    message="Hello";
 
       if(send(clientSocket,message,strlen(message),0)<0)
       {
@@ -240,7 +240,7 @@ void client_tcp(char* host, long port)
       
       printf("\n message sent from client  successfully\n ");
       
-    // close (clientSocket);
+    close (clientSocket);
 
 
 }
