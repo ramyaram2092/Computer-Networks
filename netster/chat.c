@@ -212,8 +212,6 @@ void client_tcp(char* host, long port)
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   //connect client socket with  server socket 
-   for (;;)
-  {
 
       if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
       {
@@ -228,7 +226,7 @@ void client_tcp(char* host, long port)
       printf("send command is the issue \n ");
 
       // Try to send a message to server
-      char * message="Hi this is Client. Nice to meet you ";
+      char* message="Hi";
       if((send(clientSocket,message,strlen(message),0))<0)
       {
         printf("\n Sending message from client failed\n ");
@@ -238,16 +236,15 @@ void client_tcp(char* host, long port)
       
       printf("\n message sent from client  successfully\n ");
       
-  }
-
-   printf("\n I am coming here ");
-
-
-  // close (clientSocket);
-
+    // close (clientSocket);
 
 
 }
+
+
+
+
+
 
 
 
