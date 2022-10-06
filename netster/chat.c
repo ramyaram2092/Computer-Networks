@@ -189,7 +189,7 @@ void client_tcp(char* host, long port)
   
 
   server.sin_family=AF_INET; // address family IPV4 or 6
-  server.sin_addr.s_addr= host;
+  server.sin_addr.s_addr= inet_addr(host);
   server.sin_port=(int)port;
 
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
