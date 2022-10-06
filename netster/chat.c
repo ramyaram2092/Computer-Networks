@@ -212,7 +212,7 @@ void client_tcp(char* host, long port)
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   //connect client socket with  server socket 
-   while (1)
+   for (;;)
   {
       if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
       {
