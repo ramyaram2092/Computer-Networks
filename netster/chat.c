@@ -191,7 +191,7 @@ void client_tcp(char* host, long port)
    struct sockaddr_in server;
 
   //create socket
-  // clientSocket=socket(AF_INET,SOCK_STREAM,0);
+  clientSocket=socket(AF_INET,SOCK_STREAM,0);
   // if(clientSocket<0)
   // {
   //   printf("\n Client socket creation failed \n");
@@ -202,18 +202,20 @@ void client_tcp(char* host, long port)
   //   printf("\n Client Socket created Successfully\n ");
   // }
    
-  
+  printlf("Hi darling\n ");
 
-  // // assign ip and port
-  // server.sin_family=AF_INET; // address family IPV4 or 6
-  // server.sin_addr.s_addr= inet_addr(host);
-  // server.sin_port=(int)port;
+  // assign ip and port
+  server.sin_family=AF_INET; // address family IPV4 or 6
+  server.sin_addr.s_addr= inet_addr(host);
+  server.sin_port=(int)port;
 
-  // memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+  memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   //connect client socket with  server socket 
    for (;;)
   {
+      printlf("Hello darling\n ");
+
       // if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
       // {
       //   printf("\n Connection with server failed \n ");
