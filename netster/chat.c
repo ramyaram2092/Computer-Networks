@@ -202,7 +202,7 @@ void client_tcp(char* host, long port)
   //   printf("\n Client Socket created Successfully\n ");
   // }
    
-  printlf("Hi darling\n ");
+  printf("Hi darling\n ");
 
   // assign ip and port
   server.sin_family=AF_INET; // address family IPV4 or 6
