@@ -96,6 +96,7 @@ void  server_tcp(char* iface, long port)
 {
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
+  char client_message[4096];
 
   // create socket 
   serverSocket=socket(AF_INET,SOCK_STREAM,0);
@@ -133,6 +134,8 @@ void  server_tcp(char* iface, long port)
   if(listen(serverSocket,3)<0) // the no 5 is subjected to change. no of requests that can be queued
   {
     printf("\n Listening failed\n ");
+    exit(0);
+
   }
   else
   {
@@ -146,14 +149,30 @@ void  server_tcp(char* iface, long port)
    if(newSocket<0)
    {
       printf("\n Unable to accept the client packet\n ");
+      exit(0);
+
    }
    else{
     printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
    }
 
+   if((recv(newSocket,client_message,sizeof(client_message),0)<0))
+   {
+     printf("coundnt recieve \n");
+     exit(0);
+   }
+   else
+   {
+      printf("\n Message recieved from client %s", client_message);
+
+
+   }
+
    if((send(newSocket,"Hi this is server\n",14,0))<0)
    {
     printf("\n Sending message from server failed\n ");
+    exit(0);
+
    }
    else
    {
@@ -186,8 +205,6 @@ void client_tcp(char* host, long port)
   
 
   // assign ip and port
-  
-
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= inet_addr(host);
   server.sin_port=(int)port;
@@ -197,35 +214,39 @@ void client_tcp(char* host, long port)
   //connect client socket with  server socket 
    while (1)
   {
-    if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
-    {
-      printf("\n Connection with server failed \n ");
-    }
-    else
-    {
-      printf("\n Finally connected successfully to server \n ");
-      printf("\n I coem here \n  ");
+      if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
+      {
+        printf("\n Connection with server failed \n ");
+        exit(0);
 
-    }
-    printf("\n I am coming here though? ");
+      }
+      else
+      {
+        printf("\n Finally connected successfully to server \n ");
+        printf("\n I coem here \n  ");
+
+      }
+      printf("\n I am coming here though? ");
 
 
-    // Try to send a message to server
-  
-    if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
-    {
-      printf("\n Sending message from client failed\n ");
-    }
-    else
-    {
-      printf("\n message sent from client  successfully\n ");
-    }
+      // Try to send a message to server
+    
+      if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
+      {
+        printf("\n Sending message from client failed\n ");
+        exit(0);
+
+      }
+      else
+      {
+        printf("\n message sent from client  successfully\n ");
+      }
   }
 
    printf("\n I am coming here ");
 
 
-  // close (clientSocket);
+  close (clientSocket);
 
 
 
@@ -236,7 +257,20 @@ void client_tcp(char* host, long port)
 
 
 
-
+for (ai = aiList; ai != NULL; ai=ai->ai_next) { // try connecting to resolved addrs
+if ((sd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1) {
+… an error occurred …
+}
+if (connect(sd, ai->ai_addr, ai->ai_addrlen) != 0) {
+… an error occurred …
+} else {
+break;
+}
+}
+if ((numbytes=recv(sd, buf, MAXDATASIZE-1, 0)) == -1) {
+perror("recv");
+exit(1);
+}
 
 
 
