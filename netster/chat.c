@@ -214,7 +214,7 @@ void client_tcp(char* host, long port)
   //connect client socket with  server socket 
    for (;;)
   {
-      printlf("Hello darling\n ");
+      printf("Hello darling\n ");
 
       // if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
       // {
