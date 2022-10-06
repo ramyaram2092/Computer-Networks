@@ -204,7 +204,7 @@ void client_tcp(char* host, long port)
   // assign ip and port
   server.sin_family=AF_INET; // address family IPV4 or 6
   server.sin_addr.s_addr= inet_addr(host);
-  server.sin_port=port;
+  server.sin_port=htons(port);
 
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
@@ -226,7 +226,7 @@ void client_tcp(char* host, long port)
       char* message="Hi";
       printf("message command is the issue \n ");
 
-      if((sendto(clientSocket,message,strlen(message),0))<0)
+      if((send(clientSocket,message,strlen(message),0))<0)
       {
         printf("\n Sending message from client failed\n ");
         exit(0);
