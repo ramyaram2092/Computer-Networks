@@ -195,28 +195,32 @@ void client_tcp(char* host, long port)
   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   //connect client socket with  server socket 
-  if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
+   while (1)
   {
-    printf("\n Connection with server failed \n ");
+    if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
+    {
+      printf("\n Connection with server failed \n ");
+    }
+    else
+    {
+      printf("\n Finally connected successfully to server \n ");
+      printf("\n I coem here \n  ");
+
+    }
+    printf("\n I am coming here though? ");
+
+
+    // Try to send a message to server
+  
+    if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
+    {
+      printf("\n Sending message from client failed\n ");
+    }
+    else
+    {
+      printf("\n message sent from client  successfully\n ");
+    }
   }
-  else
-  {
-    printf("\n Finally connected successfully to server \n ");
-    printf("\n I coem here \n  ");
-
-  }
-  printf("\n I am coming here though? ");
-
-
-  // Try to send a message to server
-   if((send(clientSocket,"Hi this is Client. Nice to meet you \n",100,0))<0)
-   {
-    printf("\n Sending message from client failed\n ");
-   }
-   else
-   {
-    printf("\n message sent from client  successfully\n ");
-   }
 
    printf("\n I am coming here ");
 
