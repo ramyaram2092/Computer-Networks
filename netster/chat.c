@@ -152,21 +152,19 @@ void  server_tcp(char* iface, long port)
       exit(0);
 
    }
-   else{
+
     printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
-   }
+   
 
    if((recv(newSocket,client_message,sizeof(client_message),0)<0))
    {
      printf("coundnt recieve \n");
      exit(0);
    }
-   else
-   {
+  
       printf("\n Message recieved from client %s", client_message);
 
-
-   }
+   
 
    if((send(newSocket,"Hi this is server\n",14,0))<0)
    {
@@ -174,10 +172,9 @@ void  server_tcp(char* iface, long port)
     exit(0);
 
    }
-   else
-   {
+   
     printf("\n message sent successfully\n ");
-   }
+   
    close(newSocket);
 
    close (serverSocket);
