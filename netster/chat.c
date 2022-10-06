@@ -214,7 +214,6 @@ void client_tcp(char* host, long port)
   //connect client socket with  server socket 
    for (;;)
   {
-      printf("Hello darling\n ");
 
       if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
       {
@@ -224,7 +223,11 @@ void client_tcp(char* host, long port)
       }
       
       printf("\n Finally connected successfully to server \n ");
-      printf("\n I coem here \n  ");
+      printf("\n I come here \n  ");
+      printf("Hello darling\n ");
+      printf("send command is the issue \n ");
+
+
 
 
 
