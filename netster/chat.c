@@ -10,7 +10,6 @@
 
 
 
-#define BACKLOG 10
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
 void  client_tcp(char* host, long port);
@@ -97,6 +96,7 @@ void  server_tcp(char* iface, long port)
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
   char client_message[4096];
+
   printf("\n Port : %ld",port);
 
   // create socket 
@@ -120,28 +120,26 @@ void  server_tcp(char* iface, long port)
 
 
   //bind the socket with the server ip and port 
-  if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))<0)
+  if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))!=0)
   {
     printf("\n Error in socket binding \n ");
     exit(0);
   }
-  else
-  {
+
     printf("\n Socket successfully binded to server\n ");
-  }
+  
 
 
   // listen to the socket connection 
-  if(listen(serverSocket,3)<0) // the no 5 is subjected to change. no of requests that can be queued
+  if(listen(serverSocket,3)!=0) // the no 5 is subjected to change. no of requests that can be queued
   {
     printf("\n Listening failed\n ");
     exit(0);
 
   }
-  else
-  {
+
     printf("\n Server is listening to socket\n ");
-  }
+  
 
   socklen_t clientLen= sizeof(client);
 
@@ -154,7 +152,7 @@ void  server_tcp(char* iface, long port)
 
    }
 
-    printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
+    // printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
    
 
    if((recv(newSocket,client_message,sizeof(client_message),0)<0))
@@ -163,18 +161,18 @@ void  server_tcp(char* iface, long port)
      exit(0);
    }
   
-      printf("\n Message recieved from client %s", client_message);
+    printf("\n Message recieved from client %s", client_message);
 
    
 
-   if((send(newSocket,"Hi this is server\n",14,0))<0)
+   if((send(newSocket,"Hi this is server. I recieved your message \n",14,0))<0)
    {
     printf("\n Sending message from server failed\n ");
     exit(0);
 
    }
    
-    printf("\n message sent successfully\n ");
+    printf("\n message sent from server successfully\n ");
    
    close(newSocket);
 
@@ -186,7 +184,7 @@ void  server_tcp(char* iface, long port)
 void client_tcp(char* host, long port)
 {
    int clientSocket;
-   struct sockaddr_in server;
+   struct sockaddr_in serveraddr;
    printf("\n Port : %ld",port);
 
   //create socket
@@ -201,36 +199,25 @@ void client_tcp(char* host, long port)
     printf("\n Client Socket created Successfully\n ");
   }
    
-  // printf("Hi darling\n ");
-
+memset(&serveraddr,0,sizeof(serveraddr));
   // assign ip and port
-  server.sin_family=AF_INET; // address family IPV4 or 6
-  server.sin_addr.s_addr= inet_addr(host);
-  server.sin_port=port;
+  serveraddr.sin_family=AF_INET; // address family IPV4 or 6
+  serveraddr.sin_addr.s_addr= inet_addr(host);
+  serveraddr.sin_port=port;
 
-  memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+      
 
   //connect client socket with  server socket 
 
-      if((connect(clientSocket,(struct sockaddr*)&server, sizeof(server) ))<0)
+      if(connect(clientSocket,(struct sockaddr*)&serveraddr, sizeof(serveraddr) )!=0)
       {
         printf("\n Connection with server failed \n ");
         exit(0);
 
       }
-      
-      printf("\n Finally connected successfully to server \n ");
-      printf("\n I come here \n  ");
-      printf("Hello darling\n ");
-      printf("send command is the issue \n ");
 
       // Try to send a message to server
-      char message[4096]="hi";
-      printf("message command is the issue \n ");
-
-      // recv(clientSocket,message,strlen(message),0);
-      // printf("Message from server  is % s"message);
-      //    message="Hello";
+      char message[4096]="hi this is Client ";
 
       if(send(clientSocket,message,strlen(message),0)<0)
       {
@@ -240,6 +227,21 @@ void client_tcp(char* host, long port)
       }
       
       printf("\n message sent from client  successfully\n ");
+
+
+            // recv(clientSocket,message,strlen(message),0);
+      // printf("Message from server  is % s"message);
+
+      char response[4096];
+      if(recv(clientSocket,response,sizeof(response),0)<0)
+      {
+        printf("\n Sending message from client failed\n ");
+        exit(0);
+
+      }
+      
+      printf("\n message recived from server successfully: %s\n ", response);
+
       
     close (clientSocket);
 
