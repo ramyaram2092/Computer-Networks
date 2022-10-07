@@ -95,7 +95,6 @@ void  server_tcp(char* iface, long port)
 {
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
-  char client_message[4096];
 
   printf("\n Port : %ld",port);
 
@@ -110,7 +109,7 @@ void  server_tcp(char* iface, long port)
     printf("\n Server Socket created Successfully\n ");
   }
 
-   memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+  //  memset(&server,0,sizeof(server)); // appending zero ?  Read about it
 
   // assign ip and port
 
@@ -153,28 +152,45 @@ void  server_tcp(char* iface, long port)
    }
 
     // printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
-   
+   char message[100];
 
-   if((recv(newSocket,client_message,sizeof(client_message),0)<0))
-   {
-     printf("coundnt recieve \n");
-     exit(0);
+   for(;;)
+   { 
+      if((recv(newSocket,message,sizeof(message),0)<0))
+      {
+        printf("coundnt recieve message from client \n");
+        exit(0);
+      }
+      
+      printf("Message recieved from client %s\n ", message);
+
+      if((strncmp(message,"goodbye",8)==0))
+      {
+        bzero(message, sizeof(message));
+        if((send(newSocket,"OK",2,0))<0)
+        {
+          printf("Sending message from server failed\n");
+          exit(0);
+
+        }
+        printf("Server  Exit...\n");
+        break;
+      }
+      bzero(message, sizeof(message));
+      int i=0;
+      while ((message[i++] = getchar()) != '\n')
+     ;
+      message[i]='\0';
+      if((send(newSocket,message,strlen(message),0))<0)
+      {
+        printf("Sending message from server failed\n");
+        exit(0);
+
+      }
+       bzero(message, sizeof(message));
+        
    }
-  
-    printf("\n Message recieved from client %s", client_message);
-
    
-
-   if((send(newSocket,"Hi this is server. I recieved your message \n",14,0))<0)
-   {
-    printf("\n Sending message from server failed\n ");
-    exit(0);
-
-   }
-   
-    printf("\n message sent from server successfully\n ");
-   
-   close(newSocket);
 
    close (serverSocket);
     
@@ -199,7 +215,7 @@ void client_tcp(char* host, long port)
     printf("\n Client Socket created Successfully\n ");
   }
    
-memset(&serveraddr,0,sizeof(serveraddr));
+// memset(&serveraddr,0,sizeof(serveraddr));
   // assign ip and port
   serveraddr.sin_family=AF_INET; // address family IPV4 or 6
   serveraddr.sin_addr.s_addr= inet_addr(host);
@@ -217,30 +233,43 @@ memset(&serveraddr,0,sizeof(serveraddr));
       }
 
       // Try to send a message to server
-      char message[4096]="hi this is Client ";
-
-      if(send(clientSocket,message,strlen(message),0)<0)
+      char message[100];// The
+      for(;;)
       {
-        printf("\n Sending message from client failed\n ");
-        exit(0);
+        
+        if((strncmp(message,"farewell",8==0))||(strncmp(message,"OK",2)==0))
+        {
+            printf("Client Exit...\n");
+            break;
+        }
+        int i=0;
+       while ((message[i++] = getchar()) != '\n')
+       ;
 
-      }
+            
+          if(send(clientSocket,message,strlen(message),0)<0)
+          {
+            printf("Sending message from client failed\n ");
+            exit(0);
+
+          }
+          bzero(message, sizeof(message));
+          
+          printf("\n message sent from client  successfully\n ");
+
+          
+          if(recv(clientSocket,message,sizeof(message),0)<0)
+          {
+            printf("Recieving message from Server failed\n ");
+            exit(0);
+
+          }
+          printf("Message recived from server : %s\n ", message);
+          bzero(message, sizeof(message));
+
+          
       
-      printf("\n message sent from client  successfully\n ");
-
-
-            // recv(clientSocket,message,strlen(message),0);
-      // printf("Message from server  is % s"message);
-
-      char response[4096];
-      if(recv(clientSocket,response,sizeof(response),0)<0)
-      {
-        printf("\n Sending message from client failed\n ");
-        exit(0);
-
       }
-      
-      printf("\n message recived from server successfully: %s\n ", response);
 
       
     close (clientSocket);
