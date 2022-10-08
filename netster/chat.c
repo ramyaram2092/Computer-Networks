@@ -16,6 +16,7 @@ struct clientDetails
       int socketfileDesctiptor;
       char *host;
       long port;
+      int status;
 };
 
 void  server_udp(char* iface, long port);
@@ -110,6 +111,7 @@ void  server_tcp(char* iface, long port)
   server.sin_port=port;
 
 
+
   //bind the socket with the server ip and port 
   if ((bind(serverSocket,(struct sockaddr*) & server, sizeof(server)))!=0)
   {
@@ -146,22 +148,22 @@ void  server_tcp(char* iface, long port)
    inet_ntop(AF_INET,&client.sin_addr.s_addr,buffer,200);
    printf("Connection %d from (%s,%ld) \n ", i, buffer ,port);
    pthread_t id;
+
    struct clientDetails cd;
    cd.host=buffer;
    cd.port=port;
    cd.socketfileDesctiptor=newSocket;
+   cd.status=0;
 
     // handle the chat with client
     pthread_create(&id,NULL,serverchatHandler,&cd);
+    if(cd.status==-1)
+    {
+      break;
+    }
    
     i++;
-    
-    // struct sample s;
-    // s.a=10;
-    // s.b=20;
-    // s.c="ramya";
-    // int c=pthread_create(&id,NULL,printServer,&s);
-    // printf("%d\n",c);
+    // pthread_kill(id,0); 
 
   }
 
@@ -198,6 +200,7 @@ void * serverchatHandler(void *argp)
   char* host= c->host;
   long port=c->port;
   int socketFileDescriptor=c->socketfileDesctiptor;
+  // pthread_t id=c->id;
   char message[200];
 
    for(;;)
@@ -208,7 +211,7 @@ void * serverchatHandler(void *argp)
       if((recv(socketFileDescriptor,message,sizeof(message),0)<0))
       {
         printf("coundnt recieve message from client \n");
-        exit(0);
+        // exit(0);
       }
 
         // display the recieved message 
@@ -236,8 +239,9 @@ void * serverchatHandler(void *argp)
           printf("Sending message from server failed\n");
           exit(0);
         }
-        // printf("Server exits...\n");
-        // return -1;
+        c->status=-1;
+        break;
+       
       }
 
       // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
@@ -248,8 +252,8 @@ void * serverchatHandler(void *argp)
           printf("Sending message from server failed\n");
           exit(0);
         }
-        // printf("Server Exiting the current client ...\n");
-        // return 0;
+        break;
+       
       }
 
       else
@@ -262,6 +266,7 @@ void * serverchatHandler(void *argp)
             printf("Sending message from server failed\n");
             exit(0);
           }
+
         }
         else
         {
