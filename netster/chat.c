@@ -19,7 +19,7 @@ int getaddrinfo(const char *restrict node,
                 const char *restrict service,
                 const struct addrinfo *restrict hints,
                 struct addrinfo **restrict res);
-int serverchatHandler(int socketFileDescriptor);
+int serverchatHandler(int socketFileDescriptor, char* host, long port);
 void clientchatHandler(int socketFileDescriptor);
 
 
@@ -105,7 +105,7 @@ void  server_tcp(char* iface, long port)
     exit(0);
   }
 
-  
+  int i=0;
   for (;;)
   {
 
@@ -117,25 +117,28 @@ void  server_tcp(char* iface, long port)
 
   }
 
-    printf("\n Server is listening to socket\n ");
-  
-
   socklen_t clientLen= sizeof(client);
 
   // accept the incoming packet from client 
   
    newSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
+   
    if(newSocket<0)
    {
       printf("\n Unable to accept the client packet\n ");
       exit(0);
 
    }
+   char buffer[200];
+   inet_ntop(AF_INET,&client.sin_addr.s_addr,buffer,200);
+   printf("\n Connection %d from (%s,%ld) \n ", i, buffer ,port);
+
     // handle the chat with client
-    if(serverchatHandler(newSocket)==-1)
+    if(serverchatHandler(newSocket, buffer,port)==-1)
     {
       break;
     }
+    i++;
 
   }
 
@@ -152,9 +155,9 @@ void  server_tcp(char* iface, long port)
  * @param socketFileDescriptor 
  */
 
-int serverchatHandler(int socketFileDescriptor)
+int serverchatHandler(int socketFileDescriptor, char* host, long port)
 {
-   char message[100];
+   char message[200];
 
    for(;;)
    { 
@@ -168,7 +171,7 @@ int serverchatHandler(int socketFileDescriptor)
       }
 
         // display the recieved message 
-      printf("Message recieved from client :  %s \n ", message);
+      printf("got message from (%s,%ld)\n", host,port);
       
       int len= (int)strlen(message)-1;
       
@@ -180,7 +183,7 @@ int serverchatHandler(int socketFileDescriptor)
           printf("Sending message from server failed\n");
           exit(0);
         }
-        printf("Server exits...\n");
+        // printf("Server exits...\n");
         return -1;
       }
 
@@ -192,7 +195,7 @@ int serverchatHandler(int socketFileDescriptor)
           printf("Sending message from server failed\n");
           exit(0);
         }
-        printf("Server Exiting the current client ...\n");
+        // printf("Server Exiting the current client ...\n");
         return 0;
       }
 
@@ -300,7 +303,7 @@ void clientchatHandler(int socketFileDescriptor)
             printf("Recieving message from Server failed \n");
             exit(0);
         }
-        printf("Message recived from server : %s\n ", message);
+        printf("%s\n", message);
         int len= (int)strlen(message)-1;
 
 
