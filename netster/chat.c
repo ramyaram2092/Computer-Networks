@@ -1,15 +1,22 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
 #include<netdb.h>
 #include<string.h>
 #include<unistd.h>
-#include <arpa/inet.h>
+#include<arpa/inet.h>
 #include<ctype.h>
+#include<pthread.h>
 
 
+struct clientDetails
+{
+      int socketfileDesctiptor;
+      char *host;
+      long port;
+};
 
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
@@ -20,8 +27,12 @@ int getaddrinfo(const char *restrict node,
                 const char *restrict service,
                 const struct addrinfo *restrict hints,
                 struct addrinfo **restrict res);
-int serverchatHandler(int socketFileDescriptor, char* host, long port);
+void *serverchatHandler(void *);
 void clientchatHandler(int socketFileDescriptor);
+
+void *printServer(void*);
+
+
 
 
 /*
@@ -109,6 +120,7 @@ void  server_tcp(char* iface, long port)
   int i=0;
   for (;;)
   {
+    // printf("Listening for next conncection \n");
 
   // listen to the socket connection 
   if(listen(serverSocket,3)!=0) // the no 5 is subjected to change. no of requests that can be queued
@@ -133,13 +145,23 @@ void  server_tcp(char* iface, long port)
    char buffer[200];
    inet_ntop(AF_INET,&client.sin_addr.s_addr,buffer,200);
    printf("Connection %d from (%s,%ld) \n ", i, buffer ,port);
+   pthread_t id;
+   struct clientDetails cd;
+   cd.host=buffer;
+   cd.port=port;
+   cd.socketfileDesctiptor=newSocket;
 
     // handle the chat with client
-    if(serverchatHandler(newSocket, buffer,port)==-1)
-    {
-      break;
-    }
+    pthread_create(&id,NULL,serverchatHandler,&cd);
+   
     i++;
+    
+    // struct sample s;
+    // s.a=10;
+    // s.b=20;
+    // s.c="ramya";
+    // int c=pthread_create(&id,NULL,printServer,&s);
+    // printf("%d\n",c);
 
   }
 
@@ -150,15 +172,33 @@ void  server_tcp(char* iface, long port)
 
 
 
+// void *printServer( void* argp)
+// {
+//   struct sample* ab= (struct sample*)argp;
+
+//   printf("Thanks for connecting to the server \n");
+//   printf("a: %d\n",ab->a);
+//   printf("b: %d\n",ab->b);
+//   printf("c: %s\n",ab->c);
+//   fflush(stdout);  
+//   return NULL;
+// }
+
+
+
 /**
  * @brief server's chat handler function
  * 
  * @param socketFileDescriptor 
  */
 
-int serverchatHandler(int socketFileDescriptor, char* host, long port)
+void * serverchatHandler(void *argp)
 {
-   char message[200];
+  struct clientDetails* c=(struct clientDetails*)argp;
+  char* host= c->host;
+  long port=c->port;
+  int socketFileDescriptor=c->socketfileDesctiptor;
+  char message[200];
 
    for(;;)
    { 
@@ -173,7 +213,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
 
         // display the recieved message 
       printf("got message from (%s,%ld)\n", host,port);
-      
+  
 
        int len= (int)strlen(message)-1;
 
@@ -184,7 +224,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
         client_msg[j++]=ch;
       }
       client_msg[j]='\0';
-      printf("%s",client_msg);
+      // printf("%s",client_msg);
 
 
       
@@ -197,7 +237,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
           exit(0);
         }
         // printf("Server exits...\n");
-        return -1;
+        // return -1;
       }
 
       // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
@@ -209,7 +249,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
           exit(0);
         }
         // printf("Server Exiting the current client ...\n");
-        return 0;
+        // return 0;
       }
 
       else
@@ -241,7 +281,9 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
         }
       }
    }
-  return 0;      
+  fflush(stdout);  
+
+  return NULL;      
    
 }
 
