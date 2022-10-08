@@ -7,6 +7,7 @@
 #include<string.h>
 #include<unistd.h>
 #include <arpa/inet.h>
+#include<ctype.h>
 
 
 
@@ -131,7 +132,7 @@ void  server_tcp(char* iface, long port)
    }
    char buffer[200];
    inet_ntop(AF_INET,&client.sin_addr.s_addr,buffer,200);
-   printf("\n Connection %d from (%s,%ld) \n ", i, buffer ,port);
+   printf("Connection %d from (%s,%ld) \n ", i, buffer ,port);
 
     // handle the chat with client
     if(serverchatHandler(newSocket, buffer,port)==-1)
@@ -173,10 +174,22 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
         // display the recieved message 
       printf("got message from (%s,%ld)\n", host,port);
       
-      int len= (int)strlen(message)-1;
+
+       int len= (int)strlen(message)-1;
+
+       char client_msg[200];
+       int j=0;
+       while (message[j]) {
+        char ch = toupper(message[j]);
+        client_msg[j++]=ch;
+      }
+      client_msg[j]='\0';
+      printf("%s",client_msg);
+
+
       
       // case 1: if the client sends "exit", send ok and  server should exit 
-      if((strncmp(message,"exit",len))==0)
+      if((strncmp(client_msg,"EXIT",len))==0)
       {
         if((send(socketFileDescriptor,"ok",strlen("ok"),0))<0)
         {
@@ -188,7 +201,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
       }
 
       // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
-      else if((strncmp(message,"goodbye",len))==0)
+      else if((strncmp(client_msg,"GOODBYE",len))==0)
       {
         if((send(socketFileDescriptor,"farewell",strlen("farewell"),0))<0)
         {
@@ -202,7 +215,7 @@ int serverchatHandler(int socketFileDescriptor, char* host, long port)
       else
       {
         // case 1: if the client sends "hello" respond with world 
-        if(strncmp(message,"hello",len)==0)
+        if(strncmp(client_msg,"HELLO",len)==0)
         {
           if(send(socketFileDescriptor,"world",strlen("world"),0)<0)
           {
@@ -248,7 +261,7 @@ void client_tcp(char* host, long port)
   clientSocket=socket(AF_INET,SOCK_STREAM,0);
   if(clientSocket<0)
   {
-    printf("\n Client socket creation failed \n");
+    printf("Client socket creation failed \n");
     exit(0);
   }
    
@@ -262,7 +275,7 @@ void client_tcp(char* host, long port)
   //connect client socket with  server socket 
   if(connect(clientSocket,(struct sockaddr*)&serveraddr, sizeof(serveraddr) )!=0)
   {
-      printf("\n Connection with server failed \n ");
+      printf("Connection with server failed \n ");
       exit(0);
 
   }
