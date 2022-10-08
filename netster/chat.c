@@ -19,6 +19,9 @@ int getaddrinfo(const char *restrict node,
                 const char *restrict service,
                 const struct addrinfo *restrict hints,
                 struct addrinfo **restrict res);
+int serverchatHandler(int socketFileDescriptor);
+void clientchatHandler(int socketFileDescriptor);
+
 
 /*
  *  Here is the starting point for your netster part.1 definitions. Add the 
@@ -60,26 +63,8 @@ void chat_client(char* host, long port, int use_udp) {
  */
 void  server_udp(char* iface, long port)
 {
-    // int socket_fd, new_fd; // listen on sockfd, new connection on new_fd
-    // struct sockaddr_in server_addr; // my address information
-    // struct sockaddr_in client_addr; // client's address information
-
-    // if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) 
-    // {
-    //     perror("socket");
-    //     exit(1);
-    // }
-    // server_addr.sin_family = AF_INET; // host byte order
-    // server_addr.sin_port = htons(port); // short, network byte order
-    // server_addr.sin_addr.s_addr = INADDR_ANY; // auto. filled with local IP
-    // memset(&(server_addr.sin_zero), '\0', 8); // zero the rest of the struct
-
-    // if (bind(socket_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in)) == -1) 
-    // {
-    //     perror("bind");
-    //     exit(1);
-    // }
-    // printf("\n Hello, I am a server");
+    printf("\n");
+    
 
 }
 
@@ -96,7 +81,6 @@ void  server_tcp(char* iface, long port)
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
 
-  printf("\n Port : %ld",port);
 
   // create socket 
   serverSocket=socket(AF_INET,SOCK_STREAM,0);
@@ -104,12 +88,8 @@ void  server_tcp(char* iface, long port)
   {
     printf("\n server socket creation failed \n");
   }
-  else
-  {
-    printf("\n Server Socket created Successfully\n ");
-  }
 
-  //  memset(&server,0,sizeof(server)); // appending zero ?  Read about it
+
 
   // assign ip and port
 
@@ -125,9 +105,9 @@ void  server_tcp(char* iface, long port)
     exit(0);
   }
 
-    printf("\n Socket successfully binded to server\n ");
   
-
+  for (;;)
+  {
 
   // listen to the socket connection 
   if(listen(serverSocket,3)!=0) // the no 5 is subjected to change. no of requests that can be queued
@@ -143,6 +123,7 @@ void  server_tcp(char* iface, long port)
   socklen_t clientLen= sizeof(client);
 
   // accept the incoming packet from client 
+  
    newSocket=accept(serverSocket, (struct sockaddr*) &client, &clientLen );
    if(newSocket<0)
    {
@@ -150,58 +131,115 @@ void  server_tcp(char* iface, long port)
       exit(0);
 
    }
+    // handle the chat with client
+    if(serverchatHandler(newSocket)==-1)
+    {
+      break;
+    }
 
-    // printf("\n Suceessfully accepted the client packet from %s", inet_ntoa(client.sin_addr));
-   char message[100];
+  }
 
-   for(;;)
-   { 
-      if((recv(newSocket,message,sizeof(message),0)<0))
-      {
-        printf("coundnt recieve message from client \n");
-        exit(0);
-      }
-      
-      printf("Message recieved from client %s\n ", message);
-
-      if((strncmp(message,"goodbye",8)==0))
-      {
-        bzero(message, sizeof(message));
-        if((send(newSocket,"OK",2,0))<0)
-        {
-          printf("Sending message from server failed\n");
-          exit(0);
-
-        }
-        printf("Server  Exit...\n");
-        break;
-      }
-      bzero(message, sizeof(message));
-      int i=0;
-      while ((message[i++] = getchar()) != '\n')
-     ;
-      message[i]='\0';
-      if((send(newSocket,message,strlen(message),0))<0)
-      {
-        printf("Sending message from server failed\n");
-        exit(0);
-
-      }
-       bzero(message, sizeof(message));
-        
-   }
-   
-
-   close (serverSocket);
+    //close the socket 
+    close (serverSocket);
     
 }
 
 
+
+/**
+ * @brief server's chat handler function
+ * 
+ * @param socketFileDescriptor 
+ */
+
+int serverchatHandler(int socketFileDescriptor)
+{
+   char message[100];
+
+   for(;;)
+   { 
+      bzero(message, sizeof(message));
+
+      // recieve message if any 
+      if((recv(socketFileDescriptor,message,sizeof(message),0)<0))
+      {
+        printf("coundnt recieve message from client \n");
+        exit(0);
+      }
+
+        // display the recieved message 
+      printf("Message recieved from client :  %s \n ", message);
+      
+      int len= (int)strlen(message)-1;
+      
+      // case 1: if the client sends "exit", send ok and  server should exit 
+      if((strncmp(message,"exit",len))==0)
+      {
+        if((send(socketFileDescriptor,"ok",strlen("ok"),0))<0)
+        {
+          printf("Sending message from server failed\n");
+          exit(0);
+        }
+        printf("Server exits...\n");
+        return -1;
+      }
+
+      // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
+      else if((strncmp(message,"goodbye",len))==0)
+      {
+        if((send(socketFileDescriptor,"farewell",strlen("farewell"),0))<0)
+        {
+          printf("Sending message from server failed\n");
+          exit(0);
+        }
+        printf("Server Exiting the current client ...\n");
+        return 0;
+      }
+
+      else
+      {
+        // case 1: if the client sends "hello" respond with world 
+        if(strncmp(message,"hello",len)==0)
+        {
+          if(send(socketFileDescriptor,"world",strlen("world"),0)<0)
+          {
+            printf("Sending message from server failed\n");
+            exit(0);
+          }
+        }
+        else
+        {
+          bzero(message, sizeof(message));
+          // read the input 
+          int i=0;
+          while ((message[i++] = getchar()) != '\n')
+          ;
+          message[i]='\0';
+          //send  the server's response to client 
+          if((send(socketFileDescriptor,message,strlen(message),0))<0)
+          {
+            printf("Sending message from server failed\n");
+            exit(0);
+
+          }
+        }
+      }
+   }
+  return 0;      
+   
+}
+
+/**
+ * @brief tcp client
+ * 
+ * @param host 
+ * @param port 
+ */
 void client_tcp(char* host, long port)
 {
    int clientSocket;
    struct sockaddr_in serveraddr;
-   printf("\n Port : %ld",port);
+  //  printf("\n Port : %ld",port);
 
   //create socket
   clientSocket=socket(AF_INET,SOCK_STREAM,0);
@@ -210,12 +248,7 @@ void client_tcp(char* host, long port)
     printf("\n Client socket creation failed \n");
     exit(0);
   }
-  else
-  {
-    printf("\n Client Socket created Successfully\n ");
-  }
    
-// memset(&serveraddr,0,sizeof(serveraddr));
   // assign ip and port
   serveraddr.sin_family=AF_INET; // address family IPV4 or 6
   serveraddr.sin_addr.s_addr= inet_addr(host);
@@ -224,58 +257,65 @@ void client_tcp(char* host, long port)
       
 
   //connect client socket with  server socket 
+  if(connect(clientSocket,(struct sockaddr*)&serveraddr, sizeof(serveraddr) )!=0)
+  {
+      printf("\n Connection with server failed \n ");
+      exit(0);
 
-      if(connect(clientSocket,(struct sockaddr*)&serveraddr, sizeof(serveraddr) )!=0)
-      {
-        printf("\n Connection with server failed \n ");
-        exit(0);
+  }
 
-      }
+  // Try to send a message to server
+  clientchatHandler(clientSocket);  
+  close (clientSocket);
 
-      // Try to send a message to server
-      char message[100];// The
-      for(;;)
-      {
-        
-        if((strncmp(message,"farewell",8==0))||(strncmp(message,"OK",2)==0))
+}
+
+/**
+ * @brief client's chat handler
+ * 
+ * @param socketFileDescriptor 
+ */
+
+void clientchatHandler(int socketFileDescriptor)
+{
+  char message[100];// The
+  for(;;)
+  {
+
+        bzero(message, sizeof(message));
+        // read input from user 
+        int i=0;
+        while ((message[i++] = getchar()) != '\n')
+        ;
+        message[i]='\0';
+        if(send(socketFileDescriptor,message,strlen(message),0)<0)
+        {
+            printf("Sending message from client failed\n ");
+            exit(0);
+        }
+        bzero(message, sizeof(message));  
+        // recieve message if any 
+        if((recv(socketFileDescriptor,message,sizeof(message),0)<0))
+        {
+            printf("Recieving message from Server failed \n");
+            exit(0);
+        }
+        printf("Message recived from server : %s\n ", message);
+        int len= (int)strlen(message)-1;
+
+
+        if((strncmp(message,"farewell",len)==0)||(strncmp(message,"ok",len)==0))
         {
             printf("Client Exit...\n");
             break;
         }
-        int i=0;
-       while ((message[i++] = getchar()) != '\n')
-       ;
-
-            
-          if(send(clientSocket,message,strlen(message),0)<0)
-          {
-            printf("Sending message from client failed\n ");
-            exit(0);
-
-          }
-          bzero(message, sizeof(message));
-          
-          printf("\n message sent from client  successfully\n ");
-
-          
-          if(recv(clientSocket,message,sizeof(message),0)<0)
-          {
-            printf("Recieving message from Server failed\n ");
-            exit(0);
-
-          }
-          printf("Message recived from server : %s\n ", message);
-          bzero(message, sizeof(message));
+    }
 
           
       
-      }
-
-      
-    close (clientSocket);
+  }
 
 
-}
 
 
 
