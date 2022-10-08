@@ -16,8 +16,8 @@ struct clientDetails
       int socketfileDesctiptor;
       char *host;
       long port;
-      int status;
-};
+      int serverSocket;
+}cd;
 
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
@@ -153,14 +153,11 @@ void  server_tcp(char* iface, long port)
    cd.host=buffer;
    cd.port=port;
    cd.socketfileDesctiptor=newSocket;
-   cd.status=0;
+   cd.serverSocket=serverSocket;
 
     // handle the chat with client
     pthread_create(&id,NULL,serverchatHandler,&cd);
-    if(cd.status==-1)
-    {
-      break;
-    }
+    
    
     i++;
     // pthread_kill(id,0); 
@@ -168,23 +165,13 @@ void  server_tcp(char* iface, long port)
   }
 
     //close the socket 
-    close (serverSocket);
+    // close (serverSocket);
     
 }
 
 
 
-// void *printServer( void* argp)
-// {
-//   struct sample* ab= (struct sample*)argp;
 
-//   printf("Thanks for connecting to the server \n");
-//   printf("a: %d\n",ab->a);
-//   printf("b: %d\n",ab->b);
-//   printf("c: %s\n",ab->c);
-//   fflush(stdout);  
-//   return NULL;
-// }
 
 
 
@@ -239,9 +226,10 @@ void * serverchatHandler(void *argp)
           printf("Sending message from server failed\n");
           exit(0);
         }
-        c->status=-1;
-        break;
-       
+        // c->status=-1;
+        // return (void*)-1;  
+        // pthread_exit(NULL);
+        close(c->serverSocket);
       }
 
       // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
