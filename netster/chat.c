@@ -9,6 +9,7 @@
 #include<arpa/inet.h>
 #include<ctype.h>
 #include<pthread.h>
+#include<sys/types.h>
 
 
 struct clientDetails
@@ -22,6 +23,8 @@ struct clientDetails
 void  server_udp(char* iface, long port);
 void  server_tcp(char* iface, long port);
 void  client_tcp(char* host, long port);
+void  client_udp(char* host, long port);
+
 char *inet_ntoa(struct in_addr in);
 
 int getaddrinfo(const char *restrict node,
@@ -45,10 +48,12 @@ void *printServer(void*);
 void chat_server(char* iface, long port, int use_udp) {
     if(use_udp==0)
     {
+
         server_tcp(iface,port);
     }
     else
     {
+        printf("yooo");
         server_udp(iface,port);
     }
 
@@ -61,36 +66,205 @@ void chat_client(char* host, long port, int use_udp) {
     }
     else
     {
-        // client_udp(host,port);
+        client_udp(host,port);
     }
   
 }
 
-// for udp server 
-/**
- 1. Create a UDP socket.
-2. Bind the socket to the server address.
-3. Wait until the datagram packet arrives from the client.
-4. Process the datagram packet and send a reply to the client.
-5. Go back to Step 3.
- */
+
 void  server_udp(char* iface, long port)
 {
-    printf("\n");
-    
+  int serverSocket;
+  struct sockaddr_in server,client;
 
-}
+  printf("\n in udp");
+  // create socket 
+  serverSocket=socket(AF_INET,SOCK_STREAM,0);
+  if(serverSocket<0)
+  {
+    printf("Server socket creation failed \n");
+  }
 
-// for tcp server 
-/**
-1. using create(), Create TCP socket.
-2. using bind(), Bind the socket to server address.
-3. using listen(), put the server socket in a passive mode, where it waits for the client to approach the server to make a connection
-4. using accept(), At this point, connection is established between client and server, and they are ready to transfer data.
-5. Go back to Step 3. 
- */
+    // memset(&server, 0, sizeof(server)); 
+    // memset(&client, 0, sizeof(client));
+
+  // assign ip and port
+
+  server.sin_family=AF_INET; // address family IPV4 or 6
+  server.sin_addr.s_addr= INADDR_ANY ;// takes default ip-> local ip
+  server.sin_port=port;
+
+  //bind the socket with the server ip and port 
+  if ((bind(serverSocket,(struct sockaddr*)&server, sizeof(server)))<0)
+  {
+    printf("\n Error in socket binding \n ");
+    exit(0);
+  }
+  printf("%ld\n",port);
+  char ca[200];
+  inet_ntop(AF_INET,&server.sin_addr.s_addr,ca,200);
+  printf("Host :%s\n",ca);
+   // socklen_t clientLen= sizeof(client);
+
+//  char message[200];
+  // for (;;)
+  // {
+  //   printf("Waiting for messages");
+  //     bzero(message, sizeof(message));
+
+  //     // recieve message if any 
+  //    int n=recvfrom(serverSocket,(char *)message,sizeof(message),MSG_WAITALL,(struct sockaddr *)&client,&clientLen);
+  //    message[n]='\0';
+  //     int len= (int)strlen(message)-1;
+
+  //      char client_msg[200];
+  //      int j=0;
+  //      while (message[j]) {
+  //       char ch = toupper(message[j]);
+  //       client_msg[j++]=ch;
+  //     }
+  //     client_msg[j]='\0';
+
+
+      
+  //     // case 1: if the client sends "exit", send ok and  server should exit 
+  //     if((strncmp(client_msg,"EXIT",len))==0)
+  //     {
+  //        sendto(serverSocket, "ok",strlen("ok"),MSG_WAITALL,(struct sockaddr *)&client,clientLen);
+  //        break;
+     
+  //     }
+
+  //     // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
+  //     else if((strncmp(client_msg,"GOODBYE",len))==0)
+  //     {
+  //         sendto(serverSocket, "farewell",strlen("farwell"),MSG_WAITALL,(struct sockaddr *)&client,clientLen);
+       
+  //     }
+
+  //     else
+  //     {
+  //       // case 1: if the client sends "hello" respond with world 
+  //       if(strncmp(client_msg,"HELLO",len)==0)
+  //       {
+  //           sendto(serverSocket,"world",strlen("world"),MSG_WAITALL,(struct sockaddr *)&client,clientLen);
+  //       }
+  //       else
+  //       {
+  //         bzero(message, sizeof(message));
+  //         // read the input 
+  //         int i=0;
+  //         while ((message[i++] = getchar()) != '\n')
+  //         ;
+  //         message[i]='\0';
+  //         //send  the server's response to client 
+  //         sendto(serverSocket,(char *)message,strlen(message),MSG_WAITALL,(struct sockaddr *)&client,clientLen);
+
+  //         }
+  //       }
+  //     }
+
+// sample code 
+printf("broooooooooo\n");
+    int len;
+    ssize_t n;
+    char buffer[100]; 
+    char *hello = "Hello from server"; 
+    len = sizeof(client);  
+    printf("coming here\n");
+
+    n = recvfrom(serverSocket,buffer,100,MSG_WAITALL,(struct sockaddr *)&client,&len); 
+    printf("n: %d",(int)n);
+    buffer[(int)n] = '\0'; 
+    printf("Client : %s\n", buffer); 
+    sendto(serverSocket, hello, strlen(hello),0, (struct sockaddr *)&client,len); 
+    printf("%s message sent.\n",hello);  
+   }
+
+
+
+   void client_udp(char* host, long port)
+   {
+    int clientSocket;
+   struct sockaddr_in serveraddr;
+  //  printf("\n Port : %ld",port);
+
+  //create socket
+  clientSocket=socket(AF_INET,SOCK_STREAM,0);
+  if(clientSocket<0)
+  {
+    printf("Client socket creation failed \n");
+    exit(0);
+  }
+   
+  // memset(&serveraddr, 0, sizeof(serveraddr)); 
+
+  // assign ip and port
+  serveraddr.sin_family=AF_INET; // address family IPV4 or 6
+  serveraddr.sin_addr.s_addr= inet_addr(host);
+  serveraddr.sin_port=port;
+
+      
+
+
+
+  // Try to send a message to server
+// char message[100];
+
+    printf("%ld\n",port);
+    char ca[200];
+    inet_ntop(AF_INET,&serveraddr.sin_addr.s_addr,ca,200);
+    printf("Host :%s\n",ca);
+
+  // for(;;)
+  // {
+
+  //       int serverLen;
+  //       bzero(message, sizeof(message));
+  //       // read input from user 
+  //       int i=0;
+  //       while ((message[i++] = getchar()) != '\n')
+  //       ;
+  //       message[i]='\0';
+  //       sendto(clientSocket,(char *)message,strlen(message),MSG_WAITALL,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+
+  //       bzero(message, sizeof(message));  
+  //       // recieve message if any 
+  //         int n=recvfrom(clientSocket,(char *)message,sizeof(message),MSG_WAITALL,(struct sockaddr *)&serveraddr,&serverLen);
+  //         message[n]='\0';
+  //         printf("%s\n", message);
+  //         int len= (int)strlen(message)-1;
+
+
+  //       if((strncmp(message,"farewell",len)==0)||(strncmp(message,"ok",len)==0))
+  //       {
+  //           printf("Client Exit...\n");
+  //           break;
+  //       }
+  //   }  
+  char *hello = "Hello from client";
+  int n, len; 
+  char buffer[200]; 
+        
+    sendto(clientSocket, hello, strlen(hello),0, (struct sockaddr *)&serveraddr, sizeof(serveraddr)); 
+    printf("%s message sent.\n",hello); 
+            
+    n = recvfrom(clientSocket, buffer, 200,MSG_WAITALL, (struct sockaddr *) &serveraddr, 
+                &len); 
+    buffer[n] = '\0'; 
+    printf("Server : %s\n", buffer); 
+ 
+
+
+    close (clientSocket);
+
+   }
+
+
+
 void  server_tcp(char* iface, long port)
 {
+
   int serverSocket, newSocket;
   struct sockaddr_in server,client;
 
@@ -165,7 +339,7 @@ void  server_tcp(char* iface, long port)
   }
 
     //close the socket 
-    // close (serverSocket);
+    close (serverSocket);
     
 }
 
@@ -229,7 +403,7 @@ void * serverchatHandler(void *argp)
         // c->status=-1;
         // return (void*)-1;  
         // pthread_exit(NULL);
-        close(c->serverSocket);
+        exit(0);
       }
 
       // case 2: if client sends "goodbye"  send farewell and disconnect from the client 
