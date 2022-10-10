@@ -98,7 +98,7 @@ void server_udp(char *iface, long port)
   char buffer[256];
   char *hello = "Hello from server";
   len = sizeof(client);
-  printf("\n Port:%ld",port);
+  printf("\n UDP Port:%ld",port);
 
   int recv_msg_client = recvfrom(serverSocket, buffer, 256, MSG_WAITALL, (struct sockaddr *)&client, &len);
 
