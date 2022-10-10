@@ -94,7 +94,7 @@ void server_udp(char *iface, long port)
   }
 
   // sample code
-  int len;
+  socklen_t len;
   char buffer[256];
   char *hello = "Hello from server";
   len = sizeof(client);
@@ -111,10 +111,6 @@ void server_udp(char *iface, long port)
   printf("Client : %s\n", buffer);
   sendto(serverSocket, hello, strlen(hello), 0, (struct sockaddr *)&client, len);
   printf("%s message sent.\n", hello);
-
-
-
-  
 }
 
 void client_udp(char *host, long port)
@@ -138,8 +134,9 @@ void client_udp(char *host, long port)
 
   // Try to send a message to server
 
-  int n, len;
+  int n;
   char buffer[256];
+  socklen_t len;
   char hello[256]="Hey this is client";
   printf("\n Port:%ld",port);
   int sent_msg_flag = sendto(clientSocket, hello, 256, 0, (const struct sockaddr *)&serveraddr, sizeof(serveraddr));
@@ -158,23 +155,6 @@ void client_udp(char *host, long port)
   close(clientSocket);
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
