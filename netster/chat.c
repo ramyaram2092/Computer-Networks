@@ -69,48 +69,52 @@ void chat_client(char *host, long port, int use_udp)
 
 void server_udp(char *iface, long port)
 {
-  int serverSocket;
-  struct sockaddr_in server, client;
 
   // create socket
-  serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+  int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+
   if (serverSocket < 0)
   {
     printf("Server socket creation failed \n");
+    return;
   }
 
+  struct sockaddr_in server;
 
   // assign ip and port
 
   server.sin_family = AF_INET;         // address family IPV4 or 6
-  server.sin_addr.s_addr = INADDR_ANY; // takes default ip-> local ip
   server.sin_port = htons(port);
+  server.sin_addr.s_addr = INADDR_ANY; // takes default ip-> local ip
+
+  int bind_flag = bind(serverSocket,(struct sockaddr *) &server, sizeof(server));
 
   // bind the socket with the server ip and port
-  if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) < 0)
+  if (bind_flag < 0)
   {
     printf("\n Error in socket binding \n ");
-    exit(0);
-  }
-
-  // sample code
-  socklen_t len;
-  char buffer[256];
-  char *hello = "Hello from server";
-  len = sizeof(client);
-  printf("\n UDP Port:%ld",port);
-
-  int recv_msg_client = recvfrom(serverSocket, buffer, 256, MSG_WAITALL, (struct sockaddr *)&client, &len);
-
-  if (recv_msg_client < 0) {
-    printf("\n SOmething went wrong while recv  the msg from  client");
     return;
   }
+
+  struct sockaddr_in client;
+  socklen_t len = sizeof(client);
+
+  char client_msg[256];
+
+  int recv_msg_client = recvfrom(serverSocket, client_msg, 256, MSG_WAITALL, (struct sockaddr *) &client, &len);
+
+  if (recv_msg_client < 0) {
+    printf("\n SOmething went wrong while recv  the msg from  client\n");
+    return;
+  }
+
+  printf("I am here");
+
   // printf("n: %d", (int)n);
   // buffer[(int)n] = '\0';
-  printf("Client : %s\n", buffer);
-  sendto(serverSocket, hello, strlen(hello), 0, (struct sockaddr *)&client, len);
-  printf("%s message sent.\n", hello);
+  // printf("Client : %s\n", buffer);
+  // sendto(serverSocket, hello, strlen(hello), 0, (struct sockaddr *)&client, len);
+  // printf("%s message sent.\n", hello);
 }
 
 void client_udp(char *host, long port)
