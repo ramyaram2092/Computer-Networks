@@ -153,6 +153,7 @@ void server_udp(char *iface, long port)
                 printf("Error occured while receiving the message - UDP");
                 return;
             }
+            //**
             snprintf(client_description_two,
                     sizeof(client_description_two),
                     "%s%s%s%s%d%s", "got message from ",
