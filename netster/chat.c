@@ -176,9 +176,9 @@ void client_udp(char *host, long port)
   int n;
   char buffer[256];
   socklen_t len;
-  char hello[256]="Hey this is client";
+  char *hello="Hey this is client";
   printf("\n Port:%ld",port);
-  int sent_msg_flag = sendto(clientSocket, hello, 256, 0, (const struct sockaddr *)&serveraddr, sizeof(serveraddr));
+  int sent_msg_flag = sendto(clientSocket, hello, strlen(hello), 0, (const struct sockaddr *)&serveraddr, sizeof(serveraddr));
   printf("%s message sent.\n", hello);
   if (sent_msg_flag < 0) {
     printf("\n SOmething went wrong while send the msg");
