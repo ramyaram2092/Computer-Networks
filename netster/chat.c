@@ -129,7 +129,7 @@ void client_udp(char *host, long port)
     exit(0);
   }
 
-  memset(&server, 0, sizeof(server)); 
+  // memset(&server, 0, sizeof(server)); 
 
   // assign ip and port
   server.sin_family = AF_INET; // address family IPV4 or 6
