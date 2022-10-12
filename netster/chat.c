@@ -68,88 +68,81 @@ void chat_client(char *host, long port, int use_udp)
 void server_udp(char *iface, long port)
 {
 
-  // Create a socket
-  int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
-  if (serverSocket < 0)
-  {
-    printf("server socket creation failed \n");
-    exit(0);
-  }
-  struct sockaddr_in server, client;
-
-  server.sin_family = AF_INET;
-  server.sin_port = htons(port);
-  server.sin_addr.s_addr = INADDR_ANY;
-
-  /*binds server information (Internet family, port, and ipaddress)
-       to server socket*/
-  int bind_successful_flag = bind(serverSocket, (struct sockaddr *)&server, sizeof(server));
-  if (bind_successful_flag < 0)
-  {
-    printf("Socket binding failed - UDP");
-    exit(0);
-  }
-
-  socklen_t clientSize = sizeof(client);
-  char clientMessage[256];
-  char serverMessage[256];
-  char client_description_two[256];
-  int close_client_connection_flag = 0; // flag for managing new connections
-  while (1)
-  {
-    // receive client message
-    int received_message_flag = recvfrom(serverSocket, clientMessage, 256, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-    if (received_message_flag < 0)
-    {
-      printf("Error occured while receiving the message - UDP\n ");
-      exit(0);
-    }
-    snprintf(client_description_two,
-             sizeof(client_description_two),
-             "%s%s%s%s%d%s", "got message from ",
-             "('", inet_ntoa(client.sin_addr), "', ",
-             ntohs(client.sin_port), ")");
-    printf("%s\n", client_description_two);
-
-    // logic for managing custom user messages
-    if (strcmp(clientMessage, "hello\n") == 0)
-    {
-      strcpy(serverMessage, "world\n");
-    }
-    else if (strcmp(clientMessage, "goodbye\n") == 0)
-    {
-      strcpy(serverMessage, "farewell\n");
-    }
-    else if (strcmp(clientMessage, "exit\n") == 0)
-    {
-      strcpy(serverMessage, "ok\n");
-      close_client_connection_flag = 1;
-    }
-    else
-    {
-      strcpy(serverMessage, clientMessage);
-    }
-    // send message to client
-    int send_message_flag = sendto(serverSocket, serverMessage, 256, 0,
-                                   (const struct sockaddr *)&client,
-                                   sizeof(clientSize));
-    if (send_message_flag < 0)
-    {
-      printf("Error occured while sending the message - UDP\n ");
-      exit(0);
-    }
-    /*logic for new client connection, after previous client
-        connection has been closed*/
-    if (close_client_connection_flag == 1)
-    {
-      break;
-    }
-
-    // reset client_message & server_message arrays
-    memset(clientMessage, '\0', sizeof(clientMessage));
-    memset(serverMessage, '\0', sizeof(serverMessage));
-  }
-  close(serverSocket);
+  //Create a socket
+        int server_socket = socket(AF_INET, SOCK_DGRAM, 0);
+        if (server_socket < 0) {
+            printf("Problem creating socket - UDP");
+            return;
+        }
+        struct sockaddr_in server_info;
+        
+        //Set the server information (Internet family, port, and ipaddress)
+        server_info.sin_family = AF_INET;
+        server_info.sin_port = htons(port);
+        server_info.sin_addr.s_addr = INADDR_ANY;
+        
+        /*binds server information (Internet family, port, and ipaddress)
+         to server socket*/
+        int bind_successful_flag = bind(server_socket,
+                                        (struct sockaddr*) &server_info,
+                                        sizeof(server_info));
+        if (bind_successful_flag < 0) {
+            printf("Socket binding failed - UDP");
+            return;
+        }
+        struct sockaddr_in client_info;
+        unsigned int client_info_length = sizeof(client_info);
+        char client_message[256];
+        char server_message[256];
+        char client_description_two[256];
+        int close_client_connection_flag = 0;//flag for managing new connections
+        while(1) {
+            //receive client message
+            int received_message_flag = recvfrom(server_socket, client_message, 256,
+                                                MSG_WAITALL,
+                                                (struct sockaddr*) &client_info,
+                                                &client_info_length);
+            if (received_message_flag < 0) {
+                printf("Error occured while receiving the message - UDP");
+                return;
+            }
+            snprintf(client_description_two,
+                    sizeof(client_description_two),
+                    "%s%s%s%s%d%s", "got message from ",
+                    "('", inet_ntoa(client_info.sin_addr), "', ",
+                    ntohs(client_info.sin_port), ")");
+            printf("%s\n", client_description_two);
+            
+            //logic for managing custom user messages
+            if (strcmp(client_message, "hello\n") == 0) {
+                strcpy(server_message, "world\n");
+            } else if (strcmp(client_message, "goodbye\n") == 0) {
+                strcpy(server_message, "farewell\n");
+            } else if (strcmp(client_message, "exit\n") == 0) {
+                strcpy(server_message, "ok\n");
+                close_client_connection_flag = 1;
+            } else {
+                strcpy(server_message, client_message);
+            }
+            //send message to client
+            int send_message_flag = sendto(server_socket, server_message, 256, 0,
+                                           (const struct sockaddr *) &client_info,
+                                            sizeof(client_info));
+            if (send_message_flag < 0) {
+                printf("Error occured while sending the message - UDP");
+                return;
+            }
+            /*logic for new client connection, after previous client 
+                connection has been closed*/
+            if (close_client_connection_flag == 1) {
+                break;
+            }
+            
+            //reset client_message & server_message arrays
+            memset(client_message, '\0', sizeof(client_message));
+            memset(server_message, '\0', sizeof(server_message));
+        }
+        close(server_socket);
 }
 
 void client_udp(char *host, long port)
