@@ -83,7 +83,7 @@ void server_udp(char *iface, long port)
   // assign ip and port
 
   server.sin_family = AF_INET;         // address family IPV4 or 6
-  server.sin_port = htons(port);
+  server.sin_port = port;
   server.sin_addr.s_addr = INADDR_ANY; // takes default ip-> local ip
 
   int bind_flag = bind(serverSocket,(struct sockaddr *) &server, sizeof(server));
