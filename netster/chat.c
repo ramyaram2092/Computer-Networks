@@ -93,7 +93,7 @@ void server_udp(char *iface, long port)
   socklen_t clientSize = sizeof(client);
   char clientMessage[256];
   char serverMessage[256];
-  // char client_description_two[256];
+  char client_description_two[256];
   int close_client_connection_flag = 0; // flag for managing new connections
   while (1)
   {
@@ -104,12 +104,12 @@ void server_udp(char *iface, long port)
       printf("Error occured while receiving the message - UDP\n ");
       exit(0);
     }
-    // snprintf(client_description_two,
-    //          sizeof(client_description_two),
-    //          "%s%s%s%s%d%s", "got message from ",
-    //          "('", inet_ntoa(client_info.sin_addr), "', ",
-    //          ntohs(client_info.sin_port), ")");
-    // printf("%s\n", client_description_two);
+    snprintf(client_description_two,
+             sizeof(client_description_two),
+             "%s%s%s%s%d%s", "got message from ",
+             "('", inet_ntoa(client.sin_addr), "', ",
+             ntohs(client.sin_port), ")");
+    printf("%s\n", client_description_two);
 
     // logic for managing custom user messages
     if (strcmp(clientMessage, "hello\n") == 0)
