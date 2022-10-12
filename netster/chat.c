@@ -67,7 +67,6 @@ void chat_client(char *host, long port, int use_udp)
 
 void server_udp(char *iface, long port)
 {
-
   // Create a socket
   int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
   if (serverSocket < 0)
@@ -94,57 +93,76 @@ void server_udp(char *iface, long port)
   char servermsg[256];
   char client_description_two[256];
   int close_client_connection_flag = 0; // flag for managing new connections
-  while (1)
+
+  for (;;)
   {
     // receive client message
-    int received_message_flag = recvfrom(serverSocket, clientmsg, 256,MSG_WAITALL,(struct sockaddr *)&client,&client_length);
-    if (received_message_flag < 0)
+    int flag = recvfrom(serverSocket, clientmsg, 256,MSG_WAITALL,(struct sockaddr *)&client,&client_length);
+    if (flag < 0)
     {
-      printf("Error occured while receiving the message - UDP");
+      printf("UDP: Error occured while receiving the message \n ");
       return;
     }
-    snprintf(client_description_two,
-             sizeof(client_description_two),
-             "%s%s%s%s%d%s", "got message from ",
-             "('", inet_ntoa(client.sin_addr), "', ",
-             ntohs(client.sin_port), ")");
-    printf("%s\n", client_description_two);
+    // snprintf(client_description_two,
+    //          sizeof(client_description_two),
+    //          "%s%s%s%s%d%s", "got message from ",
+    //          "('", inet_ntoa(client.sin_addr), "', ",
+    //          ntohs(client.sin_port), ")");
+    printf(" Recieved message from  client :  %s\n",clientmsg);
 
     // logic for managing custom user messages
     if (strcmp(clientmsg, "hello\n") == 0)
     {
-      strcpy(servermsg, "world\n");
+      // strcpy(servermsg, "world\n");
+        int send_message_flag = sendto(serverSocket, "world", 256, 0,(const struct sockaddr *)&client,sizeof(client));
+        if (send_message_flag < 0)
+        {
+          printf("UDP:Error occured while sending the message - \n");
+          exit(0);
+        }
     }
     else if (strcmp(clientmsg, "goodbye\n") == 0)
     {
-      strcpy(servermsg, "farewell\n");
+      // strcpy(servermsg, "farewell\n");
+       int send_message_flag = sendto(serverSocket, "farewell", 256, 0,(const struct sockaddr *)&client,sizeof(client));
+        if (send_message_flag < 0)
+        {
+          printf("UDP:Error occured while sending the message - \n");
+          exit(0);
+        }
     }
     else if (strcmp(clientmsg, "exit\n") == 0)
     {
-      strcpy(servermsg, "ok\n");
-      close_client_connection_flag = 1;
+      // strcpy(servermsg, "ok\n");
+       int send_message_flag = sendto(serverSocket, "ok", 256, 0,(const struct sockaddr *)&client,sizeof(client));
+        if (send_message_flag < 0)
+        {
+          printf("UDP:Error occured while sending the message - \n");
+          exit(0);
+        }
+        break;
     }
     else
     {
-      strcpy(servermsg, clientmsg);
+      int i = 0;
+      while ((servermsg[i++] = getchar()) != '\n')
+      ;
+      servermsg[i] = '\0';
+      int send_message_flag = sendto(serverSocket, servermsg, 256, 0,(const struct sockaddr *)&client,sizeof(client));
+        if (send_message_flag < 0)
+        {
+          printf("UDP:Error occured while sending the message - \n");
+          exit(0);
+        }
+        
     }
-    // send message to client
-    int send_message_flag = sendto(serverSocket, servermsg, 256, 0,(const struct sockaddr *)&client,sizeof(client));
-    if (send_message_flag < 0)
-    {
-      printf("Error occured while sending the message - UDP");
-      return;
-    }
-    /*logic for new client connection, after previous client
-        connection has been closed*/
-    if (close_client_connection_flag == 1)
-    {
-      break;
-    }
+    
 
     // reset clientmsg & servermsg arrays
     memset(clientmsg, '\0', sizeof(clientmsg));
     memset(servermsg, '\0', sizeof(servermsg));
+
+
   }
   close(serverSocket);
 }
@@ -273,7 +291,6 @@ void server_tcp(char *iface, long port)
     pthread_create(&id, NULL, serverchatHandler, &cd);
 
     i++;
-    // pthread_kill(id,0);
   }
 
   // close the socket
@@ -292,7 +309,6 @@ void *serverchatHandler(void *argp)
   char *host = c->host;
   long port = c->port;
   int socketFileDescriptor = c->socketfileDesctiptor;
-  // pthread_t id=c->id;
   char message[200];
 
   for (;;)
@@ -303,7 +319,7 @@ void *serverchatHandler(void *argp)
     if ((recv(socketFileDescriptor, message, sizeof(message), 0) < 0))
     {
       printf("coundnt recieve message from client \n");
-      // exit(0);
+      exit(0);
     }
 
     // display the recieved message
