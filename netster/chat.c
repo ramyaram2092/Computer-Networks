@@ -119,7 +119,7 @@ void server_udp(char *iface, long port)
 void client_udp(char *host, long port)
 {
   int clientSocket;
-  struct sockaddr_in serveraddr;
+  struct sockaddr_in server;
 
   // create socket
   clientSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -129,11 +129,12 @@ void client_udp(char *host, long port)
     exit(0);
   }
 
+  memset(&server, 0, sizeof(server)); 
 
   // assign ip and port
-  serveraddr.sin_family = AF_INET; // address family IPV4 or 6
-  serveraddr.sin_addr.s_addr = inet_addr(host);
-  serveraddr.sin_port = htons(port);
+  server.sin_family = AF_INET; // address family IPV4 or 6
+  server.sin_addr.s_addr = inet_addr(host);
+  server.sin_port = htons(port);
 
   // Try to send a message to server
 
@@ -142,7 +143,7 @@ void client_udp(char *host, long port)
   socklen_t len;
   char *hello="Hey this is client";
   printf("\n Port:%ld",port);
-  int sent_msg_flag = sendto(clientSocket, hello, strlen(hello), 0, (const struct sockaddr *)&serveraddr, sizeof(serveraddr));
+  int sent_msg_flag = sendto(clientSocket, hello, strlen(hello), 0, (const struct sockaddr *)&server, sizeof(server));
   printf("%s message sent.\n", hello);
   if (sent_msg_flag < 0) {
     printf("\n SOmething went wrong while send the msg");
@@ -150,7 +151,7 @@ void client_udp(char *host, long port)
   }
   // printf("%s message sent.\n", hello);
 
-  n = recvfrom(clientSocket, buffer, 256, MSG_WAITALL, (struct sockaddr *)&serveraddr,
+  n = recvfrom(clientSocket, buffer, 256, MSG_WAITALL, (struct sockaddr *)&server,
                &len);
   buffer[n] = '\0';
   printf("Server : %s\n", buffer);
