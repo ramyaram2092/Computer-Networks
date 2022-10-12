@@ -90,10 +90,10 @@ void server_udp(char *iface, long port)
     exit(0);
   }
 
-  socklen_t clientSize = sizeof(clientchatHandler);
+  socklen_t clientSize = sizeof(client);
   char clientMessage[256];
   char serverMessage[256];
-  char client_description_two[256];
+  // char client_description_two[256];
   int close_client_connection_flag = 0; // flag for managing new connections
   while (1)
   {
