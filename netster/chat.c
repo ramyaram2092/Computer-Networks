@@ -91,7 +91,7 @@ void server_udp(char *iface, long port)
             return;
         }
         struct sockaddr_in client_info;
-        unsigned int client_info_length = sizeof(client_info);
+        socklen_t  client_info_length = sizeof(client_info);
         char client_message[256];
         char server_message[256];
         char client_description_two[256];
