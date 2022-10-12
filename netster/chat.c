@@ -49,44 +49,8 @@ void chat_server(char *iface, long port, int use_udp)
   }
   else
   {
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    server_udp(iface, port);
 
-    if (serverSocket < 0)
-    {
-      printf("Server socket creation failed \n");
-      return;
-    }
-
-    struct sockaddr_in server;
-
-    // assign ip and port
-
-    server.sin_family = AF_INET;         // address family IPV4 or 6
-    server.sin_port = htons(port);
-    server.sin_addr.s_addr = INADDR_ANY; // takes default ip-> local ip
-
-    int bind_flag = bind(serverSocket,(struct sockaddr *) &server, sizeof(server));
-
-    // bind the socket with the server ip and port
-    if (bind_flag < 0)
-    {
-      printf("\n Error in socket binding \n ");
-      return;
-    }
-
-    struct sockaddr_in client;
-    socklen_t len = sizeof(client);
-
-    char client_msg[256];
-
-    int recv_msg_client = recvfrom(serverSocket, client_msg, 256, MSG_WAITALL, (struct sockaddr *) &client, &len);
-
-    if (recv_msg_client < 0) {
-      printf("\n SOmething went wrong while recv  the msg from  client\n");
-      return;
-    }
-
-    printf("I am here");
   }
 }
 
@@ -136,7 +100,7 @@ void server_udp(char *iface, long port)
 
   char client_msg[256];
 
-  int recv_msg_client = recvfrom(serverSocket, client_msg, 256, MSG_WAITALL, (struct sockaddr *) &client, &len);
+  int recv_msg_client = recvfrom(serverSocket, client_msg, sizeof(client_msg), MSG_WAITALL, (struct sockaddr *) &client, &len);
 
   if (recv_msg_client < 0) {
     printf("\n SOmething went wrong while recv  the msg from  client\n");
@@ -168,7 +132,7 @@ void client_udp(char *host, long port)
 
   // assign ip and port
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
-  serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serveraddr.sin_addr.s_addr = inet_addr(host);
   serveraddr.sin_port = htons(port);
 
   // Try to send a message to server
