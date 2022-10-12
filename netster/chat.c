@@ -81,8 +81,8 @@ void server_udp(char *iface, long port)
   server.sin_port = htons(port);
   server.sin_addr.s_addr = INADDR_ANY;
 
-  // bind socket with server 
-  if(bind(serverSocket,(struct sockaddr *)&server,sizeof(server)) < 0)
+  // bind socket with server
+  if (bind(serverSocket, (struct sockaddr *)&server, sizeof(server)) < 0)
   {
     printf("UDP: Error in Socket binding \n ");
     return;
@@ -91,13 +91,13 @@ void server_udp(char *iface, long port)
   socklen_t client_length = sizeof(client);
   char clientmsg[256];
   char servermsg[256];
-  char client_description_two[256];
-  int close_client_connection_flag = 0; // flag for managing new connections
+  // char client_description_two[256];
+  // int close_client_connection_flag = 0; // flag for managing new connections
 
   for (;;)
   {
     // receive client message
-    int flag = recvfrom(serverSocket, clientmsg, 256,MSG_WAITALL,(struct sockaddr *)&client,&client_length);
+    int flag = recvfrom(serverSocket, clientmsg, 256, MSG_WAITALL, (struct sockaddr *)&client, &client_length);
     if (flag < 0)
     {
       printf("UDP: Error occured while receiving the message \n ");
@@ -108,61 +108,57 @@ void server_udp(char *iface, long port)
     //          "%s%s%s%s%d%s", "got message from ",
     //          "('", inet_ntoa(client.sin_addr), "', ",
     //          ntohs(client.sin_port), ")");
-    printf(" Recieved message from  client :  %s\n",clientmsg);
+    printf(" Recieved message from  client :  %s\n", clientmsg);
 
     // logic for managing custom user messages
     if (strcmp(clientmsg, "hello\n") == 0)
     {
       // strcpy(servermsg, "world\n");
-        int send_message_flag = sendto(serverSocket, "world", 256, 0,(const struct sockaddr *)&client,sizeof(client));
-        if (send_message_flag < 0)
-        {
-          printf("UDP:Error occured while sending the message - \n");
-          exit(0);
-        }
+      int send_message_flag = sendto(serverSocket, "world", 256, 0, (const struct sockaddr *)&client, sizeof(client));
+      if (send_message_flag < 0)
+      {
+        printf("UDP:Error occured while sending the message  \n");
+        exit(0);
+      }
     }
     else if (strcmp(clientmsg, "goodbye\n") == 0)
     {
       // strcpy(servermsg, "farewell\n");
-       int send_message_flag = sendto(serverSocket, "farewell", 256, 0,(const struct sockaddr *)&client,sizeof(client));
-        if (send_message_flag < 0)
-        {
-          printf("UDP:Error occured while sending the message - \n");
-          exit(0);
-        }
+      int send_message_flag = sendto(serverSocket, "farewell", 256, 0, (const struct sockaddr *)&client, sizeof(client));
+      if (send_message_flag < 0)
+      {
+        printf("UDP:Error occured while sending the message  \n");
+        exit(0);
+      }
     }
     else if (strcmp(clientmsg, "exit\n") == 0)
     {
       // strcpy(servermsg, "ok\n");
-       int send_message_flag = sendto(serverSocket, "ok", 256, 0,(const struct sockaddr *)&client,sizeof(client));
-        if (send_message_flag < 0)
-        {
-          printf("UDP:Error occured while sending the message - \n");
-          exit(0);
-        }
-        break;
+      int send_message_flag = sendto(serverSocket, "ok", 256, 0, (const struct sockaddr *)&client, sizeof(client));
+      if (send_message_flag < 0)
+      {
+        printf("UDP:Error occured while sending the message \n");
+        exit(0);
+      }
+      break;
     }
     else
     {
       int i = 0;
       while ((servermsg[i++] = getchar()) != '\n')
-      ;
+        ;
       servermsg[i] = '\0';
-      int send_message_flag = sendto(serverSocket, servermsg, 256, 0,(const struct sockaddr *)&client,sizeof(client));
-        if (send_message_flag < 0)
-        {
-          printf("UDP:Error occured while sending the message - \n");
-          exit(0);
-        }
-        
+      int send_message_flag = sendto(serverSocket, servermsg, 256, 0, (const struct sockaddr *)&client, sizeof(client));
+      if (send_message_flag < 0)
+      {
+        printf("UDP:Error occured while sending the message - \n");
+        exit(0);
+      }
     }
-    
 
     // reset clientmsg & servermsg arrays
     memset(clientmsg, '\0', sizeof(clientmsg));
     memset(servermsg, '\0', sizeof(servermsg));
-
-
   }
   close(serverSocket);
 }
