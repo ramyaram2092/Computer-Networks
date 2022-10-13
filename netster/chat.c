@@ -166,7 +166,7 @@ void server_udp(char *iface, long port)
       servermsg[i] = '\0';
       // send message to client
     printf("Typed messages : %s",servermsg);
-    flag = sendto(serverSocket,servermsg, strlen(servermsg), 0, (const struct sockaddr *)&client,clientSize );
+    flag = sendto(serverSocket,servermsg, 256, 0, (const struct sockaddr *)&client,clientSize );
     if (flag < 0)
     {
       printf("UDP:Error occured while sending the message  \n");
@@ -211,7 +211,7 @@ void client_udp(char *host, long port)
     clientmsg[i] = '\0';
 
     //send the message to server
-    int flag = sendto(clientSocket, clientmsg, sizeof(clientmsg), 0, (const struct sockaddr *)&server, sizeof(server));
+    int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, sizeof(server));
     if (flag < 0)
     {
       printf("UDP:Unable to send message to the \n ");
