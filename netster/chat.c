@@ -109,9 +109,9 @@ void server_udp(char *iface, long port)
     // convert the recieved message into uppercase
     char client_msg[200];
     int j = 0;
-    while (message[j])
+    while (clientmsg[j])
     {
-      char ch = toupper(message[j]);
+      char ch = toupper(clientmsg[j]);
       client_msg[j++] = ch;
     }
     client_msg[j] = '\0';
@@ -214,15 +214,15 @@ void client_udp(char *host, long port)
     int j = 0;
     while (servermsg[j])
     {
-      char ch = toupper(message[j]);
-      client_msg[j++] = ch;
+      char ch = toupper(servermsg[j]);
+      server_msg[j++] = ch;
     }
-    client_msg[j] = '\0';
+    server_msg[j] = '\0';
 
     // based on the message recieved decide the next course of action
 
   
-    if ((strcmp(servermsg, "FAREWELL") == 0) ||(strcmp(servermsg, "OK") == 0))
+    if ((strcmp(server_msg, "FAREWELL") == 0) ||(strcmp(server_msg, "OK") == 0))
     {
       break;
     }
