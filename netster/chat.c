@@ -222,7 +222,7 @@ void client_udp(char *host, long port)
     // based on the message recieved decide the next course of action
 
   
-    if ((strncmp(server_msg, "FAREWELL",strlen(server_msg)) == 0) ||(strcmp(server_msg, "OK", strlen(server_msg)) == 0))
+    if ((strncmp(server_msg, "FAREWELL",strlen(server_msg)) == 0) ||(strncmp(server_msg, "OK", strlen(server_msg)) == 0))
     {
       break;
     }
