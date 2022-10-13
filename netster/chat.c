@@ -469,7 +469,7 @@ void client_tcp(char *host, long port)
    printf("%s",buffer);
     
 
-  }
+  
 
    /************************/
   // assign ip and port
