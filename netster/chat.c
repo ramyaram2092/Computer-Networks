@@ -22,6 +22,7 @@ void server_udp(char *iface, long port);
 void server_tcp(char *iface, long port);
 void client_tcp(char *host, long port);
 void client_udp(char *host, long port);
+char * get_ip(char * host, long port);
 
 char *inet_ntoa(struct in_addr in);
 
@@ -63,6 +64,27 @@ void chat_client(char *host, long port, int use_udp)
   {
     client_udp(host, port);
   }
+}
+
+
+char * get_ip(char * host, long port )
+{
+  struct addrinfo hints;
+  hints.ai_flags=AI_PASSIVE;
+  hints.ai_family=PF_UNSPEC;
+  hints.ai_socktype=SOCK_STREAM;
+  hints.ai_protocol=IPPROTO_TCP;
+
+  struct addrinfo *response;
+  response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
+  
+  getaddrinfo(host,port, &hints,&response);
+  
+  struct addrinfo *iterator=response;
+   char buffer[256];
+   inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
+   printf("IPv4 %s\n",buffer);
+   return (char *) buffer;
 }
 
 void server_udp(char *iface, long port)
@@ -198,7 +220,7 @@ void client_udp(char *host, long port)
  
   server.sin_family = AF_INET;
   server.sin_port = htons(port);
-  server.sin_addr.s_addr = inet_addr(host);
+  server.sin_addr.s_addr = inet_addr(get_ip(host,port));
 
   char clientmsg[256];
   char servermsg[256];
@@ -443,10 +465,10 @@ void client_tcp(char *host, long port)
 
   // assign ip and port
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
-  serveraddr.sin_addr.s_addr = inet_addr(host);
+  serveraddr.sin_addr.s_addr = inet_addr(get_ip(host,port));
   serveraddr.sin_port = htons(port);
   
-  printf("%s", host);
+  printf("%s", get_ip(host,port));
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
