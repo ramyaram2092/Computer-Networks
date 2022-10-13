@@ -476,12 +476,24 @@ void client_tcp(char *host, long port)
   getaddrinfo(host,(char *)port, &hints,&response);
   
   struct addrinfo *iterator=response;
-   char buffer[256];
-   struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
-   void * raw_addr= &(tmp->sin_addr);
-   inet_ntop(AF_INET,raw_addr,buffer,256);
-   printf("IPv4 %s\n",buffer);
+   
+  char buffer[4096]; 
+  while(iterator!=NULL)
+  {
+    void * raw_addr;
+    if(iterator->ai_family==AF_INET)// Address is IPv4
+    {
+      struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
+      raw_addr= &(tmp->sin_addr);
+      inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
+      printf("IPv4 %s\n",buffer);
+      break;
+    }
+   
+    iterator=iterator->ai_next;
+    
 
+  }
 
    /************************/
   // assign ip and port
