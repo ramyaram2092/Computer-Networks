@@ -211,7 +211,7 @@ void client_udp(char *host, long port)
     clientmsg[i] = '\0';
 
     //send the message to server
-    int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, sizeof(server));
+    int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, serverSize);
     if (flag < 0)
     {
       printf("UDP:Unable to send message to the \n ");
