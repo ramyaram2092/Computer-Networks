@@ -109,10 +109,37 @@ void server_udp(char *iface, long port)
   memset(&server, 0, sizeof(server));
   memset(&client, 0, sizeof(client));
 
+ // resolve address
+
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_flags = AI_PASSIVE;
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = 0;
+  hints.ai_protocol = 0;
+
+  struct addrinfo *response;
+  response = (struct addrinfo *)malloc(sizeof(struct addrinfo));
+  char str[256];
+  sprintf(str, "%ld", port);
+  getaddrinfo(iface, str, &hints, &response);
+  struct addrinfo *iterator = response;
+  char buffer[4096];
+  void *raw_addr;
+
+  struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
+  raw_addr = &(tmp->sin_addr);
+  inet_ntop(AF_INET, raw_addr, buffer, 4096);
+
+
+
+
+
   // assign ip and port
   server.sin_family = AF_INET;
   server.sin_port = port;
-  server.sin_addr.s_addr = INADDR_ANY;
+  server.sin_addr.s_addr = inet_addr(buffer);
 
   // bind socket with server
   if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
@@ -297,7 +324,7 @@ void client_udp(char *host, long port)
     {
       break;
     }
-    
+
     // reset clientmsg & servermsg arrays
     bzero(clientmsg, sizeof(clientmsg));
 
@@ -319,10 +346,33 @@ void server_tcp(char *iface, long port)
     printf("TCP: Server socket creation failed \n");
   }
 
+  // resolve address
+
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_flags = AI_PASSIVE;
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = 0;
+  hints.ai_protocol = 0;
+
+  struct addrinfo *response;
+  response = (struct addrinfo *)malloc(sizeof(struct addrinfo));
+  char str[256];
+  sprintf(str, "%ld", port);
+  getaddrinfo(iface, str, &hints, &response);
+  struct addrinfo *iterator = response;
+  char buffer[4096];
+  void *raw_addr;
+
+  struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
+  raw_addr = &(tmp->sin_addr);
+  inet_ntop(AF_INET, raw_addr, buffer, 4096);
+
   // assign ip and port
 
   server.sin_family = AF_INET;         // address family IPV4 or 6
-  server.sin_addr.s_addr = INADDR_ANY; // takes default ip-> local ip
+  server.sin_addr.s_addr = inet_addr(buffer); 
   server.sin_port = port;
 
   // bind the socket with the server ip and port
