@@ -116,7 +116,7 @@ void server_udp(char *iface, long port)
 
   socklen_t clientSize = sizeof(client);
   char clientmsg[256];
-  char ip[200];
+  // char ip[200];
   // char servermsg[256];
 
   // chat handler begins
@@ -130,11 +130,13 @@ void server_udp(char *iface, long port)
       printf("UDP: Error occured while receiving the message \n ");
       return;
     }
-    inet_ntop(AF_INET, &client.sin_addr.s_addr, ip, 200);
+    // inet_ntop(AF_INET, &client.sin_addr.s_addr, ip, 200);
 
-    printf(" Got message from (%s,%ld)", ip,port);
+    // printf(" Got message from (%s,%ld)", ip,port);
 
-    bzero(ip, sizeof(ip));
+    // bzero(ip, sizeof(ip));
+
+    printf("Got message from client\n");
 
 
     int len = (int)strlen(clientmsg) - 1;
