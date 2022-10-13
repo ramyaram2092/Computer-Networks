@@ -125,7 +125,7 @@ void server_udp(char *iface, long port)
     //case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
-      flag = sendto(serverSocket,"world", 256, 0, (const struct sockaddr *)&client,clientSize );
+      flag = sendto(serverSocket,"world", strlen("world"), 0, (const struct sockaddr *)&client,clientSize );
     if (flag < 0)
     {
       printf("UDP:Error occured while sending the message  \n");
