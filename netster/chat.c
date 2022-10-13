@@ -88,6 +88,13 @@ void chat_client(char *host, long port, int use_udp)
 //    return  buffer;
 // }
 
+/**
+ * @brief Upd server
+ *
+ * @param iface
+ * @param port
+ */
+
 void server_udp(char *iface, long port)
 {
   // Create a socket
@@ -99,8 +106,8 @@ void server_udp(char *iface, long port)
   }
 
   struct sockaddr_in server, client;
-  memset(&server, 0, sizeof(server)); 
-  memset(&client, 0, sizeof(client)); 
+  memset(&server, 0, sizeof(server));
+  memset(&client, 0, sizeof(client));
 
   // assign ip and port
   server.sin_family = AF_INET;
@@ -138,7 +145,6 @@ void server_udp(char *iface, long port)
 
     printf("Got message from client\n");
 
-
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
     char client_msg[256];
@@ -153,8 +159,7 @@ void server_udp(char *iface, long port)
     // printf("Upper case messages : %s", client_msg);
     // printf("%d", strncmp(client_msg, "HELLO", len));
 
-
-     // based on the message recieved decide the next course of action
+    // based on the message recieved decide the next course of action
     // case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
@@ -205,19 +210,14 @@ void server_udp(char *iface, long port)
         printf("UDP:Error occured while sending the message  \n");
         exit(0);
       }
-
-
     }
 
-        bzero(clientmsg, sizeof(clientmsg));
-
+    bzero(clientmsg, sizeof(clientmsg));
   }
 
   // close server socket
   close(serverSocket);
 }
-
-
 
 void client_udp(char *host, long port)
 {
@@ -229,9 +229,9 @@ void client_udp(char *host, long port)
   }
   struct sockaddr_in server;
   socklen_t serverSize = sizeof(server);
-  memset(&server, 0, sizeof(server)); 
+  memset(&server, 0, sizeof(server));
 
- // resolve address
+  // resolve address
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(hints));
@@ -254,9 +254,9 @@ void client_udp(char *host, long port)
   raw_addr = &(tmp->sin_addr);
   inet_ntop(AF_INET, raw_addr, buffer, 4096);
 
-  printf("%s\n",buffer);
+  // printf("%s\n",buffer);
 
-  // set server's ip and host 
+  // set server's ip and host
   server.sin_family = AF_INET;
   server.sin_port = port;
   server.sin_addr.s_addr = inet_addr(buffer);
@@ -265,7 +265,7 @@ void client_udp(char *host, long port)
   char servermsg[256];
   for (;;)
   {
-     
+
     // get client input
     int i = 0;
     while ((clientmsg[i++] = getchar()) != '\n')
@@ -287,30 +287,24 @@ void client_udp(char *host, long port)
       printf("UDP:Problem in receiving server message\n");
       return;
     }
-    printf("%s\n",servermsg);
+    printf("%s\n", servermsg);
 
     int len = (int)strlen(servermsg) - 1;
 
-    
     // based on the message recieved decide the next course of action
 
     if ((strncmp(servermsg, "farewell", len) == 0) || (strncmp(servermsg, "ok", len) == 0))
     {
       break;
     }
+    
     // reset clientmsg & servermsg arrays
-        bzero(clientmsg, sizeof(clientmsg));
+    bzero(clientmsg, sizeof(clientmsg));
 
-        bzero(servermsg, sizeof(servermsg));
+    bzero(servermsg, sizeof(servermsg));
   }
   close(clientSocket);
 }
-
-
-
-
-
-
 
 void server_tcp(char *iface, long port)
 {
@@ -412,7 +406,7 @@ void *serverchatHandler(void *argp)
 
     int len = (int)strlen(message) - 1;
 
-    //convert the recieved message to upper case 
+    // convert the recieved message to upper case
     char client_msg[200];
     int j = 0;
     while (message[j])
@@ -523,8 +517,6 @@ void client_tcp(char *host, long port)
   raw_addr = &(tmp->sin_addr);
   inet_ntop(AF_INET, raw_addr, buffer, 4096);
   // printf("IPv4 %s\n", buffer);
-
-
 
   // assign ip and port
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
