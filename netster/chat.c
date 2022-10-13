@@ -248,6 +248,8 @@ void client_udp(char *host, long port)
   raw_addr = &(tmp->sin_addr);
   inet_ntop(AF_INET, raw_addr, buffer, 4096);
 
+  printf("%s\n",buffer);
+
   // set server's ip and host 
   server.sin_family = AF_INET;
   server.sin_port = port;
@@ -270,7 +272,7 @@ void client_udp(char *host, long port)
     int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, serverSize);
     if (flag < 0)
     {
-      printf("UDP:Unable to send message to the client\n ");
+      printf("UDP:Unable to send message to the server\n ");
       return;
     }
 
