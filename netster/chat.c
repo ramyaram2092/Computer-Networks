@@ -67,7 +67,7 @@ void chat_client(char *host, long port, int use_udp)
 }
 
 
-char * get_ip(char * host, long port )
+const char* get_ip(char * host, long port )
 {
   struct addrinfo hints;
   hints.ai_flags=AI_PASSIVE;
