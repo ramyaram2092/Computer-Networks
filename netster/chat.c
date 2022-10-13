@@ -121,7 +121,7 @@ void server_udp(char *iface, long port)
     printf("Upper case messages : %s",client_msg);
 
     // based on the message recieved decide the next course of action
-
+    printf("%d",strncmp(client_msg,"HELLO",len));
     //case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
