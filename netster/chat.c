@@ -119,19 +119,19 @@ void server_udp(char *iface, long port)
     // based on the message recieved decide the next course of action
 
     //case 1:
-    if (strcmp(client_msg, "HELLO") == 0)
+    if (strncmp(client_msg, "HELLO", strlen(client_msg)) == 0)
     {
       strcpy(servermsg, "world");
     }
 
     //case 2:
-    else if (strcmp(client_msg, "GOODBYE") == 0)
+    else if (strncmp(client_msg, "GOODBYE",strlen(client_msg)) == 0)
     {
       strcpy(servermsg, "farewell");
     }
 
     //case 3:
-    else if (strcmp(client_msg, "EXIT") == 0)
+    else if (strncmp(client_msg, "EXIT", strlen(client_msg)) == 0)
     {
       flag = sendto(serverSocket, "ok", 256, 0, (const struct sockaddr *)&client, sizeof(client));
       if (flag < 0)
@@ -222,7 +222,7 @@ void client_udp(char *host, long port)
     // based on the message recieved decide the next course of action
 
   
-    if ((strcmp(server_msg, "FAREWELL") == 0) ||(strcmp(server_msg, "OK") == 0))
+    if ((strncmp(server_msg, "FAREWELL",strlen(server_msg)) == 0) ||(strcmp(server_msg, "OK", strlen(server_msg)) == 0))
     {
       break;
     }
