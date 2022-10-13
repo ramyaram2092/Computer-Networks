@@ -124,8 +124,6 @@ void server_udp(char *iface, long port)
 
     //case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
-    if (strncmp(client_msg, "HELLO", len) == 0)
-
     {
       printf("going here");
       flag = sendto(serverSocket,"world", strlen("world"), 0, (const struct sockaddr *)&client,clientSize);
