@@ -22,7 +22,7 @@ void server_udp(char *iface, long port);
 void server_tcp(char *iface, long port);
 void client_tcp(char *host, long port);
 void client_udp(char *host, long port);
-char * get_ip(char * host, long port);
+const char * get_ip(char * host, long port);
 
 char *inet_ntoa(struct in_addr in);
 
