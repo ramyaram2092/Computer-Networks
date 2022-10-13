@@ -477,7 +477,9 @@ void client_tcp(char *host, long port)
   
   struct addrinfo *iterator=response;
    char buffer[256];
-   inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
+   struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
+   void * raw_addr= &(tmp->sin_addr);
+   inet_ntop(AF_INET,raw_addr,buffer,256);
    printf("IPv4 %s\n",buffer);
 
 
