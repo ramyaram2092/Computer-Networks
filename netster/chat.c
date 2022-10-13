@@ -197,15 +197,15 @@ void client_udp(char *host, long port)
     int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, sizeof(server));
     if (flag < 0)
     {
-      printf("Unable to send message to the server - UDP");
+      printf("UDP:Unable to send message to the \n ");
       return;
     }
 
     // Reveive message from the server  sizeof(servermsg),
-     flag = recvfrom(clientSocket, servermsg, 256, MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
+    flag = recvfrom(clientSocket, servermsg, 256, MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
     if (flag < 0)
     {
-      printf("Problem in receiving server message - UDP");
+      printf("UDP:Problem in receiving server message\n");
       return;
     }
 
@@ -268,7 +268,7 @@ void server_tcp(char *iface, long port)
     // listen to the socket connection
     if (listen(serverSocket, 3) != 0) // the no 5 is subjected to change. no of requests that can be queued
     {
-      printf("\n Listening failed\n ");
+      printf("TCP : Listening failed\n ");
       exit(0);
     }
 
@@ -280,7 +280,7 @@ void server_tcp(char *iface, long port)
 
     if (newSocket < 0)
     {
-      printf("\n Unable to accept the client packet\n ");
+      printf("TCP: Unable to accept the client packet\n ");
       exit(0);
     }
     char buffer[200];
@@ -325,12 +325,12 @@ void *serverchatHandler(void *argp)
     // recieve message if any
     if ((recv(socketFileDescriptor, message, sizeof(message), 0) < 0))
     {
-      printf("coundnt recieve message from client \n");
+      printf("TCP: Coundnt recieve message from client \n");
       exit(0);
     }
 
     // display the recieved message
-    printf("got message from (%s,%ld)\n", host, port);
+    printf("TCP: Got message from (%s,%ld)\n", host, port);
 
     int len = (int)strlen(message) - 1;
 
@@ -349,7 +349,7 @@ void *serverchatHandler(void *argp)
     {
       if ((send(socketFileDescriptor, "ok", strlen("ok"), 0)) < 0)
       {
-        printf("Sending message from server failed\n");
+        printf("TCP: Sending message from server failed\n");
         exit(0);
       }
       // c->status=-1;
@@ -363,7 +363,7 @@ void *serverchatHandler(void *argp)
     {
       if ((send(socketFileDescriptor, "farewell", strlen("farewell"), 0)) < 0)
       {
-        printf("Sending message from server failed\n");
+        printf("TCP: Sending message from server failed\n");
         exit(0);
       }
       break;
@@ -376,7 +376,7 @@ void *serverchatHandler(void *argp)
       {
         if (send(socketFileDescriptor, "world", strlen("world"), 0) < 0)
         {
-          printf("Sending message from server failed\n");
+          printf("TCP: Sending message from server failed\n");
           exit(0);
         }
       }
@@ -391,7 +391,7 @@ void *serverchatHandler(void *argp)
         // send  the server's response to client
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
-          printf("Sending message from server failed\n");
+          printf("TCP: Sending message from server failed\n");
           exit(0);
         }
       }
@@ -418,7 +418,7 @@ void client_tcp(char *host, long port)
   clientSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (clientSocket < 0)
   {
-    printf("Client socket creation failed \n");
+    printf("TCP: Client socket creation failed \n");
     exit(0);
   }
 
@@ -430,7 +430,7 @@ void client_tcp(char *host, long port)
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
-    printf("Connection with server failed \n ");
+    printf("TCP: Connection with server failed \n ");
     exit(0);
   }
 
@@ -450,31 +450,36 @@ void clientchatHandler(int socketFileDescriptor)
   char message[100]; // The
   for (;;)
   {
-
     bzero(message, sizeof(message));
+
     // read input from user
     int i = 0;
     while ((message[i++] = getchar()) != '\n')
       ;
     message[i] = '\0';
+
+    //send the message
     if (send(socketFileDescriptor, message, strlen(message), 0) < 0)
     {
-      printf("Sending message from client failed\n ");
+      printf("TCP: Sending message from client failed\n ");
       exit(0);
     }
     bzero(message, sizeof(message));
+
+
     // recieve message if any
     if ((recv(socketFileDescriptor, message, sizeof(message), 0) < 0))
     {
-      printf("Recieving message from Server failed \n");
+      printf("TCP: Recieving message from Server failed \n");
       exit(0);
     }
+
     printf("%s\n", message);
     int len = (int)strlen(message) - 1;
 
+    // based on the message recieved decide the next action 
     if ((strncmp(message, "farewell", len) == 0) || (strncmp(message, "ok", len) == 0))
     {
-      printf("Client Exit...\n");
       break;
     }
   }
