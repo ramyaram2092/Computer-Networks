@@ -117,6 +117,8 @@ void server_udp(char *iface, long port)
       client_msg[j++] = ch;
     }
     client_msg[j] = '\0';
+    
+    printf("Upper case messages : %s",client_msg);
 
     // based on the message recieved decide the next course of action
 
