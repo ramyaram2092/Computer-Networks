@@ -464,33 +464,9 @@ void client_tcp(char *host, long port)
   }
   /**********/
 
-   struct addrinfo hints;
-  hints.ai_flags=AI_PASSIVE;
-  hints.ai_family=PF_UNSPEC;
-  hints.ai_socktype=SOCK_STREAM;
-  hints.ai_protocol=IPPROTO_TCP;
-
-  struct addrinfo *response;
-  response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
-  
-  getaddrinfo(host,(char *)port, &hints,&response);
-  
-  struct addrinfo *iterator=response;
-   
-  char buffer[4096]; 
-  while(iterator!=NULL)
-  {
-    void * raw_addr;
-    if(iterator->ai_family==AF_INET)// Address is IPv4
-    {
-      struct sockaddr_in* tmp=(struct sockaddr_in*)iterator->ai_addr;
-      raw_addr= &(tmp->sin_addr);
-      inet_ntop(iterator->ai_family,raw_addr,buffer,4096);
-      printf("IPv4 %s\n",buffer);
-      break;
-    }
-   
-    iterator=iterator->ai_next;
+   char buffer[200];
+   inet_ntop(AF_INET,&serveraddr.sin_addr.s_addr,buffer,200);
+   printf("%s",buffer);
     
 
   }
