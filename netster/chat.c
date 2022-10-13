@@ -121,8 +121,6 @@ void server_udp(char *iface, long port)
   // chat handler begins
   for (;;)
   {
-   // reset clientmsg & servermsg arrays
-    // memset(servermsg, '\0', sizeof(servermsg));
 
     // receive client message
     int flag = recvfrom(serverSocket, clientmsg, 256, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
@@ -131,8 +129,9 @@ void server_udp(char *iface, long port)
       printf("UDP: Error occured while receiving the message \n ");
       return;
     }
-
-    printf(" Recieved message from  client : %s\n", clientmsg);
+    char ip[200];
+    inet_ntop(AF_INET, &client.sin_addr.s_addr, ip, 200);
+    printf(" Got message from (%s,%ld)", ip,port);
 
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
@@ -145,10 +144,11 @@ void server_udp(char *iface, long port)
     }
     client_msg[j] = '\0';
 
-    printf("Upper case messages : %s", client_msg);
+    // printf("Upper case messages : %s", client_msg);
+    // printf("%d", strncmp(client_msg, "HELLO", len));
 
-    // based on the message recieved decide the next course of action
-    printf("%d", strncmp(client_msg, "HELLO", len));
+
+     // based on the message recieved decide the next course of action
     // case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
@@ -296,9 +296,6 @@ void client_udp(char *host, long port)
         bzero(clientmsg, sizeof(clientmsg));
 
         bzero(servermsg, sizeof(servermsg));
-
-
-   
   }
   close(clientSocket);
 }
