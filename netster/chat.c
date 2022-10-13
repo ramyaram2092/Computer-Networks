@@ -462,13 +462,32 @@ void client_tcp(char *host, long port)
     printf("TCP: Client socket creation failed \n");
     exit(0);
   }
+  /**********/
 
+   struct addrinfo hints;
+  hints.ai_flags=AI_PASSIVE;
+  hints.ai_family=PF_UNSPEC;
+  hints.ai_socktype=SOCK_STREAM;
+  hints.ai_protocol=IPPROTO_TCP;
+
+  struct addrinfo *response;
+  response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
+  
+  getaddrinfo(host,(char *)port, &hints,&response);
+  
+  struct addrinfo *iterator=response;
+   char buffer[256];
+   inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
+   printf("IPv4 %s\n",buffer);
+
+
+   /************************/
   // assign ip and port
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
-  serveraddr.sin_addr.s_addr = inet_addr(get_ip(host,port));
+  serveraddr.sin_addr.s_addr = inet_addr(buffer);
   serveraddr.sin_port = htons(port);
   
-  printf("%s", get_ip(host,port));
+  printf("%s", buffer);
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
