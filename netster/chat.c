@@ -125,13 +125,23 @@ void server_udp(char *iface, long port)
     //case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
-      strcpy(servermsg, "world");
+      flag = sendto(serverSocket,"world", 256, 0, (const struct sockaddr *)&client,clientSize );
+    if (flag < 0)
+    {
+      printf("UDP:Error occured while sending the message  \n");
+      exit(0);
+    }
     }
 
     //case 2:
     else if (strncmp(client_msg, "GOODBYE",len) == 0)
     {
-      strcpy(servermsg, "farewell");
+      flag = sendto(serverSocket,"farewell", 256, 0, (const struct sockaddr *)&client,clientSize );
+    if (flag < 0)
+    {
+      printf("UDP:Error occured while sending the message  \n");
+      exit(0);
+    }
     }
 
     //case 3:
@@ -153,9 +163,7 @@ void server_udp(char *iface, long port)
       while ((servermsg[i++] = getchar()) != '\n')
         ;
       servermsg[i] = '\0';
-    }
-
-    // send message to client
+      // send message to client
     printf("Typed messages : %s",servermsg);
     flag = sendto(serverSocket,servermsg, 256, 0, (const struct sockaddr *)&client,clientSize );
     if (flag < 0)
@@ -163,6 +171,9 @@ void server_udp(char *iface, long port)
       printf("UDP:Error occured while sending the message  \n");
       exit(0);
     }
+    }
+
+    
 
     // reset clientmsg & servermsg arrays
     memset(clientmsg, '\0', sizeof(clientmsg));
