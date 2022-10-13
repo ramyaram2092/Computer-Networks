@@ -232,7 +232,7 @@ void client_udp(char *host, long port)
 
   hints.ai_flags = AI_PASSIVE;
   hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_socktype = 0;
   hints.ai_protocol = 0;
 
   struct addrinfo *response;
