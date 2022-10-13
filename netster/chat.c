@@ -445,7 +445,8 @@ void client_tcp(char *host, long port)
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
   serveraddr.sin_addr.s_addr = inet_addr(host);
   serveraddr.sin_port = htons(port);
-
+  
+  printf("%s", host);
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
