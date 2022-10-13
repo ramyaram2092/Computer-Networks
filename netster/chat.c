@@ -78,13 +78,13 @@ char * get_ip(char * host, long port )
   struct addrinfo *response;
   response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
   
-  getaddrinfo(host,port, &hints,&response);
+  getaddrinfo(host,(char *)port, &hints,&response);
   
   struct addrinfo *iterator=response;
    char buffer[256];
    inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
    printf("IPv4 %s\n",buffer);
-   return (char *) buffer;
+   return  buffer;
 }
 
 void server_udp(char *iface, long port)
