@@ -203,7 +203,7 @@ void server_udp(char *iface, long port)
 
     }
 
-           memset(clientmsg, '\0', sizeof(clientmsg));
+        bzero(clientmsg, sizeof(clientmsg));
 
   }
 
@@ -259,9 +259,7 @@ void client_udp(char *host, long port)
   char servermsg[256];
   for (;;)
   {
-     // reset clientmsg & servermsg arrays
-    memset(clientmsg, '\0', sizeof(clientmsg));
-    memset(servermsg, '\0', sizeof(servermsg));
+     
     // get client input
     int i = 0;
     while ((clientmsg[i++] = getchar()) != '\n')
@@ -294,6 +292,11 @@ void client_udp(char *host, long port)
     {
       break;
     }
+    // reset clientmsg & servermsg arrays
+        bzero(clientmsg, sizeof(clientmsg));
+
+        bzero(servermsg, sizeof(servermsg));
+
 
    
   }
