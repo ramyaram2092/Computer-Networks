@@ -106,6 +106,8 @@ void server_udp(char *iface, long port)
     }
 
     printf(" Recieved message from  client : %s\n", clientmsg);
+
+    int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
     char client_msg[256];
     int j = 0;
@@ -119,19 +121,19 @@ void server_udp(char *iface, long port)
     // based on the message recieved decide the next course of action
 
     //case 1:
-    if (strncmp(client_msg, "HELLO", strlen(client_msg)+1) == 0)
+    if (strncmp(client_msg, "HELLO", len) == 0)
     {
       strcpy(servermsg, "world");
     }
 
     //case 2:
-    else if (strncmp(client_msg, "GOODBYE",strlen(client_msg)+1) == 0)
+    else if (strncmp(client_msg, "GOODBYE",len) == 0)
     {
       strcpy(servermsg, "farewell");
     }
 
     //case 3:
-    else if (strncmp(client_msg, "EXIT", strlen(client_msg)+1) == 0)
+    else if (strncmp(client_msg, "EXIT", len) == 0)
     {
       flag = sendto(serverSocket, "ok", 256, 0, (const struct sockaddr *)&client,clientSize);
       if (flag < 0)
@@ -210,8 +212,10 @@ void client_udp(char *host, long port)
       return;
     }
 
+    int len = (int)strlen(servermsg) - 1;
+    
     // convert the recieved message into uppercase
-    char server_msg[200];
+    char server_msg[256];
     int j = 0;
     while (servermsg[j])
     {
@@ -223,7 +227,7 @@ void client_udp(char *host, long port)
     // based on the message recieved decide the next course of action
 
   
-    if ((strncmp(server_msg, "FAREWELL",strlen(server_msg)+1) == 0) ||(strncmp(server_msg, "OK", strlen(server_msg)+1) == 0))
+    if ((strncmp(server_msg, "FAREWELL",len) == 0) ||(strncmp(server_msg, "OK", len) == 0))
     {
       break;
     }
