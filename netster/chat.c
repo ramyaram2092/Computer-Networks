@@ -220,7 +220,7 @@ void client_udp(char *host, long port)
  
   server.sin_family = AF_INET;
   server.sin_port = htons(port);
-  server.sin_addr.s_addr = inet_addr(get_ip(host,port));
+  server.sin_addr.s_addr = inet_addr(host);
 
   char clientmsg[256];
   char servermsg[256];
