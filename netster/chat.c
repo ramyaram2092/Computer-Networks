@@ -22,7 +22,7 @@ void server_udp(char *iface, long port);
 void server_tcp(char *iface, long port);
 void client_tcp(char *host, long port);
 void client_udp(char *host, long port);
-const char * get_ip(char * host, long port);
+// const char * get_ip(char * host, long port);
 
 char *inet_ntoa(struct in_addr in);
 
@@ -67,25 +67,25 @@ void chat_client(char *host, long port, int use_udp)
 }
 
 
-const char* get_ip(char * host, long port )
-{
-  struct addrinfo hints;
-  hints.ai_flags=AI_PASSIVE;
-  hints.ai_family=PF_UNSPEC;
-  hints.ai_socktype=SOCK_STREAM;
-  hints.ai_protocol=IPPROTO_TCP;
+// const char* get_ip(char * host, long port )
+// {
+//   struct addrinfo hints;
+//   hints.ai_flags=AI_PASSIVE;
+//   hints.ai_family=PF_UNSPEC;
+//   hints.ai_socktype=SOCK_STREAM;
+//   hints.ai_protocol=IPPROTO_TCP;
 
-  struct addrinfo *response;
-  response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
+//   struct addrinfo *response;
+//   response=(struct addrinfo*)malloc(sizeof(struct addrinfo));  
   
-  getaddrinfo(host,(char *)port, &hints,&response);
+//   getaddrinfo(host,(char *)port, &hints,&response);
   
-  struct addrinfo *iterator=response;
-   char buffer[256];
-   inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
-   printf("IPv4 %s\n",buffer);
-   return  buffer;
-}
+//   struct addrinfo *iterator=response;
+//    char buffer[256];
+//    inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
+//    printf("IPv4 %s\n",buffer);
+//    return  buffer;
+// }
 
 void server_udp(char *iface, long port)
 {
