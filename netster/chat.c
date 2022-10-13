@@ -99,26 +99,31 @@ void server_udp(char *iface, long port)
   }
 
   struct sockaddr_in server, client;
+  memset(&server, 0, sizeof(server)); 
+  memset(&client, 0, sizeof(client)); 
 
   // assign ip and port
   server.sin_family = AF_INET;
-  server.sin_port = htons(port);
+  server.sin_port = port;
   server.sin_addr.s_addr = INADDR_ANY;
 
   // bind socket with server
   if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
   {
-    printf("UDP : Error in Socket binding \n ");
+    printf("UDP : Error in Socket binding  \n ");
     exit(0);
   }
 
   socklen_t clientSize = sizeof(client);
   char clientmsg[256];
-  char servermsg[256];
+  // char servermsg[256];
 
   // chat handler begins
   for (;;)
   {
+   // reset clientmsg & servermsg arrays
+    // memset(servermsg, '\0', sizeof(servermsg));
+
     // receive client message
     int flag = recvfrom(serverSocket, clientmsg, strlen(clientmsg), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
     if (flag < 0)
@@ -182,48 +187,79 @@ void server_udp(char *iface, long port)
     // case 4:
     else
     {
-      int i = 0;
-      while ((servermsg[i++] = getchar()) != '\n')
-        ;
-      servermsg[i] = '\0';
-      // send message to client
-      printf("Typed messages : %s", servermsg);
-      flag = sendto(serverSocket, servermsg, 256, 0, (const struct sockaddr *)&client, clientSize);
+      // int i = 0;
+      // while ((servermsg[i++] = getchar()) != '\n')
+      //   ;
+      // servermsg[i] = '\0';
+      // // send message to client
+      // printf("Typed messages : %s", servermsg);
+      flag = sendto(serverSocket, clientmsg, 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
         printf("UDP:Error occured while sending the message  \n");
         exit(0);
       }
+
+
     }
 
-    // reset clientmsg & servermsg arrays
-    memset(clientmsg, '\0', sizeof(clientmsg));
-    memset(servermsg, '\0', sizeof(servermsg));
+           memset(clientmsg, '\0', sizeof(clientmsg));
+
   }
 
   // close server socket
   close(serverSocket);
 }
 
+
+
 void client_udp(char *host, long port)
 {
   int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
   if (clientSocket < 0)
   {
-    printf("Problem creating socket - UDP");
+    printf("UDP: Error in socket creation at client\n");
     return;
   }
   struct sockaddr_in server;
   socklen_t serverSize = sizeof(server);
+  memset(&server, 0, sizeof(server)); 
 
+ // resolve address
+
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_flags = AI_PASSIVE;
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = 0;
+
+  struct addrinfo *response;
+  response = (struct addrinfo *)malloc(sizeof(struct addrinfo));
+  char str[256];
+  sprintf(str, "%ld", port);
+  getaddrinfo(host, str, &hints, &response);
+  struct addrinfo *iterator = response;
+  char buffer[4096];
+  void *raw_addr;
+
+  struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
+  raw_addr = &(tmp->sin_addr);
+  inet_ntop(AF_INET, raw_addr, buffer, 4096);
+
+  // set server's ip and host 
   server.sin_family = AF_INET;
-  server.sin_port = htons(port);
-  server.sin_addr.s_addr = inet_addr(host);
+  server.sin_port = port;
+  server.sin_addr.s_addr = inet_addr(buffer);
 
   char clientmsg[256];
   char servermsg[256];
   for (;;)
   {
+     // reset clientmsg & servermsg arrays
+    memset(clientmsg, '\0', sizeof(clientmsg));
+    memset(servermsg, '\0', sizeof(servermsg));
     // get client input
     int i = 0;
     while ((clientmsg[i++] = getchar()) != '\n')
@@ -234,7 +270,7 @@ void client_udp(char *host, long port)
     int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, serverSize);
     if (flag < 0)
     {
-      printf("UDP:Unable to send message to the \n ");
+      printf("UDP:Unable to send message to the client\n ");
       return;
     }
 
@@ -245,32 +281,28 @@ void client_udp(char *host, long port)
       printf("UDP:Problem in receiving server message\n");
       return;
     }
+    printf("%s\n",servermsg);
 
     int len = (int)strlen(servermsg) - 1;
 
-    // convert the recieved message into uppercase
-    char server_msg[256];
-    int j = 0;
-    while (servermsg[j])
-    {
-      char ch = toupper(servermsg[j]);
-      server_msg[j++] = ch;
-    }
-    server_msg[j] = '\0';
-
+    
     // based on the message recieved decide the next course of action
 
-    if ((strncmp(server_msg, "FAREWELL", len) == 0) || (strncmp(server_msg, "OK", len) == 0))
+    if ((strncmp(servermsg, "farewell", len) == 0) || (strncmp(servermsg, "ok", len) == 0))
     {
       break;
     }
 
-    // reset clientmsg & servermsg arrays
-    memset(clientmsg, '\0', sizeof(clientmsg));
-    memset(servermsg, '\0', sizeof(servermsg));
+   
   }
   close(clientSocket);
 }
+
+
+
+
+
+
 
 void server_tcp(char *iface, long port)
 {
@@ -363,15 +395,16 @@ void *serverchatHandler(void *argp)
     // recieve message if any
     if ((recv(socketFileDescriptor, message, sizeof(message), 0) < 0))
     {
-      printf("TCP: Coundnt recieve message from client \n");
+      printf("TCP: Coundnt recieve message from client\n");
       exit(0);
     }
 
     // display the recieved message
-    printf("TCP: Got message from (%s,%ld)\n", host, port);
+    printf("Got message from (%s,%ld)\n", host, port);
 
     int len = (int)strlen(message) - 1;
 
+    //convert the recieved message to upper case 
     char client_msg[200];
     int j = 0;
     while (message[j])
@@ -420,12 +453,12 @@ void *serverchatHandler(void *argp)
       }
       else
       {
-        bzero(message, sizeof(message));
-        // read the input
-        int i = 0;
-        while ((message[i++] = getchar()) != '\n')
-          ;
-        message[i] = '\0';
+        // bzero(message, sizeof(message));
+        // // read the input
+        // int i = 0;
+        // while ((message[i++] = getchar()) != '\n')
+        //   ;
+        // message[i] = '\0';
         // send  the server's response to client
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
