@@ -79,7 +79,7 @@ void server_udp(char *iface, long port)
 
   // assign ip and port
   server.sin_family = AF_INET;
-  server.sin_port = htons(port);
+  server.sin_port = port;
   server.sin_addr.s_addr = INADDR_ANY;
 
   // bind socket with server
@@ -197,7 +197,7 @@ void client_udp(char *host, long port)
   socklen_t serverSize = sizeof(server);
  
   server.sin_family = AF_INET;
-  server.sin_port = htons(port);
+  server.sin_port = port;
   server.sin_addr.s_addr = inet_addr(host);
 
   char clientmsg[256];
