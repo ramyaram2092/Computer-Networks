@@ -107,7 +107,7 @@ void server_udp(char *iface, long port)
 
     printf(" Recieved message from  client : %s\n", clientmsg);
     // convert the recieved message into uppercase
-    char client_msg[200];
+    char client_msg[256];
     int j = 0;
     while (clientmsg[j])
     {
