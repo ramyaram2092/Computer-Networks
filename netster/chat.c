@@ -125,7 +125,7 @@ void server_udp(char *iface, long port)
     // memset(servermsg, '\0', sizeof(servermsg));
 
     // receive client message
-    int flag = recvfrom(serverSocket, clientmsg, strlen(clientmsg), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
+    int flag = recvfrom(serverSocket, clientmsg, 256, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
     if (flag < 0)
     {
       printf("UDP: Error occured while receiving the message \n ");
