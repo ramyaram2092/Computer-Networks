@@ -385,8 +385,6 @@ void server_tcp(char *iface, long port)
   int i = 0;
   for (;;)
   {
-    // printf("Listening for next conncection \n");
-
     // listen to the socket connection
     if (listen(serverSocket, 3) != 0) // the no 5 is subjected to change. no of requests that can be queued
     {
@@ -465,7 +463,6 @@ void *serverchatHandler(void *argp)
       client_msg[j++] = ch;
     }
     client_msg[j] = '\0';
-    // printf("%s",client_msg);
 
     // case 1: if the client sends "exit", send ok and  server should exit
     if ((strncmp(client_msg, "EXIT", len)) == 0)
@@ -475,9 +472,6 @@ void *serverchatHandler(void *argp)
         printf("TCP: Sending message from server failed\n");
         exit(0);
       }
-      // c->status=-1;
-      // return (void*)-1;
-      // pthread_exit(NULL);
       exit(0);
     }
 
@@ -505,10 +499,6 @@ void *serverchatHandler(void *argp)
       }
       else
       {
- 
-        // strncat(message,"\n",1);
-        // printf("%s",message);
-        // printf("%ld",strlen(message));
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
           printf("TCP: Sending message from server failed\n");
@@ -573,7 +563,7 @@ void client_tcp(char *host, long port)
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
-    printf("TCP: Connection with server : %s  and port %s failed \n ", buffer,str);
+    printf("TCP: Connection with server : %s  and port %s failed\n", buffer,str);
     exit(0);
   }
 
@@ -590,10 +580,11 @@ void client_tcp(char *host, long port)
 
 void clientchatHandler(int socketFileDescriptor)
 {
-  char message[100]; // The
+  char message[100]; 
+  bzero(message, sizeof(message));
+
   for (;;)
   {
-    bzero(message, sizeof(message));
 
     // read input from user
     int i = 0;
@@ -601,10 +592,11 @@ void clientchatHandler(int socketFileDescriptor)
       ;
     message[i] = '\0';
     strncat(message,"\n",1);
+
     // send the message
     if (send(socketFileDescriptor, message, strlen(message), 0) < 0)
     {
-      printf("TCP: Sending message from client failed\n ");
+      printf("TCP: Sending message from client failed\n");
       exit(0);
     }
     bzero(message, sizeof(message));
@@ -625,6 +617,8 @@ void clientchatHandler(int socketFileDescriptor)
       // break;
        exit(0);
     }
+    bzero(message, sizeof(message));
+
   }
  
 }
