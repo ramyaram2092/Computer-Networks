@@ -506,7 +506,7 @@ void *serverchatHandler(void *argp)
       else
       {
  
-        strncat(message,"\n",1);
+        // strncat(message,"\n",1);
         // printf("%s",message);
         // printf("%ld",strlen(message));
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
