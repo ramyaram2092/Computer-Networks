@@ -401,7 +401,7 @@ void server_tcp(char *iface, long port)
     }
     char buffer[200];
     inet_ntop(AF_INET, &client.sin_addr.s_addr, buffer, 200);
-    printf("Connection %d from (%s,%s)\n ", i, buffer, str);
+    printf("Connection %d from (%s,%s)\n", i, buffer, str);
     pthread_t id;
 
     struct clientDetails cd;
