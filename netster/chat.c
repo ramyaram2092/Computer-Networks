@@ -457,7 +457,7 @@ void *serverchatHandler(void *argp)
     // convert the recieved message to upper case
     char client_msg[200];
     int j = 0;
-    while (message[j])
+    while (message[j]!='\n')
     {
       char ch = toupper(message[j]);
       client_msg[j++] = ch;
