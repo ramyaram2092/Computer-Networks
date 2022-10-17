@@ -170,7 +170,7 @@ void server_udp(char *iface, long port)
     // printf(" Got message from (%s,%ld)", ip,port);
 
 
-    printf("Got message ('%s', %ld)\n",ip,port);
+    printf("Got message ('%s', %ld)\n",ip,client.sin_port);
 
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
@@ -191,7 +191,7 @@ void server_udp(char *iface, long port)
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
       // printf("going here");
-      flag = sendto(serverSocket, "world\n", strlen("world\n"), 0, (const struct sockaddr *)&client, clientSize);
+      flag = sendto(serverSocket, "world\n", 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
         printf("UDP:Error occured while sending the message  \n");
@@ -231,6 +231,8 @@ void server_udp(char *iface, long port)
       // servermsg[i] = '\0';
       // // send message to client
       // printf("Typed messages : %s", servermsg);
+      strncat(clientmsg,"\n",1);
+
       flag = sendto(serverSocket, clientmsg, 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
@@ -502,8 +504,8 @@ void *serverchatHandler(void *argp)
       {
  
         strncat(message,"\n",1);
-        printf("%s",message);
-        printf("%ld",strlen(message));
+        // printf("%s",message);
+        // printf("%ld",strlen(message));
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
           printf("TCP: Sending message from server failed\n");
