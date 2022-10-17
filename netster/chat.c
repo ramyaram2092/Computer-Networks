@@ -205,11 +205,11 @@ void server_udp(char *iface, long port)
       flag = sendto(serverSocket, clientmsg, 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
-        printf("UDP:Error occured while sending the message  \n");
+        printf("UDP:Error occured while sending the message\n");
         exit(0);
       }
     }
-        bzero(clientmsg, sizeof(clientmsg));
+   bzero(clientmsg, sizeof(clientmsg));
 
 
 }
