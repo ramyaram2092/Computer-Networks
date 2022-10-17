@@ -261,7 +261,7 @@ void client_udp(char *host, long port)
 
   hints.ai_flags = AI_PASSIVE;
   hints.ai_family = AF_INET;
-  hints.ai_socktype = 0;
+  hints.ai_socktype = SOCK_DGRAM;
   hints.ai_protocol = 0;
 
   struct addrinfo *response;
@@ -277,9 +277,6 @@ void client_udp(char *host, long port)
   raw_addr = &(tmp->sin_addr);
   inet_ntop(AF_INET, raw_addr, buffer, 4096);
 
-
-
-  // printf("%s\n",buffer);
 
   // set server's ip and host
   server.sin_family = AF_INET;
