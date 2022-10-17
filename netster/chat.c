@@ -621,7 +621,7 @@ void clientchatHandler(int socketFileDescriptor)
       exit(0);
     }
 
-    printf("%s\n", message);
+    printf("%s", message);
     int len = (int)strlen(message) - 1;
 
     // based on the message recieved decide the next action
