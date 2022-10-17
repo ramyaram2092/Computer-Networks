@@ -485,11 +485,9 @@ void *serverchatHandler(void *argp)
       }
       break;
     }
+    // case 3: if the client sends "hello" respond with world
 
-    else
-    {
-      // case 1: if the client sends "hello" respond with world
-      if (strncmp(client_msg, "HELLO", len) == 0)
+     else if (strncmp(client_msg, "HELLO", len) == 0)
       {
         if (send(socketFileDescriptor, "world\n", strlen("world\n"), 0) < 0)
         {
@@ -497,14 +495,15 @@ void *serverchatHandler(void *argp)
           exit(0);
         }
       }
-      else
-      {
+
+    else
+    {
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
           printf("TCP: Sending message from server failed\n");
           exit(0);
         }
-      }
+      
     }
     bzero(message, sizeof(message));
 
