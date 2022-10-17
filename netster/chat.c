@@ -170,7 +170,7 @@ void server_udp(char *iface, long port)
     // printf(" Got message from (%s,%ld)", ip,port);
 
 
-    printf("Got message from client with host: %s and port : %s \n",ip,str);
+    printf("Got message from client with ip: %s at port : %s \n",ip,str);
 
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
@@ -219,7 +219,7 @@ void server_udp(char *iface, long port)
         printf("UDP:Error occured while sending the message \n");
         exit(0);
       }
-      break;
+      exit(0);
     }
 
     // case 4:
@@ -620,7 +620,9 @@ void clientchatHandler(int socketFileDescriptor)
     // based on the message recieved decide the next action
     if ((strncmp(message, "farewell", len) == 0) || (strncmp(message, "ok", len) == 0))
     {
-      break;
+      // break;
+       exit(0);
     }
   }
+ 
 }
