@@ -285,7 +285,7 @@ void client_udp(char *host, long port)
       ;
     clientmsg[i] = '\0';
 
-    strncat(clientmsg,"\n",1);
+    // strncat(clientmsg,"\n",1);
 
     // send the message to server
     int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, serverSize);
