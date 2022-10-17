@@ -170,7 +170,7 @@ void server_udp(char *iface, long port)
     // printf(" Got message from (%s,%ld)", ip,port);
 
 
-    printf("Got message ('%s', %ld)\n",ip,client.sin_port);
+    printf("Got message ('%s', %d)\n",ip,client.sin_port);
 
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
