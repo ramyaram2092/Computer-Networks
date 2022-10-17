@@ -138,13 +138,13 @@ void server_udp(char *iface, long port)
 
   // assign ip and port
   server.sin_family = AF_INET;
-  server.sin_port = port;
+  server.sin_port = htons(port);
   server.sin_addr.s_addr = inet_addr(buffer);
 
   // bind socket with server
   if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
   {
-    printf("UDP : Error in Socket binding  \n ");
+    printf("UDP : Error in Socket binding \n ");
     exit(0);
   }
 
@@ -190,8 +190,8 @@ void server_udp(char *iface, long port)
     // case 1:
     if (strncmp(client_msg, "HELLO", len) == 0)
     {
-      printf("going here");
-      flag = sendto(serverSocket, "world", strlen("world"), 0, (const struct sockaddr *)&client, clientSize);
+      // printf("going here");
+      flag = sendto(serverSocket, "world\n", strlen("world\n"), 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
         printf("UDP:Error occured while sending the message  \n");
@@ -202,7 +202,7 @@ void server_udp(char *iface, long port)
     // case 2:
     else if (strncmp(client_msg, "GOODBYE", len) == 0)
     {
-      flag = sendto(serverSocket, "farewell", 256, 0, (const struct sockaddr *)&client, clientSize);
+      flag = sendto(serverSocket, "farewell\n", 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
         printf("UDP:Error occured while sending the message  \n");
@@ -213,7 +213,7 @@ void server_udp(char *iface, long port)
     // case 3:
     else if (strncmp(client_msg, "EXIT", len) == 0)
     {
-      flag = sendto(serverSocket, "ok", 256, 0, (const struct sockaddr *)&client, clientSize);
+      flag = sendto(serverSocket, "ok\n", 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
         printf("UDP:Error occured while sending the message \n");
@@ -285,7 +285,7 @@ void client_udp(char *host, long port)
 
   // set server's ip and host
   server.sin_family = AF_INET;
-  server.sin_port = port;
+  server.sin_port = htons(port);
   server.sin_addr.s_addr = inet_addr(buffer);
 
   char clientmsg[256];
@@ -505,14 +505,7 @@ void *serverchatHandler(void *argp)
       }
       else
       {
-        // bzero(message, sizeof(message));
-        // // read the input
-        // int i = 0;
-        // while ((message[i++] = getchar()) != '\n')
-        //   ;
-        // message[i] = '\0';
-        // send  the server's response to client
-       
+ 
         strncat(message,"\n",1);
         printf("%s",message);
         printf("%ld",strlen(message));
