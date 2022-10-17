@@ -150,13 +150,11 @@ void server_udp(char *iface, long port)
   socklen_t clientSize = sizeof(client);
   char clientmsg[256];
   char ip[200];
-  // char servermsg[256];
-          bzero(clientmsg, sizeof(clientmsg));
+  bzero(clientmsg, sizeof(clientmsg));
 
   // chat handler begins
   for (;;)
   {
-
     // receive client message
     int flag = recvfrom(serverSocket, clientmsg, 256, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
     if (flag < 0)
@@ -179,8 +177,7 @@ void server_udp(char *iface, long port)
     }
     client_msg[j] = '\0';
 
-    // printf("Upper case messages : %s", client_msg);
-    // printf("%d", strncmp(client_msg, "HELLO", len));
+
 
     // based on the message recieved decide the next course of action
     // case 1:
@@ -220,18 +217,9 @@ void server_udp(char *iface, long port)
 
    
 
-    // case 4:
+    // case 4: send back the recieved message
     else
     {
-      // int i = 0;
-      // while ((servermsg[i++] = getchar()) != '\n')
-      //   ;
-      // servermsg[i] = '\0';
-      // // send message to client
-      // printf("Typed messages : %s", servermsg);
-      // strncat(clientmsg,"\n",1);
-      // printf("sending back:%s\n",clientmsg);
-
       flag = sendto(serverSocket, clientmsg, 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
       {
@@ -327,7 +315,6 @@ void client_udp(char *host, long port)
 
     // reset clientmsg & servermsg arrays
     bzero(clientmsg, sizeof(clientmsg));
-
     bzero(servermsg, sizeof(servermsg));
   }
   close(clientSocket);
@@ -592,7 +579,7 @@ void clientchatHandler(int socketFileDescriptor)
     while ((message[i++] = getchar()) != '\n')
       ;
     message[i] = '\0';
-    strncat(message,"\n",1);
+    // strncat(message,"\n",1);
 
     // send the message
     if (send(socketFileDescriptor, message, strlen(message), 0) < 0)
