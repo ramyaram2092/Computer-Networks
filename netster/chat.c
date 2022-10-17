@@ -470,7 +470,7 @@ void *serverchatHandler(void *argp)
     // case 1: if the client sends "exit", send ok and  server should exit
     if ((strncmp(client_msg, "EXIT", len)) == 0)
     {
-      if ((send(socketFileDescriptor, "ok", strlen("ok"), 0)) < 0)
+      if ((send(socketFileDescriptor, "ok\n", strlen("ok\n"), 0)) < 0)
       {
         printf("TCP: Sending message from server failed\n");
         exit(0);
@@ -484,7 +484,7 @@ void *serverchatHandler(void *argp)
     // case 2: if client sends "goodbye"  send farewell and disconnect from the client
     else if ((strncmp(client_msg, "GOODBYE", len)) == 0)
     {
-      if ((send(socketFileDescriptor, "farewell", strlen("farewell"), 0)) < 0)
+      if ((send(socketFileDescriptor, "farewell\n", strlen("farewell\n"), 0)) < 0)
       {
         printf("TCP: Sending message from server failed\n");
         exit(0);
@@ -497,7 +497,7 @@ void *serverchatHandler(void *argp)
       // case 1: if the client sends "hello" respond with world
       if (strncmp(client_msg, "HELLO", len) == 0)
       {
-        if (send(socketFileDescriptor, "world", strlen("world"), 0) < 0)
+        if (send(socketFileDescriptor, "world\n", strlen("world\n"), 0) < 0)
         {
           printf("TCP: Sending message from server failed\n");
           exit(0);
