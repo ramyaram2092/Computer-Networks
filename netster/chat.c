@@ -188,7 +188,19 @@ void server_udp(char *iface, long port)
 
     // based on the message recieved decide the next course of action
     // case 1:
-    if (strncmp(client_msg, "HELLO", len) == 0)
+    if (strncmp(client_msg, "EXIT", len) == 0)
+    {
+      flag = sendto(serverSocket, "ok\n", 256, 0, (const struct sockaddr *)&client, clientSize);
+      if (flag < 0)
+      {
+        printf("UDP:Error occured while sending the message \n");
+        exit(0);
+      }
+      exit(0);
+    }
+    
+    // case 2:
+    else if (strncmp(client_msg, "HELLO", len) == 0)
     {
       // printf("going here");
       flag = sendto(serverSocket, "world\n", 256, 0, (const struct sockaddr *)&client, clientSize);
@@ -199,7 +211,7 @@ void server_udp(char *iface, long port)
       }
     }
 
-    // case 2:
+    // case 3:
     else if (strncmp(client_msg, "GOODBYE", len) == 0)
     {
       flag = sendto(serverSocket, "farewell\n", 256, 0, (const struct sockaddr *)&client, clientSize);
@@ -210,17 +222,7 @@ void server_udp(char *iface, long port)
       }
     }
 
-    // case 3:
-    else if (strncmp(client_msg, "EXIT", len) == 0)
-    {
-      flag = sendto(serverSocket, "ok\n", 256, 0, (const struct sockaddr *)&client, clientSize);
-      if (flag < 0)
-      {
-        printf("UDP:Error occured while sending the message \n");
-        exit(0);
-      }
-      exit(0);
-    }
+   
 
     // case 4:
     else
