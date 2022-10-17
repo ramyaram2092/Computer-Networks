@@ -70,25 +70,7 @@ void chat_client(char *host, long port, int use_udp)
   }
 }
 
-// const char* get_ip(char * host, long port )
-// {
-//   struct addrinfo hints;
-//   hints.ai_flags=AI_PASSIVE;
-//   hints.ai_family=PF_UNSPEC;
-//   hints.ai_socktype=SOCK_STREAM;
-//   hints.ai_protocol=IPPROTO_TCP;
 
-//   struct addrinfo *response;
-//   response=(struct addrinfo*)malloc(sizeof(struct addrinfo));
-
-//   getaddrinfo(host,(char *)port, &hints,&response);
-
-//   struct addrinfo *iterator=response;
-//    char buffer[256];
-//    inet_ntop(AF_INET,(struct sockaddr_in*)iterator->ai_addr,buffer,256);
-//    printf("IPv4 %s\n",buffer);
-//    return  buffer;
-// }
 
 /**
  * @brief Upd server
@@ -392,7 +374,7 @@ void server_tcp(char *iface, long port)
     }
     char buffer[200];
     inet_ntop(AF_INET, &client.sin_addr.s_addr, buffer, 200);
-    printf("Connection %d from (%s,%s)\n", i, buffer, str);
+    printf("Connection %d from (%s,%d)\n", i, buffer, client.sin_port);
     pthread_t id;
 
     struct clientDetails cd;
