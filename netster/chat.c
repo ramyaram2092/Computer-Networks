@@ -600,7 +600,7 @@ void clientchatHandler(int socketFileDescriptor)
     while ((message[i++] = getchar()) != '\n')
       ;
     message[i] = '\0';
-
+    strncat(message,"\n",1);
     // send the message
     if (send(socketFileDescriptor, message, strlen(message), 0) < 0)
     {
