@@ -373,7 +373,7 @@ void server_tcp(char *iface, long port)
 
   server.sin_family = AF_INET;         // address family IPV4 or 6
   server.sin_addr.s_addr = inet_addr(buffer); 
-  server.sin_port = port;
+  server.sin_port =htons(port);
 
   // bind the socket with the server ip and port
   if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
@@ -571,7 +571,7 @@ void client_tcp(char *host, long port)
   // assign ip and port
   serveraddr.sin_family = AF_INET; // address family IPV4 or 6
   serveraddr.sin_addr.s_addr = inet_addr(buffer);
-  serveraddr.sin_port = port;
+  serveraddr.sin_port = htons(port);
 
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
