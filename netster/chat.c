@@ -514,6 +514,8 @@ void *serverchatHandler(void *argp)
         // send  the server's response to client
        
         strncat(message,"\n",1);
+        printf("%s",message);
+        printf("%d",strlen(message));
         if ((send(socketFileDescriptor, message, strlen(message), 0)) < 0)
         {
           printf("TCP: Sending message from server failed\n");
