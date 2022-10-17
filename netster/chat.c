@@ -52,11 +52,9 @@ void chat_server(char *iface, long port, int use_udp)
   }
   else
   {
-<<<<<<< HEAD
+
     server_udp(iface,port);
-=======
-    server_udp(iface, port);
->>>>>>> ca3f0eabd5a650f52aa13e4639b2a4b2f9cb5534
+
   }
 }
 
@@ -241,15 +239,6 @@ void server_udp(char *iface, long port)
       }
     }
 
-<<<<<<< HEAD
-
-=======
-    bzero(clientmsg, sizeof(clientmsg));
-  }
-
-  // close server socket
-  close(serverSocket);
->>>>>>> ca3f0eabd5a650f52aa13e4639b2a4b2f9cb5534
 }
 
 void client_udp(char *host, long port)
@@ -283,16 +272,7 @@ void client_udp(char *host, long port)
   char buffer[4096];
   void *raw_addr;
 
-<<<<<<< HEAD
-  n = recvfrom(clientSocket, buffer, 256, MSG_WAITALL, (struct sockaddr *)&serveraddr,
-               &len);
-  // buffer[n] = '\0';
-  printf("Server : %s\n", buffer);
-=======
-  struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
-  raw_addr = &(tmp->sin_addr);
-  inet_ntop(AF_INET, raw_addr, buffer, 4096);
->>>>>>> ca3f0eabd5a650f52aa13e4639b2a4b2f9cb5534
+
 
   // printf("%s\n",buffer);
 
