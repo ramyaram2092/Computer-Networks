@@ -164,19 +164,14 @@ void server_udp(char *iface, long port)
       return;
     }
     bzero(ip, sizeof(ip));
-
     inet_ntop(AF_INET, &client.sin_addr.s_addr, ip, 200);
-
-    // printf(" Got message from (%s,%ld)", ip,port);
-
-
     printf("Got message ('%s', %d)\n",ip,client.sin_port);
 
     int len = (int)strlen(clientmsg) - 1;
     // convert the recieved message into uppercase
     char client_msg[256];
     int j = 0;
-    while (clientmsg[j])
+    while (clientmsg[j]!='\n')
     {
       char ch = toupper(clientmsg[j]);
       client_msg[j++] = ch;
@@ -313,7 +308,7 @@ void client_udp(char *host, long port)
       printf("UDP:Problem in receiving server message\n");
       return;
     }
-    printf("%s\n", servermsg);
+    printf("%s", servermsg);
 
     int len = (int)strlen(servermsg) - 1;
 
