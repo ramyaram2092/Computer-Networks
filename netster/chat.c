@@ -576,7 +576,7 @@ void client_tcp(char *host, long port)
   // connect client socket with  server socket
   if (connect(clientSocket, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) != 0)
   {
-    printf("TCP: Connection with server failed \n ");
+    printf("TCP: Connection with server : %s  and port %s failed \n ", buffer,str);
     exit(0);
   }
 
