@@ -228,7 +228,7 @@ void server_udp(char *iface, long port)
       // servermsg[i] = '\0';
       // // send message to client
       // printf("Typed messages : %s", servermsg);
-      strncat(clientmsg,"\n",1);
+      // strncat(clientmsg,"\n",1);
 
       flag = sendto(serverSocket, clientmsg, 256, 0, (const struct sockaddr *)&client, clientSize);
       if (flag < 0)
@@ -292,6 +292,8 @@ void client_udp(char *host, long port)
     while ((clientmsg[i++] = getchar()) != '\n')
       ;
     clientmsg[i] = '\0';
+
+    strncat(clientmsg,"\n",1);
 
     // send the message to server
     int flag = sendto(clientSocket, clientmsg, 256, 0, (const struct sockaddr *)&server, serverSize);
