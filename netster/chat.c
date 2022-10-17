@@ -437,10 +437,10 @@ void *serverchatHandler(void *argp)
   long port = c->port;
   int socketFileDescriptor = c->socketfileDesctiptor;
   char message[200];
+  bzero(message, sizeof(message));
 
   for (;;)
   {
-    bzero(message, sizeof(message));
 
     // recieve message if any
     if ((recv(socketFileDescriptor, message, sizeof(message), 0) < 0))
@@ -506,6 +506,8 @@ void *serverchatHandler(void *argp)
         }
       }
     }
+    bzero(message, sizeof(message));
+
   }
   fflush(stdout);
 
