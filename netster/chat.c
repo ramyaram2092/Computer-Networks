@@ -273,6 +273,10 @@ void client_udp(char *host, long port)
   char buffer[4096];
   void *raw_addr;
 
+  struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
+  raw_addr = &(tmp->sin_addr);
+  inet_ntop(AF_INET, raw_addr, buffer, 4096);
+
 
 
   // printf("%s\n",buffer);
