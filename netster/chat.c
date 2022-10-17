@@ -151,6 +151,7 @@ void server_udp(char *iface, long port)
   char clientmsg[256];
   char ip[200];
   // char servermsg[256];
+          bzero(clientmsg, sizeof(clientmsg));
 
   // chat handler begins
   for (;;)
@@ -238,6 +239,8 @@ void server_udp(char *iface, long port)
         exit(0);
       }
     }
+        bzero(clientmsg, sizeof(clientmsg));
+
 
 }
 }
