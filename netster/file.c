@@ -127,6 +127,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
     // resize filedata
     char *filedata = malloc(sizeof(char) * bufferSize);
     // receive data
+    int count=0;
     while (1)
     {
         bzero(filedata, bufferSize);
@@ -145,7 +146,10 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
+        count+=recivedbytes;
     }
+        printf("Total Recieved :%d", count);
+
     free(filedata);
     // fflush(fp);
     close(newSocket);
@@ -219,15 +223,15 @@ void tcp_client_ft(char *host, long port, FILE *fp)
     // send(clientSocket, (void *)(&hdr), sizeof(hdr), 0);
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
-
+    int count=0;
     // store read data into buffer
     while (!feof(fp))
     {
         bzero(filedata, bufferSize);
-        size_t ret = fread(filedata, sizeof(char), bufferSize, fp);
+        int ret = fread(filedata, sizeof(char), bufferSize, fp);
         if (ret == 0)
         {
-            fprintf(stderr, "fread() failed: %zu\n", ret);
+            fprintf(stderr, "fread() failed: %d\n", ret);
             exit(1);
         }
 
@@ -238,8 +242,11 @@ void tcp_client_ft(char *host, long port, FILE *fp)
             printf("TCP : Sending file from client failed \n");
             exit(1);
         }
-        printf("\n Sent %lu bytes", ret);
+        printf("\n Sent %d bytes", ret);
+        count+=ret;
     }
+        printf("Total sent :%d", count);
+
     free(filedata);
     // printf("the file was sent successfully");
     fflush(fp);
@@ -421,7 +428,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
         count += ret;
     }
     bzero(filedata, bufferSize);
-    printf("Total recieved:%d", count);
+    printf("Total sent :%d", count);
 
     if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
     {
