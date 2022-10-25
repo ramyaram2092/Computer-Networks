@@ -391,11 +391,11 @@ void udp_client_ft(char *host, long port, FILE *fp)
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
-    printf("\n Coming here");
+    // printf("\n Coming here");
     // store read data into buffer
     while (!feof(fp))
     {
-            printf("\n Inside loop Coming here");
+            // printf("\n Inside loop Coming here");
 
 
         bzero(filedata, bufferSize);
@@ -413,7 +413,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        printf("\n Sent %lu bytes", ret);
+        // printf("\n Sent %lu bytes", ret);
     }
     bzero(filedata, bufferSize);
 
