@@ -430,11 +430,11 @@ void udp_client_ft(char *host, long port, FILE *fp)
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        if (n < 256)
-        {
-            printf("\n Read %d bytes and Sent %d bytes ", ret, n);
-            fflush(stdout);
-        }
+        // if (n < 256)
+        // {
+        //     printf("\n Read %d bytes and Sent %d bytes ", ret, n);
+        //     fflush(stdout);
+        // }
 
         count += n;
     }
