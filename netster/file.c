@@ -335,11 +335,11 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
         int ret = fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
-        if (recivedbytes < 256)
-        {
-            printf("\n Recieved %d bytes and Wrote %d bytes ", recivedbytes, ret);
-        }
-        fflush(stdout);
+        // if (recivedbytes < 256)
+        // {
+        //     printf("\n Recieved %d bytes and Wrote %d bytes ", recivedbytes, ret);
+        // }
+        // fflush(stdout);
 
         count += recivedbytes;
     }
