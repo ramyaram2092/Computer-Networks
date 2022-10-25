@@ -410,10 +410,10 @@ void udp_client_ft(char *host, long port, FILE *fp)
     {
 
         bzero(filedata, bufferSize);
-        size_t ret = fread(filedata, sizeof(char), bufferSize, fp);
+        int ret = fread(filedata, sizeof(char), bufferSize, fp);
         if (ret == 0)
         {
-            fprintf(stderr, "fread() failed: %zu\n", ret);
+            fprintf(stderr, "fread() failed: %d\n", ret);
             exit(1);
         }
 
@@ -424,7 +424,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        printf("\n Sent %lu bytes", ret);
+        printf("\n Sent %d bytes", ret);
         count += ret;
     }
     bzero(filedata, bufferSize);
