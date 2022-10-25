@@ -160,6 +160,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
 
 void tcp_client_ft(char *host, long port, FILE *fp)
 {
+    printf("TCP\n");
     int clientSocket;
     struct sockaddr_in serveraddr;
 
@@ -332,6 +333,8 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
 void udp_client_ft(char *host, long port, FILE *fp)
 {
+        printf("TCP\n");
+
     int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
     {
