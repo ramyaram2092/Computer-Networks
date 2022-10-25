@@ -321,8 +321,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recvfrom(serverSocket, filedata, bufferSize, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-        printf("\n Recieved %d bytes", recivedbytes);
-        fflush(stdout);
+        // printf("\n Recieved %d bytes", recivedbytes);
 
         if (recivedbytes < 0)
         {
@@ -335,9 +334,11 @@ void udp_server_ft(char *iface, long port, FILE *fp)
         }
 
         int ret=fwrite(filedata, sizeof(char), recivedbytes, fp);
-        printf("\n Recieved %d bytes and Wrote %d bytes ",recivedbytes, ret);
-
         fflush(fp);
+        printf("\n Recieved %d bytes and Wrote %d bytes ",recivedbytes, ret);
+        fflush(stdout);
+
+    
         count += recivedbytes;
     }
     printf("\n Total recieved:%d", count);
@@ -428,6 +429,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
             exit(1);
         }
         printf("\n Read %d bytes and Sent %d bytes ",ret, n);
+        fflush(stdout);
         count += n;
     }
     bzero(filedata, bufferSize);
