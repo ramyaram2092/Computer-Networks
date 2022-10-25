@@ -343,7 +343,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
         count += recivedbytes;
     }
-    printf("\n Total recieved:%d", count);
+    // printf("\n Total recieved:%d", count);
     free(filedata);
     // fflush(fp);
     close(serverSocket);
@@ -439,7 +439,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
         count += n;
     }
     bzero(filedata, bufferSize);
-    printf("\n Total sent :%d", count);
+    // printf("\n Total sent :%d", count);
 
     if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
     {
