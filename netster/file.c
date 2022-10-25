@@ -115,13 +115,13 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
         exit(0);
     }
 
-    struct header hdr;
-    // receive file size
-    if ((recv(newSocket, (void *)(&hdr), sizeof(hdr), 0) < 0))
-    {
-        printf("TCP: Coundnt recieve file from client\n");
-        exit(0);
-    }
+    // struct header hdr;
+    // // receive file size
+    // if ((recv(newSocket, (void *)(&hdr), sizeof(hdr), 0) < 0))
+    // {
+    //     printf("TCP: Coundnt recieve file from client\n");
+    //     exit(0);
+    // }
     // printf("\n%ld", hdr.data_length);
 
     // resize filedata
@@ -209,14 +209,14 @@ void tcp_client_ft(char *host, long port, FILE *fp)
     }
 
     // find the file size
-    fseek(fp, 0, SEEK_END);
-    int filesize = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+    // fseek(fp, 0, SEEK_END);
+    // int filesize = ftell(fp);
+    // fseek(fp, 0, SEEK_SET);
 
     // send filesize to server
-    struct header hdr;
-    hdr.data_length = filesize;
-    send(clientSocket, (void *)(&hdr), sizeof(hdr), 0);
+    // struct header hdr;
+    // hdr.data_length = filesize;
+    // send(clientSocket, (void *)(&hdr), sizeof(hdr), 0);
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
@@ -297,14 +297,14 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
     socklen_t clientSize = sizeof(client);
 
-    struct header hdr;
+    // struct header hdr;
     // receive file size
-    int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-    if (flag < 0)
-    {
-        printf("UDP: Error occured while receiving the message \n ");
-        return;
-    }
+    // int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
+    // if (flag < 0)
+    // {
+    //     printf("UDP: Error occured while receiving the message \n ");
+    //     return;
+    // }
 
     // resize filedata
     char *filedata = malloc(sizeof(char) * bufferSize);
@@ -377,20 +377,20 @@ void udp_client_ft(char *host, long port, FILE *fp)
     server.sin_addr.s_addr = inet_addr(buffer);
 
     // find the file size
-    fseek(fp, 0, SEEK_END);
-    int filesize = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+    // fseek(fp, 0, SEEK_END);
+    // int filesize = ftell(fp);
+    // fseek(fp, 0, SEEK_SET);
 
     // send filesize to server
-    struct header hdr;
-    hdr.data_length = filesize;
+    // struct header hdr;
+    // hdr.data_length = filesize;
 
-    int flag = sendto(clientSocket, (void *)(&hdr), sizeof(hdr), 0, (const struct sockaddr *)&server, serverSize);
-    if (flag < 0)
-    {
-        printf("UDP:Unable to send message to the server\n ");
-        return;
-    }
+    // int flag = sendto(clientSocket, (void *)(&hdr), sizeof(hdr), 0, (const struct sockaddr *)&server, serverSize);
+    // if (flag < 0)
+    // {
+    //     printf("UDP:Unable to send message to the server\n ");
+    //     return;
+    // }
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
