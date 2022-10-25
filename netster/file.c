@@ -408,6 +408,13 @@ void udp_client_ft(char *host, long port, FILE *fp)
         }
         // printf("\n Sent %lu bytes", ret);
     }
+    bzero(filedata, bufferSize);
+
+    if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
+    {
+        printf("UDP:Unable to send message to the server\n ");
+        exit(1);
+    }
     free(filedata);
     printf("the file was sent successfully");
     fflush(fp);
