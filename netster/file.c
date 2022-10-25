@@ -144,9 +144,10 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
         }
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
+        fflush(fp);
     }
     free(filedata);
-    fflush(fp);
+    // fflush(fp);
     close(newSocket);
     close(serverSocket);
 }
@@ -325,9 +326,11 @@ void udp_server_ft(char *iface, long port, FILE *fp)
         }
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
+                fflush(fp);
+
     }
     free(filedata);
-    fflush(fp);
+    // fflush(fp);
     close(serverSocket);
 }
 
@@ -424,6 +427,6 @@ void udp_client_ft(char *host, long port, FILE *fp)
     }
     free(filedata);
     // printf("the file was sent successfully gjh\n ");
-    fflush(fp);
+    // fflush(fp);
     close(clientSocket);
 }
