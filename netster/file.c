@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#define bufferSize 256
 
 void tcp_server_ft(char *iface, long port, FILE *fp);
 void tcp_client_ft(char *host, long port, FILE *fp);
@@ -15,6 +16,11 @@ void udp_client_ft(char *host, long port, FILE *fp);
 
 const char *inet_ntop(int af, const void *restrict src,
                       char *restrict dst, socklen_t size);
+
+struct header
+{
+    long data_length;
+};
 
 void file_server(char *iface, long port, int use_udp, FILE *fp)
 {
@@ -112,29 +118,38 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
         exit(0);
     }
 
-    char message[256];
-    if ((recv(newSocket, message, sizeof(message), 0) < 0))
+    struct header hdr;
+    // receive file size
+    if ((recv(newSocket, (void *)(&hdr), sizeof(hdr), 0) < 0))
     {
-            printf("TCP: Coundnt recieve file from client\n");
-            exit(0);
+        printf("TCP: Coundnt recieve file from client\n");
+        exit(0);
     }
-     fprintf(fp, "%s", message);
-    // recieve message if any
-    while (strlen(message)!=0)
+    printf("\n%ld", hdr.data_length);
+
+    // resize filedata
+    char *filedata = malloc(sizeof(char) * bufferSize);
+    // receive data
+    while (1)
     {
-        printf("\n reading file");
-        bzero(message, sizeof(message));
-        if ((recv(newSocket, message, sizeof(message), 0) < 0))
+        bzero(filedata, bufferSize);
+        int recivedbytes = recv(newSocket, filedata, bufferSize, 0);
+        // printf("\n Recieved %d bytes", recivedbytes);
+
+        if (recivedbytes < 0)
         {
             printf("TCP: Coundnt recieve file from client\n");
             exit(0);
         }
-        fprintf(fp, "%s", message);
-        
-       
-    }
+        else if (recivedbytes == 0)
+        {
+            break;
+        }
 
-    printf("the file was received successfully");
+        fwrite(filedata, sizeof(char), recivedbytes, fp);
+    }
+    free(filedata);
+    fflush(fp);
     close(newSocket);
     close(serverSocket);
 }
@@ -193,19 +208,45 @@ void tcp_client_ft(char *host, long port, FILE *fp)
         printf("TCP: Connection with server : %s  and port %s failed\n", buffer, str);
         exit(1);
     }
-    char message[256]={0};
 
-    while (fgets(message,256,fp) != NULL)
+    // find the file size
+    fseek(fp, 0, SEEK_END);
+    int filesize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    // send filesize to server
+    struct header hdr;
+    hdr.data_length = filesize;
+    send(clientSocket, (void *)(&hdr), sizeof(hdr), 0);
+
+    char *filedata = (char *)malloc(sizeof(char) * bufferSize);
+
+    // store read data into buffer
+    while (!feof(fp))
     {
-        // send the file
-        if (send(clientSocket, message, strlen(message), 0) < 0)
+        bzero(filedata, bufferSize);
+        size_t ret = fread(filedata, sizeof(char), bufferSize, fp);
+        if (ret == 0)
         {
-            printf("TCP: Sending file from client failed\n");
+            fprintf(stderr, "fread() failed: %zu\n", ret);
             exit(1);
         }
+
+        // send the file data to server
+
+        if (send(clientSocket, filedata, ret, 0) < 0)
+        {
+            printf("TCP : Sending file from client failed \n");
+            exit(1);
+        }
+        // printf("\n Sent %lu bytes", ret);
     }
+    free(filedata);
     printf("the file was sent successfully");
+    fflush(fp);
     close(clientSocket);
+    
+
 }
 
 void udp_server_ft(char *iface, long port, FILE *fp)
