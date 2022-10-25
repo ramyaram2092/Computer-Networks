@@ -241,7 +241,7 @@ void tcp_client_ft(char *host, long port, FILE *fp)
         printf("\n Sent %lu bytes", ret);
     }
     free(filedata);
-    printf("the file was sent successfully");
+    // printf("the file was sent successfully");
     fflush(fp);
     close(clientSocket);
 }
@@ -309,11 +309,13 @@ void udp_server_ft(char *iface, long port, FILE *fp)
     // resize filedata
     char *filedata = malloc(sizeof(char) * bufferSize);
     // receive data
+    int count = 0;
     while (1)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recvfrom(serverSocket, filedata, bufferSize, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
         printf("\n Recieved %d bytes", recivedbytes);
+        fflush(stdout);
 
         if (recivedbytes < 0)
         {
@@ -327,7 +329,9 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
+        count += recivedbytes;
     }
+    printf("Total recieved:%d", count);
     free(filedata);
     // fflush(fp);
     close(serverSocket);
@@ -394,6 +398,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
     // store read data into buffer
+    int count = 0;
     while (!feof(fp))
     {
 
@@ -413,8 +418,10 @@ void udp_client_ft(char *host, long port, FILE *fp)
             exit(1);
         }
         printf("\n Sent %lu bytes", ret);
+        count += ret;
     }
     bzero(filedata, bufferSize);
+    printf("Total recieved:%d", count);
 
     if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
     {
