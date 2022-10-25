@@ -420,7 +420,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
         exit(1);
     }
     free(filedata);
-    printf("the file was sent successfully");
+    printf("the file was sent successfully gjh\n ");
     fflush(fp);
     close(clientSocket);
 }
