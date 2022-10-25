@@ -148,7 +148,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
         fflush(fp);
         count += recivedbytes;
     }
-    printf("\n Total Recieved :%d", count);
+    // printf("\n Total Recieved :%d", count);
 
     free(filedata);
     // fflush(fp);
@@ -333,7 +333,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
             break;
         }
 
-        int ret = fwrite(filedata, sizeof(char), recivedbytes, fp);
+        fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
         // if (recivedbytes < 256)
         // {
