@@ -131,7 +131,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recv(newSocket, filedata, bufferSize, 0);
-        // printf("\n Recieved %d bytes", recivedbytes);
+        printf("\n Recieved %d bytes", recivedbytes);
 
         if (recivedbytes < 0)
         {
@@ -238,7 +238,7 @@ void tcp_client_ft(char *host, long port, FILE *fp)
             printf("TCP : Sending file from client failed \n");
             exit(1);
         }
-        // printf("\n Sent %lu bytes", ret);
+        printf("\n Sent %lu bytes", ret);
     }
     free(filedata);
     printf("the file was sent successfully");
@@ -313,7 +313,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recvfrom(serverSocket, filedata, bufferSize, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-        // printf("\n Recieved %d bytes", recivedbytes);
+        printf("\n Recieved %d bytes", recivedbytes);
 
         if (recivedbytes < 0)
         {
@@ -326,8 +326,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
         }
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
-                fflush(fp);
-
+        fflush(fp);
     }
     free(filedata);
     // fflush(fp);
@@ -336,7 +335,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
 void udp_client_ft(char *host, long port, FILE *fp)
 {
-        // printf("UDP\n");
+    // printf("UDP\n");
 
     int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
@@ -394,12 +393,9 @@ void udp_client_ft(char *host, long port, FILE *fp)
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
-    // printf("\n Coming here");
     // store read data into buffer
     while (!feof(fp))
     {
-            // printf("\n Inside loop Coming here");
-
 
         bzero(filedata, bufferSize);
         size_t ret = fread(filedata, sizeof(char), bufferSize, fp);
@@ -416,7 +412,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        // printf("\n Sent %lu bytes", ret);
+        printf("\n Sent %lu bytes", ret);
     }
     bzero(filedata, bufferSize);
 
@@ -426,7 +422,6 @@ void udp_client_ft(char *host, long port, FILE *fp)
         exit(1);
     }
     free(filedata);
-    // printf("the file was sent successfully gjh\n ");
     // fflush(fp);
     close(clientSocket);
 }
