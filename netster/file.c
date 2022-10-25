@@ -127,7 +127,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
     // resize filedata
     char *filedata = malloc(sizeof(char) * bufferSize);
     // receive data
-    int count=0;
+    int count = 0;
     while (1)
     {
         bzero(filedata, bufferSize);
@@ -146,9 +146,9 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
 
         fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
-        count+=recivedbytes;
+        count += recivedbytes;
     }
-        printf("\n Total Recieved :%d", count);
+    printf("\n Total Recieved :%d", count);
 
     free(filedata);
     // fflush(fp);
@@ -223,7 +223,7 @@ void tcp_client_ft(char *host, long port, FILE *fp)
     // send(clientSocket, (void *)(&hdr), sizeof(hdr), 0);
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
-    int count=0;
+    int count = 0;
     // store read data into buffer
     while (!feof(fp))
     {
@@ -243,9 +243,9 @@ void tcp_client_ft(char *host, long port, FILE *fp)
             exit(1);
         }
         printf("\n Sent %d bytes", ret);
-        count+=ret;
+        count += ret;
     }
-        printf("\n Total sent :%d", count);
+    printf("\n Total sent :%d", count);
 
     free(filedata);
     // printf("the file was sent successfully");
@@ -333,12 +333,14 @@ void udp_server_ft(char *iface, long port, FILE *fp)
             break;
         }
 
-        int ret=fwrite(filedata, sizeof(char), recivedbytes, fp);
+        int ret = fwrite(filedata, sizeof(char), recivedbytes, fp);
         fflush(fp);
-        printf("\n Recieved %d bytes and Wrote %d bytes ",recivedbytes, ret);
+        if (recivedbytes < 256)
+        {
+            printf("\n Recieved %d bytes and Wrote %d bytes ", recivedbytes, ret);
+        }
         fflush(stdout);
 
-    
         count += recivedbytes;
     }
     printf("\n Total recieved:%d", count);
@@ -421,15 +423,19 @@ void udp_client_ft(char *host, long port, FILE *fp)
         }
 
         // send the file data to server
-        int n =sendto(clientSocket, filedata, ret, 0, (const struct sockaddr *)&server, serverSize) ;
+        int n = sendto(clientSocket, filedata, ret, 0, (const struct sockaddr *)&server, serverSize);
 
-        if (n<0)
+        if (n < 0)
         {
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        printf("\n Read %d bytes and Sent %d bytes ",ret, n);
-        fflush(stdout);
+        if (n < 256)
+        {
+            printf("\n Read %d bytes and Sent %d bytes ", ret, n);
+            fflush(stdout);
+        }
+
         count += n;
     }
     bzero(filedata, bufferSize);
