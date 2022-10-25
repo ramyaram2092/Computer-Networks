@@ -160,7 +160,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
 
 void tcp_client_ft(char *host, long port, FILE *fp)
 {
-    printf("TCP\n");
+    // printf("TCP\n");
     int clientSocket;
     struct sockaddr_in serveraddr;
 
@@ -333,7 +333,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
 void udp_client_ft(char *host, long port, FILE *fp)
 {
-        printf("UDP\n");
+        // printf("UDP\n");
 
     int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
@@ -423,7 +423,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
         exit(1);
     }
     free(filedata);
-    printf("the file was sent successfully gjh\n ");
+    // printf("the file was sent successfully gjh\n ");
     fflush(fp);
     close(clientSocket);
 }
