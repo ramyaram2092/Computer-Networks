@@ -312,7 +312,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recvfrom(serverSocket, filedata, bufferSize, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-        printf("\n Recieved %d bytes", recivedbytes);
+        // printf("\n Recieved %d bytes", recivedbytes);
 
         if (recivedbytes < 0)
         {
@@ -333,7 +333,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
 
 void udp_client_ft(char *host, long port, FILE *fp)
 {
-        printf("TCP\n");
+        printf("UDP\n");
 
     int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
