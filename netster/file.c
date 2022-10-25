@@ -311,7 +311,7 @@ void udp_server_ft(char *iface, long port, FILE *fp)
     {
         bzero(filedata, bufferSize);
         int recivedbytes = recvfrom(serverSocket, filedata, bufferSize, MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-        // printf("\n Recieved %d bytes", recivedbytes);
+        printf("\n Recieved %d bytes", recivedbytes);
 
         if (recivedbytes < 0)
         {
@@ -406,7 +406,7 @@ void udp_client_ft(char *host, long port, FILE *fp)
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        // printf("\n Sent %lu bytes", ret);
+        printf("\n Sent %lu bytes", ret);
     }
     bzero(filedata, bufferSize);
 
