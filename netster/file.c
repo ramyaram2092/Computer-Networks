@@ -148,7 +148,7 @@ void tcp_server_ft(char *iface, long port, FILE *fp)
         fflush(fp);
         count+=recivedbytes;
     }
-        printf("Total Recieved :%d", count);
+        printf("\n Total Recieved :%d", count);
 
     free(filedata);
     // fflush(fp);
@@ -245,7 +245,7 @@ void tcp_client_ft(char *host, long port, FILE *fp)
         printf("\n Sent %d bytes", ret);
         count+=ret;
     }
-        printf("Total sent :%d", count);
+        printf("\n Total sent :%d", count);
 
     free(filedata);
     // printf("the file was sent successfully");
@@ -334,11 +334,13 @@ void udp_server_ft(char *iface, long port, FILE *fp)
             break;
         }
 
-        fwrite(filedata, sizeof(char), recivedbytes, fp);
+        int ret=fwrite(filedata, sizeof(char), recivedbytes, fp);
+        printf("\n Recieved %d bytes and Wrote %d bytes ",recivedbytes, ret);
+
         fflush(fp);
         count += recivedbytes;
     }
-    printf("Total recieved:%d", count);
+    printf("\n Total recieved:%d", count);
     free(filedata);
     // fflush(fp);
     close(serverSocket);
@@ -418,17 +420,18 @@ void udp_client_ft(char *host, long port, FILE *fp)
         }
 
         // send the file data to server
+        int n =sendto(clientSocket, filedata, ret, 0, (const struct sockaddr *)&server, serverSize) ;
 
-        if (sendto(clientSocket, filedata, ret, 0, (const struct sockaddr *)&server, serverSize) < 0)
+        if (n<0)
         {
             printf("UDP:Unable to send message to the server\n ");
             exit(1);
         }
-        printf("\n Sent %d bytes", ret);
-        count += ret;
+        printf("\n Read %d bytes and Sent %d bytes ",ret, n);
+        count += n;
     }
     bzero(filedata, bufferSize);
-    printf("Total sent :%d", count);
+    printf("\n Total sent :%d", count);
 
     if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
     {
