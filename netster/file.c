@@ -388,9 +388,13 @@ void udp_client_ft(char *host, long port, FILE *fp)
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
+    printf("\n Coming here");
     // store read data into buffer
     while (!feof(fp))
     {
+            printf("\n Inside loop Coming here");
+
+
         bzero(filedata, bufferSize);
         size_t ret = fread(filedata, sizeof(char), bufferSize, fp);
         if (ret == 0)
