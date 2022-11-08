@@ -120,9 +120,9 @@ void stopandwait_server(char *iface, long port, FILE *fp)
 
         filedata = recvd_packet.payLoad;
 
-        printf("sequence noo: %ld\n", seq);
-        printf("size:%ld\n", data_length);
-        printf("Payload:%s\n", recvd_packet.payLoad);
+        // printf("sequence noo: %ld\n", seq);
+        // printf("size:%ld\n", data_length);
+        // printf("Payload:%s\n", recvd_packet.payLoad);
 
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
@@ -133,7 +133,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                printf("Here uh");
+                printf("Here uh\n");
                 nack.ack = -1;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
