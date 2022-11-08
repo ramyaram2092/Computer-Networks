@@ -95,14 +95,12 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     struct senderPacket recvd_packet;
     struct NackPacket nack;
     long prev = 0;
-    char* filedata;
 
     for (;;)
     {
         // clear buffers
         memset(&recvd_packet, 0, sizeof(recvd_packet));
         memset(&nack, 0, sizeof(nack));
-        bzero(filedata, bufferSize);
 
 
         // recieve data from client
@@ -110,7 +108,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
         long data_length = recvd_packet.data_length;
-        filedata = recvd_packet.payLoad;
+        char *filedata = recvd_packet.payLoad;
 
         printf("sequence noo: %ld\n",seq);
         printf("size:%ld\n",data_length);
@@ -160,7 +158,6 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     }
 
     // printf("\n Total recieved:%d", count);
-    free(filedata);
     free(response);
 
     close(serverSocket);
