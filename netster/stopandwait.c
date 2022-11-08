@@ -89,6 +89,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         return;
     }
     printf("Recieved file length: %ld", hdr.data_length);
+    printf("Before Segmentation fault\n");
 
     // receive data
     int count = 0;
@@ -96,6 +97,8 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     struct NackPacket nack;
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
     long prev = 0;
+            printf("After Segmentation fault\n");
+
     for (;;)
     {
         // clear buffers
