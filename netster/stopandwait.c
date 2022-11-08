@@ -88,6 +88,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         printf("UDP: Error occured while receiving the message \n ");
         return;
     }
+    printf("Recieved file length: %ld", hdr.data_length);
 
     // receive data
     int count = 0;
@@ -207,6 +208,8 @@ void stopandwait_client(char *host, long port, FILE *fp)
         printf("UDP:Unable to send message to the server\n ");
         return;
     }
+        printf("Sent  file length: %ld", hdr.data_length);
+
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
