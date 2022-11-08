@@ -198,7 +198,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
     int filesize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-        printf("\n In client program");
+    printf("In client program\n");
 
     // send filesize to server before sending the entire file content
     struct header hdr;
@@ -210,7 +210,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         printf("UDP:Unable to send message to the server\n ");
         return;
     }
-    printf("Sent file length: %ld", hdr.data_length);
+    printf("Sent file length: %ld \n", hdr.data_length);
 
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
@@ -222,6 +222,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
     while (!feof(fp))
     {
+        printf("\n coming here uh??");
         // clear buffers
         memset(&packet, 0, sizeof(packet));
         memset(&r_ack, 0, sizeof(r_ack));
