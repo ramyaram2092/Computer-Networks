@@ -236,7 +236,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         printf("UDP:Unable to send file size to the server\n ");
         return;
     }
-    printf("Sent file size detail: %ld \n", hdr.data_length);
+    printf("File size sent : %ld \n", hdr.data_length);
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
@@ -286,7 +286,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
                     exit(1);
                 }
 
-                printf("Sent %d data",dataSent);
+                printf("Sent %d data \n ",ret);
                 int j = 0;
                 int recivedbytes = 0;
 
@@ -303,6 +303,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
                 }
                 else if (r_ack.ack == seq)
                 {
+                    printf("Recieved acknowledgment\n");
                     break;
                 }
             
@@ -311,16 +312,8 @@ void stopandwait_client(char *host, long port, FILE *fp)
         count += ret;
         seq++;
     }
-    // bzero(filedata, bufferSize);
-    // printf("\n Total sent :%d", count);
-
-    // if (sendto(clientSocket, filedata, 0, 0, (const struct sockaddr *)&server, serverSize) < 0)
-    // {
-    //     printf("UDP:Unable to send message to the server\n ");
-    //     exit(1);
-    // }
+  
     free(filedata);
     free(response);
-    // fflush(fp);
     close(clientSocket);
 }
