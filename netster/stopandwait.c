@@ -103,12 +103,17 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         memset(&nack, 0, sizeof(nack));
         bzero(filedata, bufferSize);
 
+        printf("Before Segmentation fault\n");
+
         // recieve data from client
         int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
         // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
         long data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
+
+        printf("After Segmentation fault\n");
+
 
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
@@ -136,6 +141,12 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             fwrite(filedata, sizeof(char), data_length, fp);
             fflush(fp);
             count += recivedbytes;
+            int dataSent = 0;
+            while (dataSent <= 0)
+            {
+                nack.ack = seq;
+                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+            }
         }
 
         // if the entire file is recieved
@@ -198,7 +209,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
     int filesize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    printf("In client program\n");
+    // printf("In client program\n");
 
     // send filesize to server before sending the entire file content
     struct header hdr;
@@ -210,7 +221,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         printf("UDP:Unable to send message to the server\n ");
         return;
     }
-    printf("Sent file length: %ld \n", hdr.data_length);
+    // printf("Sent file length: %ld \n", hdr.data_length);
 
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
@@ -222,7 +233,6 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
     while (!feof(fp))
     {
-        printf("\n coming here uh??");
         // clear buffers
         memset(&packet, 0, sizeof(packet));
         memset(&r_ack, 0, sizeof(r_ack));
