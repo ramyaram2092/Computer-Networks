@@ -91,22 +91,22 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     printf("Recieved file length: %ld \n ", hdr.data_length);
 
     // receive data
-    int count = 0;
+    long count = 0;
     struct senderPacket recvd_packet;
     struct NackPacket nack;
     long prev = 0;
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
-
+    printf("Entering the infinite loop:\n");
     for (;;)
     {
         // clear buffers
         memset(&recvd_packet, 0, sizeof(recvd_packet));
         memset(&nack, 0, sizeof(nack));
         bzero(filedata, bufferSize);
-        printf("coming here \n ");
+        printf("Recievd data :%ld  \n ", count);
 
-         // if the entire file is recieved
+        // if the entire file is recieved
         if (count == hdr.data_length)
         {
             break;
@@ -118,14 +118,11 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         long seq = recvd_packet.seq;
         long data_length = recvd_packet.data_length;
 
-        filedata =recvd_packet.payLoad;
+        filedata = recvd_packet.payLoad;
 
-        printf("sequence noo: %ld\n",seq);
-        printf("size:%ld\n",data_length);
-        printf("Payload:%s\n",recvd_packet.payLoad);
-
-
-       
+        printf("sequence noo: %ld\n", seq);
+        printf("size:%ld\n", data_length);
+        printf("Payload:%s\n", recvd_packet.payLoad);
 
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
@@ -162,7 +159,6 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             }
         }
 
-        
         prev = seq;
     }
 
@@ -231,13 +227,13 @@ void stopandwait_client(char *host, long port, FILE *fp)
     }
     printf("Sent file length: %ld \n", hdr.data_length);
 
-
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
     int count = 0; // chunks of data sent
     int seq = 0;   // sequence number
     struct senderPacket packet;
     struct NackPacket r_ack;
+    printf("Entering the infite loop:\n");
 
     while (!feof(fp))
     {
@@ -245,6 +241,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         memset(&packet, 0, sizeof(packet));
         memset(&r_ack, 0, sizeof(r_ack));
         bzero(filedata, bufferSize);
+        r_ack.ack = -1;
 
         // read data from file and store it in filedata
         int ret = fread(filedata, sizeof(char), bufferSize, fp);
@@ -258,41 +255,43 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
         packet.data_length = ret;
 
-        int k=0;
-        while(k<ret)
+        int k = 0;
+        while (k < ret)
         {
-            packet.payLoad[k]=filedata[k];
+            packet.payLoad[k] = filedata[k];
             k++;
         }
         packet.seq = seq;
-        printf("Sending data : %s",packet.payLoad);
-
+        // printf("Sending data : %s",packet.payLoad);
         // send the chunk of data read from the file to server
         for (;;)
         {
-            int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
+            
+                int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
 
-            if (dataSent < 0)
-            {
-                printf("UDP: Unable to send message to the server\n ");
-                exit(1);
-            }
-            int j = 0;
-            int recivedbytes = 0;
+                if (dataSent < 0)
+                {
+                    printf("UDP: Unable to send message to the server\n ");
+                    exit(1);
+                }
+                int j = 0;
+                int recivedbytes = 0;
 
-            while (j <= 50)
-            {
                 recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
-                j++;
-            }
-            if (recivedbytes < 0 || r_ack.ack != seq)
-            {
-                continue;
-            }
-            else if (r_ack.ack == seq)
-            {
-                break;
-            }
+
+                while (j <= 50)
+                {
+                    j++;
+                }
+                if (recivedbytes < 0 || r_ack.ack != seq)
+                {
+                    continue;
+                }
+                else if (r_ack.ack == seq)
+                {
+                    break;
+                }
+            
         }
 
         count += ret;
