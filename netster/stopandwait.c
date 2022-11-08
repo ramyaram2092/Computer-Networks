@@ -85,7 +85,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
     if (flag < 0)
     {
-        printf("UDP: Error occured while receiving the message \n ");
+        printf("UDP: hereeee Error occured while receiving the message \n ");
         return;
     }
     printf("Recieved file length: %ld", hdr.data_length);
