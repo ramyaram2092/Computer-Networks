@@ -122,7 +122,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // printf("sequence noo: %ld\n", seq);
         // printf("size:%ld\n", data_length);
         // printf("Payload:%s\n", recvd_packet.payLoad);
-        printf("Recived payload sixe: %ld", sizeof(filedata));
+        printf("Recived payload sixe: %ld", strlen(filedata));
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) < data_length)
         {
