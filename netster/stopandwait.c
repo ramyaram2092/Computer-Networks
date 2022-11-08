@@ -106,7 +106,6 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         memset(&nack, 0, sizeof(nack));
         bzero(filedata, bufferSize);
 
-        printf("Before Segmentation fault\n");
 
         // recieve data from client
         int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
@@ -115,7 +114,6 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         long data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
 
-        printf("After Segmentation fault\n");
 
 
         // if the payload is corrupted or recieve wasnt successfull
@@ -127,6 +125,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
+                printf("Here uh");
                 nack.ack = -1;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
