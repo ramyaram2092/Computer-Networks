@@ -165,9 +165,6 @@ void stopandwait_client(char *host, long port, FILE *fp)
     socklen_t serverSize = sizeof(server);
     memset(&server, 0, sizeof(server));
 
-    printf("\n In client program");
-
-
     // resolve address
 
     struct addrinfo hints;
@@ -200,6 +197,8 @@ void stopandwait_client(char *host, long port, FILE *fp)
     fseek(fp, 0, SEEK_END);
     int filesize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
+
+        printf("\n In client program");
 
     // send filesize to server before sending the entire file content
     struct header hdr;
