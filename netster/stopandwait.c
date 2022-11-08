@@ -95,6 +95,8 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     struct senderPacket recvd_packet;
     struct NackPacket nack;
     long prev = 0;
+    char *filedata = (char *)malloc(sizeof(char) * bufferSize);
+
 
     for (;;)
     {
@@ -108,7 +110,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
         long data_length = recvd_packet.data_length;
-        char *filedata = recvd_packet.payLoad;
+        filedata =&recvd_packet.payLoad;
 
         printf("sequence noo: %ld\n",seq);
         printf("size:%ld\n",data_length);
