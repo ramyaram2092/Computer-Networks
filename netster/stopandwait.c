@@ -38,7 +38,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         printf("UDP: Problem creating socket \n");
         exit(0);
     }
-    printf("\n In server program");
+    printf("In server program\n");
     struct sockaddr_in server, client;
     memset(&server, 0, sizeof(server));
     memset(&client, 0, sizeof(client));
@@ -103,6 +103,8 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // clear buffers
         memset(&recvd_packet, 0, sizeof(recvd_packet));
         memset(&nack, 0, sizeof(nack));
+        bzero(filedata, bufferSize);
+        printf("coming here \n ");
 
 
         // recieve data from client
