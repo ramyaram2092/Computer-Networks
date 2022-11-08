@@ -13,7 +13,7 @@
 struct senderPacket
 {
     long seq;
-    long data_length;
+    int data_length;
     char payLoad[bufferSize];
 };
 
@@ -116,14 +116,13 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
         // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
-        long data_length = recvd_packet.data_length;
-
+        int data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
 
         // printf("sequence noo: %ld\n", seq);
         // printf("size:%ld\n", data_length);
         // printf("Payload:%s\n", recvd_packet.payLoad);
-
+        printf("Recived payload sixe: %d", sizeof(filedata));
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
         {
