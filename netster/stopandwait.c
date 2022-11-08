@@ -128,7 +128,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
         {
             printf("UDP hereeee : Error occured while receiving the message \n ");
-
+            exit(1);
             // ask the sender to send the message again
             int dataSent = 0;
             while (dataSent <= 0)
