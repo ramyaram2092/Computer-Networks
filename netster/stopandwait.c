@@ -248,8 +248,9 @@ void stopandwait_client(char *host, long port, FILE *fp)
         // set the packet contents
 
         packet.data_length = ret;
-        packet.payLoad = &filedata;
+        packet.payLoad = filedata;
         packet.seq = seq;
+        printf("Sending data : %s",packet.payLoad);
 
         // send the chunk of data read from the file to server
         for (;;)
