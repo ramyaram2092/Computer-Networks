@@ -114,7 +114,9 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         long data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
 
-
+        printf("sequence noo: %ld\n",seq);
+        printf("size:%ld\n",data_length);
+        printf("Payload:%s\n",filedata);
 
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
@@ -220,10 +222,10 @@ void stopandwait_client(char *host, long port, FILE *fp)
     int flag = sendto(clientSocket, (void *)(&hdr), sizeof(hdr), 0, (const struct sockaddr *)&server, serverSize);
     if (flag < 0)
     {
-        printf("UDP:Unable to send message to the server\n ");
+        printf("UDP:Unable to send file size to the server\n ");
         return;
     }
-    // printf("Sent file length: %ld \n", hdr.data_length);
+    printf("Sent file length: %ld \n", hdr.data_length);
 
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
