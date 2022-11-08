@@ -85,10 +85,10 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
     if (flag < 0)
     {
-        printf("UDP: hereeee Error occured while receiving the message \n ");
+        printf("UDP:  Error occured while receiving the message \n ");
         return;
     }
-    printf("Recieved file length: %ld", hdr.data_length);
+    printf("Recieved file length: %ld \n ", hdr.data_length);
     printf("Before Segmentation fault\n");
 
     // receive data
@@ -97,7 +97,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     struct NackPacket nack;
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
     long prev = 0;
-            printf("After Segmentation fault\n");
+    printf("After Segmentation fault\n");
 
     for (;;)
     {
@@ -121,7 +121,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
         {
-            printf("UDP: Error occured while receiving the message \n ");
+            printf("UDP hereeee : Error occured while receiving the message \n ");
 
             // ask the sender to send the message again
             int dataSent = 0;
