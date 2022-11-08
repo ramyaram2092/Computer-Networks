@@ -106,6 +106,11 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         bzero(filedata, bufferSize);
         printf("coming here \n ");
 
+         // if the entire file is recieved
+        if (count == hdr.data_length)
+        {
+            break;
+        }
 
         // recieve data from client
         int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
@@ -118,6 +123,9 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         printf("sequence noo: %ld\n",seq);
         printf("size:%ld\n",data_length);
         printf("Payload:%s\n",recvd_packet.payLoad);
+
+
+       
 
         // if the payload is corrupted or recieve wasnt successfull
         if (recivedbytes < 0 || sizeof(filedata) != data_length)
@@ -154,11 +162,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             }
         }
 
-        // if the entire file is recieved
-        if (count == hdr.data_length)
-        {
-            break;
-        }
+        
         prev = seq;
     }
 
