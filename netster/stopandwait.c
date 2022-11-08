@@ -14,7 +14,7 @@ struct senderPacket
 {
     long seq;
     long data_length;
-    char *payLoad;
+    char payLoad[bufferSize];
 };
 
 // recieved packet acknowledgement
@@ -110,7 +110,8 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
         long data_length = recvd_packet.data_length;
-        filedata =&recvd_packet.payLoad;
+
+        filedata =recvd_packet.payLoad;
 
         printf("sequence noo: %ld\n",seq);
         printf("size:%ld\n",data_length);
@@ -250,7 +251,12 @@ void stopandwait_client(char *host, long port, FILE *fp)
         // set the packet contents
 
         packet.data_length = ret;
-        packet.payLoad = filedata;
+
+        int k=0;
+        while(k<ret)
+        {
+            packet.payLoad[k]=filedata[k];
+        }
         packet.seq = seq;
         printf("Sending data : %s",packet.payLoad);
 
