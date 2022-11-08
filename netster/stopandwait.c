@@ -38,7 +38,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         printf("UDP: Problem creating socket \n");
         exit(0);
     }
-
+    printf("\n In server program");
     struct sockaddr_in server, client;
     memset(&server, 0, sizeof(server));
     memset(&client, 0, sizeof(client));
@@ -165,6 +165,9 @@ void stopandwait_client(char *host, long port, FILE *fp)
     socklen_t serverSize = sizeof(server);
     memset(&server, 0, sizeof(server));
 
+    printf("\n In client program");
+
+
     // resolve address
 
     struct addrinfo hints;
@@ -208,7 +211,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         printf("UDP:Unable to send message to the server\n ");
         return;
     }
-        printf("Sent  file length: %ld", hdr.data_length);
+    printf("Sent file length: %ld", hdr.data_length);
 
 
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
