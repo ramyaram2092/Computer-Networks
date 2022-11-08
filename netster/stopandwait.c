@@ -107,7 +107,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         printf("Data recieved so far :%ld  \n ", count);
 
         // if the entire file is recieved
-        if (count >= hdr.data_length)
+        if (count == hdr.data_length)
         {
             printf("Recieved all the data needed to be recieved\n");
             break;
@@ -159,7 +159,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
 
             fwrite(filedata, sizeof(char), data_length, fp);
             fflush(fp);
-            count += recivedbytes;
+            count += data_length;
             int dataSent = 0;
             while (dataSent <= 0)
             {
