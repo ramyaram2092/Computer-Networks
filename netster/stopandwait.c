@@ -258,6 +258,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         while(k<ret)
         {
             packet.payLoad[k]=filedata[k];
+            k++;
         }
         packet.seq = seq;
         printf("Sending data : %s",packet.payLoad);
