@@ -294,7 +294,6 @@ void stopandwait_client(char *host, long port, FILE *fp)
                 }
 
                 printf("Sent %d data \n ",ret);
-                int j = 0;
                 int recivedbytes = 0;
 
                 printf("Waiting for acknowledgement from reciever\n");
