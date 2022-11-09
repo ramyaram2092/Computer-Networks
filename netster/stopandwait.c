@@ -248,7 +248,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
 
     struct timeval read_timeout;
-    read_timeout.tv_sec = 5;
+    read_timeout.tv_sec = 20;
     read_timeout.tv_usec = 0;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
     printf("ENTERING THE INFINITE LOOP \n");
