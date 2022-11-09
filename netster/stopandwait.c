@@ -248,7 +248,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
 
     struct timeval read_timeout;
-    read_timeout.tv_sec = 20;
+    read_timeout.tv_sec = 30;
     read_timeout.tv_usec = 0;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
     printf("ENTERING THE INFINITE LOOP \n");
@@ -297,7 +297,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
                 int recivedbytes = 0;
 
                 printf("Waiting for acknowledgement from reciever\n");
-                recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_DONTWAIT, (struct sockaddr *)&server, &serverSize);
+                recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
 
                 if (recivedbytes < 0 || r_ack.ack != seq)
                 {
