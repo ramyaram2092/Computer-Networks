@@ -37,7 +37,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (serverSocket < 0)
     {
-        printf("UDP: Problem creating socket \n");
+        perror("UDP: Problem creating socket \n");
         exit(0);
     }
     printf("In server program\n");
@@ -76,7 +76,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     // bind socket with server
     if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
     {
-        printf("UDP : Error in Socket binding \n ");
+        perror("UDP : Error in Socket binding \n ");
         exit(0);
     }
 
@@ -86,7 +86,8 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     long count = 0;
     struct senderPacket recvd_packet;
     struct NackPacket nack;
-    // receive file size
+
+    // receive  the file size first
 
     for (;;)
     {
@@ -103,25 +104,24 @@ void stopandwait_server(char *iface, long port, FILE *fp)
     int dataSent = 0;
     while (dataSent <= 0)
     {
-        printf("Sending acknowledgment  \n");
+        // printf("Sending acknowledgment  \n");
         nack.ack = hdr.seq;
         dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
     }
     printf(" Length of the file to be recieved: %ld \n ", hdr.data_length);
 
-    // receive data
+    // receive  the actual data
 
     long prev = 0;
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
-    printf("ENTERING THE INFINITE LOOP:\n");
     for (;;)
     {
         // clear buffers
         memset(&recvd_packet, 0, sizeof(recvd_packet));
         memset(&nack, 0, sizeof(nack));
         bzero(filedata, bufferSize);
-        printf("Data recieved so far :%ld  \n ", count);
+        // printf("Data recieved so far :%ld  \n ", count);
 
         // if the entire file is recieved
         if (count == hdr.data_length)
@@ -136,23 +136,17 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         int data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
 
-        int payloadSize=recivedbytes- 2*(sizeof(long));
-        printf("Recived payload size: %d\n", payloadSize);
-        printf("Expected payload size: %d\n", data_length);
+        int payloadSize = recivedbytes - 2 * (sizeof(long));
+        // printf("Recived payload size: %d\n", payloadSize);
+        // printf("Expected payload size: %d\n", data_length);
 
-        // if the payload is corrupted or recieve wasnt successfull
-        if (recivedbytes < 0)
+        // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
+        if (recivedbytes < 0 || payloadSize < data_length)
         {
-            printf("UDP : Error occured while receiving the message \n ");
-            exit(1);
-        }
-        else if (payloadSize < data_length)
-        {
-            // ask the sender to send the message again
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                printf("Asking the client to resend the data \n");
+                // printf("Asking the client to resend the data \n");
                 nack.ack = -1;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
@@ -161,7 +155,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // check if the seq number is same as the last recieved packet
         else if (seq != 0 && seq == prev)
         {
-            printf("Skipping the data as it is redundant \n");
+            // printf("Skipping the data as it is redundant \n");
 
             continue;
         }
@@ -245,7 +239,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
     // send filesize to server before sending the entire file content
-    
+
     struct header hdr;
     hdr.data_length = filesize;
     int count = 0; // chunks of data sent
@@ -256,12 +250,12 @@ void stopandwait_client(char *host, long port, FILE *fp)
         int flag = sendto(clientSocket, (void *)(&hdr), sizeof(hdr), 0, (const struct sockaddr *)&server, serverSize);
         if (flag < 0)
         {
-            printf("UDP:Unable to send file size to the server\n ");
-            return;
+            perror("UDP:Unable to send file size to the server\n ");
+            exit(0);
         }
-        printf("File size sent : %ld \n", hdr.data_length);
+        // printf("File size sent : %ld \n", hdr.data_length);
         int recivedbytes = 0;
-        printf("Waiting for acknowledgement from reciever \n");
+        // printf("Waiting for acknowledgement from reciever \n");
         recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
 
         if (recivedbytes < 0 || r_ack.ack != seq)
@@ -271,7 +265,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         }
         else if (r_ack.ack == seq)
         {
-            printf("Recieved acknowledgment now preoceeding to send the entire file \n");
+            // printf("Recieved acknowledgment now preoceeding to send the entire file \n");
             break;
         }
     }
@@ -281,8 +275,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
     count = 0, seq = 0;
     struct senderPacket packet;
 
-
-    printf("ENTERING THE INFINITE LOOP \n");
+    // printf("ENTERING THE INFINITE LOOP \n");
 
     while (!feof(fp))
     {
@@ -320,14 +313,14 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
             if (dataSent < 0)
             {
-                printf("UDP: Unable to send message to the server\n ");
+                perror("UDP: Unable to send message to the server\n ");
                 exit(1);
             }
 
-            printf("Sent %d data \n ", ret);
+            // printf("Sent %d data \n ", ret);
             int recivedbytes = 0;
 
-            printf("Waiting for acknowledgement from reciever\n");
+            // printf("Waiting for acknowledgement from reciever\n");
             recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
 
             if (recivedbytes < 0 || r_ack.ack != seq)
@@ -337,7 +330,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
             }
             else if (r_ack.ack == seq)
             {
-                printf("Recieved acknowledgment\n");
+                // printf("Recieved acknowledgment\n");
                 break;
             }
         }
