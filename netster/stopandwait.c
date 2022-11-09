@@ -40,7 +40,6 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         perror("UDP: Problem creating socket \n");
         exit(0);
     }
-    printf("In server program\n");
     struct sockaddr_in server, client;
     memset(&server, 0, sizeof(server));
     memset(&client, 0, sizeof(client));
@@ -108,7 +107,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         nack.ack = hdr.seq;
         dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
     }
-    printf(" Length of the file to be recieved: %ld \n ", hdr.data_length);
+    // printf(" Length of the file to be recieved: %ld \n ", hdr.data_length);
 
     // receive  the actual data
 
@@ -163,7 +162,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // write the data to file
         else
         {
-            printf("Writing the data to the file  \n");
+            // printf("Writing the data to the file  \n");
 
             fwrite(filedata, sizeof(char), data_length, fp);
             fflush(fp);
@@ -171,7 +170,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                printf("Sending acknowledgment  \n");
+                // printf("Sending acknowledgment  \n");
 
                 nack.ack = seq;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
@@ -192,7 +191,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
     int clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (clientSocket < 0)
     {
-        printf("UDP: Error in socket creation at client\n");
+        perror("UDP: Error in socket creation at client\n");
         return;
     }
     struct sockaddr_in server;
