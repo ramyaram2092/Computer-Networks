@@ -137,7 +137,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         filedata = recvd_packet.payLoad;
 
         int payloadSize=recivedbytes- 2*(sizeof(long));
-        printf("Recived payload size: %ld\n", payloadSize);
+        printf("Recived payload size: %d\n", payloadSize);
         printf("Expected payload size: %d\n", data_length);
 
         // if the payload is corrupted or recieve wasnt successfull
@@ -315,7 +315,6 @@ void stopandwait_client(char *host, long port, FILE *fp)
         // send the chunk of data read from the file to server
         for (;;)
         {
-            printf("");
 
             int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
 
