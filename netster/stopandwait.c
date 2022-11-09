@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
+#include <sys/time.h>
 #define bufferSize 256
 
 // packet to send
@@ -244,6 +245,12 @@ void stopandwait_client(char *host, long port, FILE *fp)
     int seq = 0;   // sequence number
     struct senderPacket packet;
     struct NackPacket r_ack;
+
+
+    struct timeval read_timeout;
+    read_timeout.tv_sec = 5;
+    read_timeout.tv_usec = 0;
+    setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
     printf("ENTERING THE INFINITE LOOP \n");
 
     while (!feof(fp))
@@ -291,12 +298,8 @@ void stopandwait_client(char *host, long port, FILE *fp)
                 int recivedbytes = 0;
 
                 printf("Waiting for acknowledgement from reciever\n");
-                recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
+                recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_DONTWAIT, (struct sockaddr *)&server, &serverSize);
 
-                while (j <= 100)
-                {
-                    j++;
-                }
                 if (recivedbytes < 0 || r_ack.ack != seq)
                 {
                     printf("Waiting time exceeded. Resending the data\n ");
