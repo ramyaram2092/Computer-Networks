@@ -132,15 +132,12 @@ void stopandwait_server(char *iface, long port, FILE *fp)
 
         // recieve data from client
         int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
-        // printf("\n Recieved %d bytes", recivedbytes);
         long seq = recvd_packet.seq;
         int data_length = recvd_packet.data_length;
         filedata = recvd_packet.payLoad;
 
-        // printf("sequence noo: %ld\n", seq);
-        // printf("size:%ld\n", data_length);
-        // printf("Payload:%s\n", recvd_packet.payLoad);
-        printf("Recived payload size: %ld\n", strlen(filedata));
+        int payloadSize=recivedbytes- 2*(sizeof(long));
+        printf("Recived payload size: %ld\n", payloadSize);
         printf("Expected payload size: %d\n", data_length);
 
         // if the payload is corrupted or recieve wasnt successfull
@@ -149,7 +146,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
             printf("UDP : Error occured while receiving the message \n ");
             exit(1);
         }
-        else if (strlen(filedata) < data_length)
+        else if (payloadSize < data_length)
         {
             // ask the sender to send the message again
             int dataSent = 0;
@@ -318,6 +315,7 @@ void stopandwait_client(char *host, long port, FILE *fp)
         // send the chunk of data read from the file to server
         for (;;)
         {
+            printf("");
 
             int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
 
