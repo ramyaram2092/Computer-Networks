@@ -125,7 +125,7 @@ void stopandwait_server(char *iface, long port, FILE *fp)
         // if the entire file is recieved
         if (count == hdr.data_length)
         {
-            printf("Recieved all the data needed to be recieved\n");
+            // printf("Recieved all the data needed to be recieved\n");
             break;
         }
 
@@ -233,8 +233,8 @@ void stopandwait_client(char *host, long port, FILE *fp)
 
     // set the timepout for socket
     struct timeval read_timeout;
-    read_timeout.tv_sec = 3;
-    read_timeout.tv_usec = 0;
+    read_timeout.tv_sec = 0;
+    read_timeout.tv_usec = 70000;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
     // send filesize to server before sending the entire file content
