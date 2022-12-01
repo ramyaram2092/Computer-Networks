@@ -336,7 +336,7 @@ void gbn_client(char *host, long port, FILE *fp)
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
         j = 1;
-        while (j <= windowsize)
+        while (j <= windowsize  && (i + j) <= totalpackets)
         {
             memset(&r_ack, 0, sizeof(r_ack));
             memset(&packet, 0, sizeof(packet));
