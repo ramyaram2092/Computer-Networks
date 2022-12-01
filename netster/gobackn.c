@@ -303,10 +303,10 @@ void gbn_client(char *host, long port, FILE *fp)
     while (i <= totalpackets)
     {
         struct node *current = head;
-        int j = 0;
+        int j = 1;
         // send 5 packets
         DEBUGMSG("SENDING 5 PACKETS \n");
-        while (j < windowsize)
+        while (j <= windowsize && i+j<=totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
             packet = current->pk;
@@ -410,7 +410,7 @@ struct node *constructLinkedList(FILE *fp, int *totalpackets)
         DEBUGMSG("Packed %d bytes of data \n", ret);
     }
     *totalpackets = seq - 1;
-    DEBUGMSG("THE NUMBER OF PACKETS CONSTRUCTED FOR THIS FILE IS %d", seq - 1);
+    DEBUGMSG("THE NUMBER OF PACKETS CONSTRUCTED FOR THIS FILE IS %d\n", seq - 1);
     free(filedata);
 
     return head;
