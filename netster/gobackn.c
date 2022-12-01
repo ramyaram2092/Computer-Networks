@@ -329,7 +329,7 @@ void gbn_client(char *host, long port, FILE *fp)
         // check if acknowledgment has been recieved for all the files
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
-        while (current != NULL)
+        while (current->next != NULL)
         {
             memset(&r_ack, 0, sizeof(r_ack));
             memset(&packet, 0, sizeof(packet));
