@@ -348,6 +348,9 @@ void gbn_client(char *host, long port, FILE *fp)
             else if (r_ack.ack == packet.seq)
             {
                 head = current;
+                            {
+                DEBUGMSG("RECIVED acknowledgment for the packet with  seq number %ld\n", packet.seq);
+
                 i++;
             }
             current = current->next;
