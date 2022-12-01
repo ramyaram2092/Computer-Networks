@@ -9,7 +9,13 @@
 #include <netdb.h>
 #include <sys/time.h>
 #define bufferSize 256
+#define DEBUGLOGS 
 
+#ifdef DEBUGLOGS
+#define DEBUGMSG(...) printf(__VA_ARGS__)
+#else
+#define DEBUGMSG(...)
+#endif
 // packet to send
 struct senderPacket
 {
@@ -37,6 +43,10 @@ struct node
     struct senderPacket pk;
     struct node *next;
 };
+
+// Function declarations
+struct node *constructLinkedList(FILE *fp, int *totalpackets);
+
 
 /* Add function definitions */
 void gbn_server(char *iface, long port, FILE *fp)
@@ -96,7 +106,7 @@ void gbn_server(char *iface, long port, FILE *fp)
     struct NackPacket nack;
 
     // receive  the file size first
-
+    DEBUGMSG("WAITING FOR FILE SIZE \n");
     for (;;)
     {
         int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
@@ -110,31 +120,34 @@ void gbn_server(char *iface, long port, FILE *fp)
         }
     }
     int dataSent = 0;
+
+    DEBUGMSG("SENDING ACKNOWLEDGEMENT \n");
+
     while (dataSent <= 0)
     {
-        // printf("Sending acknowledgment  \n");
         nack.ack = hdr.seq;
         dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
     }
-    // printf(" Length of the file to be recieved: %ld \n ", hdr.data_length);
+    DEBUGMSG("Length of the file to be recieved: %ld \n ", hdr.data_length);
 
     // receive  the actual data
 
     long prev = 0;
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
 
+    DEBUGMSG(" RECIEVING ACTUAL FILE DATA \n");
     for (;;)
     {
         // clear buffers
         memset(&recvd_packet, 0, sizeof(recvd_packet));
         memset(&nack, 0, sizeof(nack));
         bzero(filedata, bufferSize);
-        // printf("Data recieved so far :%ld  \n ", count);
+        DEBUGMSG("Data recieved so far :%ld  \n ", count);
 
         // if the entire file is recieved
         if (count == hdr.data_length)
         {
-            // printf("Recieved all the data needed to be recieved\n");
+            DEBUGMSG("RECEIVED ALL DATA NEEDED TO BE RECIEVED\n");
             break;
         }
 
@@ -145,8 +158,8 @@ void gbn_server(char *iface, long port, FILE *fp)
         filedata = recvd_packet.payLoad;
 
         int payloadSize = recivedbytes - 2 * (sizeof(long));
-        // printf("Recived payload size: %d\n", payloadSize);
-        // printf("Expected payload size: %d\n", data_length);
+        DEBUGMSG("Recived payload size: %d\n", payloadSize);
+        DEBUGMSG("Expected payload size: %d\n", data_length);
 
         // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
         if (recivedbytes < 0 || payloadSize < data_length)
@@ -154,7 +167,7 @@ void gbn_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                // printf("Asking the client to resend the data \n");
+                DEBUGMSG("Asking the client to resend the data \n");
                 nack.ack = -1;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
@@ -163,7 +176,7 @@ void gbn_server(char *iface, long port, FILE *fp)
         // check if the seq number is same as the last recieved packet
         else if (seq != 0 && seq == prev)
         {
-            // printf("Skipping the data as it is redundant \n");
+            DEBUGMSG("Skipping the data as it is redundant \n");
 
             continue;
         }
@@ -171,7 +184,8 @@ void gbn_server(char *iface, long port, FILE *fp)
         // write the data to file
         else
         {
-            // printf("Writing the data to the file  \n");
+            DEBUGMSG("WRITING DATA TO THE FILE\n");
+            // DEBUGMSG("Writing the data to the file  \n");
 
             fwrite(filedata, sizeof(char), data_length, fp);
             fflush(fp);
@@ -179,8 +193,7 @@ void gbn_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                // printf("Sending acknowledgment  \n");
-
+                DEBUGMSG("SENDING ACKNOWLEDGEMENT \n");
                 nack.ack = seq;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
@@ -189,7 +202,7 @@ void gbn_server(char *iface, long port, FILE *fp)
         prev = seq;
     }
 
-    // printf("\n Total recieved:%d", count);
+    DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
     free(response);
 
     close(serverSocket);
@@ -252,8 +265,10 @@ void gbn_client(char *host, long port, FILE *fp)
     struct header hdr;
     hdr.data_length = filesize;
     // int count = 0; // chunks of data sent
-    int seq = 0;   // sequence number
+    int seq = 0; // sequence number
     struct NackPacket r_ack;
+
+    DEBUGMSG("SENDING FILE SIZE TO RECIEVER \n");
     for (;;)
     {
         int flag = sendto(clientSocket, (void *)(&hdr), sizeof(hdr), 0, (const struct sockaddr *)&server, serverSize);
@@ -268,7 +283,7 @@ void gbn_client(char *host, long port, FILE *fp)
         // ack not recieved or timeout
         if (recivedbytes < 0 || r_ack.ack != seq)
         {
-            printf("Waiting time exceeded / Incorrect ack . Resending the data\n ");
+            DEBUGMSG("Waiting time exceeded/Incorrect Ack . Resending the data\n");
             continue;
         }
         // ack recieved
@@ -279,67 +294,25 @@ void gbn_client(char *host, long port, FILE *fp)
     }
 
     // Logic to send the file
-    char *filedata = (char *)malloc(sizeof(char) * bufferSize);
-     seq = 0;
     struct senderPacket packet;
 
-    printf("ENTERING THE INFINITE LOOP \n");
+    DEBUGMSG("FILE TRANSFER BEGINS \n");
     int windowsize = 5;
-
-    struct node *head = (struct node *)malloc(sizeof(struct node));
-    struct node *current = head;
-
-    while (!feof(fp))
+    int totalpackets = 0;
+    struct node *head = constructLinkedList(fp, &totalpackets);
+    int i = 1;
+    while (i <= totalpackets)
     {
-
-        int i = 0;
-
-        // prepare  5 packets
-        while (i < windowsize )
-        {
-            // clear buffers
-            memset(&packet, 0, sizeof(packet));
-            bzero(filedata, bufferSize);
-            r_ack.ack = -1;
-
-            // read data from file and store it in filedata
-            int ret = fread(filedata, sizeof(char), bufferSize, fp);
-            if (ret == 0)
-            {
-                fprintf(stderr, "fread() failed: %d\n", ret);
-                exit(1);
-            }
-
-            // set the packet contents
-
-            packet.data_length = ret;
-
-            int k = 0;
-            while (k < ret)
-            {
-                packet.payLoad[k] = filedata[k];
-                k++;
-            }
-            packet.seq = seq;
-
-            // put the packet in linked list
-            current->pk = packet;
-            current->next = (struct node *)malloc(sizeof(struct node));
-            current = current->next;
-            i++;
-            printf("Packed %d bytes of data \n",ret);
-        }
-
-        current=head;
-
-        // send those 5 packets
-        while (current->next != NULL)
+        struct node *current = head;
+        int j = 0;
+        // send 5 packets
+        DEBUGMSG("SENDING 5 PACKETS \n");
+        while (j < windowsize)
         {
             memset(&packet, 0, sizeof(packet));
-            packet=current->pk;
+            packet = current->pk;
 
-            // sending the chunk of data read from the file to 
-            
+            // sending the chunk of data read from the file to
 
             int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
 
@@ -348,21 +321,19 @@ void gbn_client(char *host, long port, FILE *fp)
                 perror("UDP: Unable to send message to the server\n");
                 exit(1);
             }
-            current=current->next;
-            seq++;
-            printf("Sent %d bytes of data \n",dataSent);
-
+            current = current->next;
+            j++;
+            DEBUGMSG("Sent %d bytes of data \n", dataSent);
         }
 
         // check if acknowledgment has been recieved for all the files
-        current= head;
-        int j=0;
-        printf(" Waiting for acknowledgement from reciever\n");
-        while(current->next!=NULL)
+        current = head;
+        DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
+        while (current != NULL)
         {
             memset(&r_ack, 0, sizeof(r_ack));
             memset(&packet, 0, sizeof(packet));
-            packet=current->pk;
+            packet = current->pk;
 
             int recivedbytes = 0;
 
@@ -370,26 +341,77 @@ void gbn_client(char *host, long port, FILE *fp)
 
             if (recivedbytes < 0 || r_ack.ack != packet.seq)
             {
-                printf(" OOPSSS didnt recieve acknowledgment for the packet  with seq number %d\n",packet.seq);
+                DEBUGMSG("OOPSSS didnt recieve acknowledgment for the packet with  seq number %ld\n", packet.seq);
 
-                i=j;
-                head=current;
                 break;
             }
-            else if (r_ack.ack ==  packet.seq)
+            else if (r_ack.ack == packet.seq)
             {
-                // printf("Recieved acknowledgment\n");
-                continue;
+                head = current;
+                i++;
             }
-            current=current->next;
-            j++;
-
+            current = current->next;
         }
-
-
     }
 
-    free(filedata);
     free(response);
     close(clientSocket);
+}
+
+/**
+ * @brief The following function constructs the packets and adds it to a linked list
+ *
+ * @param fp : file pointer
+ * @param totalpackets : a pointer variable which needs to be updated with total number of packets value
+ * @return struct node* : return the head pointer to the linked list
+ */
+struct node *constructLinkedList(FILE *fp, int *totalpackets)
+{
+    char *filedata = (char *)malloc(sizeof(char) * bufferSize);
+    struct senderPacket packet;
+    int seq = 1;
+    struct node *head = (struct node *)malloc(sizeof(struct node));
+    head->next = NULL;
+    struct node *current = head;
+    DEBUGMSG("CONSTRUCTING PACKETS AND ADDING THEM TO THE LIST\n");
+    while (!feof(fp))
+    {
+
+        // clear buffers
+        memset(&packet, 0, sizeof(packet));
+        bzero(filedata, bufferSize);
+
+        // read data from file and store it in filedata
+        int ret = fread(filedata, sizeof(char), bufferSize, fp);
+        if (ret == 0)
+        {
+            fprintf(stderr, "fread() failed: %d\n", ret);
+            exit(1);
+        }
+
+        // set the packet contents
+
+        packet.data_length = ret;
+
+        int k = 0;
+        while (k < ret)
+        {
+            packet.payLoad[k] = filedata[k];
+            k++;
+        }
+        packet.seq = seq;
+
+        // put the packet in linked list
+        current->pk = packet;
+        current->next = (struct node *)malloc(sizeof(struct node));
+        current = current->next;
+        current->next = NULL;
+        seq++;
+        DEBUGMSG("Packed %d bytes of data \n", ret);
+    }
+    *totalpackets = seq - 1;
+    DEBUGMSG("THE NUMBER OF PACKETS CONSTRUCTED FOR THIS FILE IS %d", seq - 1);
+    free(filedata);
+
+    return head;
 }
