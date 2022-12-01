@@ -305,8 +305,8 @@ void gbn_client(char *host, long port, FILE *fp)
     int windowsize = 5;
     int totalpackets = 0;
     struct node *head = constructLinkedList(fp, &totalpackets);
-    int i = 1;
-    while (i <= totalpackets)
+    int i = 0;
+    while (i < totalpackets)
     {
         struct node *current = head;
         int j = 1;
