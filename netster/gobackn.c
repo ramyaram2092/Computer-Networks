@@ -179,7 +179,7 @@ void gbn_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", seq);
+                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", prev);
                 nack.ack = prev;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
