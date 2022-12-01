@@ -158,7 +158,7 @@ void gbn_server(char *iface, long port, FILE *fp)
 
         int payloadSize = recivedbytes - 2 * (sizeof(long));
         DEBUGMSG("Expected payload size: %d\n", data_length);
-        DEBUGMSG("Recived payload size: %d with seq number %d\n", payloadSize,seq);
+        DEBUGMSG("Recived payload size: %d with seq number %ld\n", payloadSize,seq);
 
         // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
         if (recivedbytes < 0 || payloadSize < data_length)
@@ -175,7 +175,7 @@ void gbn_server(char *iface, long port, FILE *fp)
         // check if the seq number is same as the last recieved packet
         else if (seq != 0 && seq == prev)
         {
-            DEBUGMSG("Skipping the  sequence no %d  as it is redundant \n", seq);
+            DEBUGMSG("Skipping the  sequence no %ld  as it is redundant \n", seq);
 
             continue;
         }
@@ -192,7 +192,7 @@ void gbn_server(char *iface, long port, FILE *fp)
             int dataSent = 0;
             while (dataSent <= 0)
             {
-                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %d\n", seq);
+                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", seq);
                 nack.ack = seq;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
@@ -323,7 +323,7 @@ void gbn_client(char *host, long port, FILE *fp)
             }
             current = current->next;
             j++;
-            DEBUGMSG("Sent %d bytes of data  with sequence number %d \n", dataSent, packet.seq);
+            DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
 
         // check if acknowledgment has been recieved for all the files
