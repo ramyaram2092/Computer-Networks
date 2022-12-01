@@ -204,6 +204,8 @@ void gbn_server(char *iface, long port, FILE *fp)
 
     DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
     free(response);
+    fflush(stdout);
+
 
     close(serverSocket);
 }
@@ -355,7 +357,9 @@ void gbn_client(char *host, long port, FILE *fp)
     }
 
     free(response);
+    fflush(stdout);
     close(clientSocket);
+
 }
 
 /**
