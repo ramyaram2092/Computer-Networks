@@ -99,7 +99,7 @@ void gbn_client(char *host, long port, FILE *fp)
 
     struct header hdr;
     hdr.data_length = filesize;
-    int count = 0; // chunks of data sent
+    // int count = 0; // chunks of data sent
     int seq = 0;   // sequence number
     struct NackPacket r_ack;
     for (;;)
@@ -128,7 +128,7 @@ void gbn_client(char *host, long port, FILE *fp)
 
     // Logic to send the file
     char *filedata = (char *)malloc(sizeof(char) * bufferSize);
-    count = 0, seq = 0;
+     seq = 0;
     struct senderPacket packet;
 
     // printf("ENTERING THE INFINITE LOOP \n");
@@ -216,6 +216,7 @@ void gbn_client(char *host, long port, FILE *fp)
                 continue;
             }
         }
+
 
     }
 
