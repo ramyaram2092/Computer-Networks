@@ -202,9 +202,10 @@ void gbn_server(char *iface, long port, FILE *fp)
                 nack.ack = seq;
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
+            prev = seq;
+
         }
 
-        prev = seq;
     }
 
     DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
