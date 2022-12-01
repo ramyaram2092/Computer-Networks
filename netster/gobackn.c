@@ -261,8 +261,8 @@ void gbn_client(char *host, long port, FILE *fp)
 
     // set the timeout for socket
     struct timeval read_timeout;
-    read_timeout.tv_sec = 0;
-    read_timeout.tv_usec = 70000;
+    read_timeout.tv_sec = 1;
+    read_timeout.tv_usec = 0;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
     // send filesize to server before sending the entire file content
