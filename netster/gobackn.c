@@ -203,9 +203,7 @@ void gbn_server(char *iface, long port, FILE *fp)
                 dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
             }
             prev = seq;
-
         }
-
     }
 
     DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
@@ -314,6 +312,7 @@ void gbn_client(char *host, long port, FILE *fp)
         int j = 1;
         // send 5 packets
         DEBUGMSG("SENDING 5 PACKETS \n");
+        DEBUGMSG("starting to send from packet %d \n",i+j);
         while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
