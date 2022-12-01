@@ -41,6 +41,157 @@ struct node
 /* Add function definitions */
 void gbn_server(char *iface, long port, FILE *fp)
 {
+    // Create a socket
+    int serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (serverSocket < 0)
+    {
+        perror("UDP: Problem creating socket \n");
+        exit(0);
+    }
+    struct sockaddr_in server, client;
+    memset(&server, 0, sizeof(server));
+    memset(&client, 0, sizeof(client));
+
+    // resolve host name into ip  address
+
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+
+    hints.ai_flags = AI_PASSIVE;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = 0;
+    hints.ai_protocol = 0;
+
+    struct addrinfo *response;
+    response = (struct addrinfo *)malloc(sizeof(struct addrinfo));
+    char str[256];
+    sprintf(str, "%ld", port);
+    getaddrinfo(iface, str, &hints, &response);
+    struct addrinfo *iterator = response;
+    char buffer[4096];
+    void *raw_addr;
+
+    struct sockaddr_in *tmp = (struct sockaddr_in *)iterator->ai_addr;
+    raw_addr = &(tmp->sin_addr);
+    inet_ntop(AF_INET, raw_addr, buffer, 4096);
+
+    // assign ip and port
+    server.sin_family = AF_INET;
+    server.sin_port = htons(port);
+    server.sin_addr.s_addr = inet_addr(buffer);
+
+    // bind socket with server
+    if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
+    {
+        perror("UDP : Error in Socket binding \n ");
+        exit(0);
+    }
+
+    socklen_t clientSize = sizeof(client);
+
+    struct header hdr;
+    long count = 0;
+    struct senderPacket recvd_packet;
+    struct NackPacket nack;
+
+    // receive  the file size first
+
+    for (;;)
+    {
+        int flag = recvfrom(serverSocket, (void *)(&hdr), sizeof(hdr), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
+        if (flag < 0)
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
+    }
+    int dataSent = 0;
+    while (dataSent <= 0)
+    {
+        // printf("Sending acknowledgment  \n");
+        nack.ack = hdr.seq;
+        dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+    }
+    // printf(" Length of the file to be recieved: %ld \n ", hdr.data_length);
+
+    // receive  the actual data
+
+    long prev = 0;
+    char *filedata = (char *)malloc(sizeof(char) * bufferSize);
+
+    for (;;)
+    {
+        // clear buffers
+        memset(&recvd_packet, 0, sizeof(recvd_packet));
+        memset(&nack, 0, sizeof(nack));
+        bzero(filedata, bufferSize);
+        // printf("Data recieved so far :%ld  \n ", count);
+
+        // if the entire file is recieved
+        if (count == hdr.data_length)
+        {
+            // printf("Recieved all the data needed to be recieved\n");
+            break;
+        }
+
+        // recieve data from client
+        int recivedbytes = recvfrom(serverSocket, (void *)(&recvd_packet), sizeof(recvd_packet), MSG_WAITALL, (struct sockaddr *)&client, &clientSize);
+        long seq = recvd_packet.seq;
+        int data_length = recvd_packet.data_length;
+        filedata = recvd_packet.payLoad;
+
+        int payloadSize = recivedbytes - 2 * (sizeof(long));
+        // printf("Recived payload size: %d\n", payloadSize);
+        // printf("Expected payload size: %d\n", data_length);
+
+        // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
+        if (recivedbytes < 0 || payloadSize < data_length)
+        {
+            int dataSent = 0;
+            while (dataSent <= 0)
+            {
+                // printf("Asking the client to resend the data \n");
+                nack.ack = -1;
+                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+            }
+        }
+
+        // check if the seq number is same as the last recieved packet
+        else if (seq != 0 && seq == prev)
+        {
+            // printf("Skipping the data as it is redundant \n");
+
+            continue;
+        }
+
+        // write the data to file
+        else
+        {
+            // printf("Writing the data to the file  \n");
+
+            fwrite(filedata, sizeof(char), data_length, fp);
+            fflush(fp);
+            count += data_length;
+            int dataSent = 0;
+            while (dataSent <= 0)
+            {
+                // printf("Sending acknowledgment  \n");
+
+                nack.ack = seq;
+                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+            }
+        }
+
+        prev = seq;
+    }
+
+    // printf("\n Total recieved:%d", count);
+    free(response);
+
+    close(serverSocket);
 }
 
 void gbn_client(char *host, long port, FILE *fp)
@@ -143,7 +294,7 @@ void gbn_client(char *host, long port, FILE *fp)
         int i = 0;
 
         // prepare  5 packets
-        while (i < windowsize)
+        while (i < windowsize )
         {
             // clear buffers
             memset(&packet, 0, sizeof(packet));
@@ -197,6 +348,7 @@ void gbn_client(char *host, long port, FILE *fp)
         // check if acknowledgment has been recieved for all the files
         current= head;
 
+        int j=0;
         while(current->next!=NULL)
         {
 
@@ -207,6 +359,7 @@ void gbn_client(char *host, long port, FILE *fp)
 
             if (recivedbytes < 0 || r_ack.ack != seq)
             {
+                i=j;
                 head=current;
                 break;
             }
@@ -215,6 +368,9 @@ void gbn_client(char *host, long port, FILE *fp)
                 // printf("Recieved acknowledgment\n");
                 continue;
             }
+            current=current->next;
+            j++;
+
         }
 
 
