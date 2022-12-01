@@ -79,6 +79,7 @@ void gbn_server(char *iface, long port, FILE *fp)
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
     server.sin_addr.s_addr = inet_addr(buffer);
+    //
 
     // bind socket with server
     if ((bind(serverSocket, (struct sockaddr *)&server, sizeof(server))) != 0)
