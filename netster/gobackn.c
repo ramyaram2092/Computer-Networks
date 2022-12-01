@@ -158,7 +158,7 @@ void gbn_server(char *iface, long port, FILE *fp)
 
         int payloadSize = recivedbytes - 2 * (sizeof(long));
         DEBUGMSG("Expected payload size: %d\n", data_length);
-        DEBUGMSG("Recived payload size: %d with seq number %ld\n", payloadSize,seq);
+        DEBUGMSG("Recived payload size: %d with seq number %ld\n", payloadSize, seq);
 
         // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
         if (recivedbytes < 0 || payloadSize < data_length)
@@ -173,7 +173,7 @@ void gbn_server(char *iface, long port, FILE *fp)
         }
 
         // check if the seq number is same as the last recieved packet
-        else if (seq != 0 && seq != prev+1)
+        else if (seq != 0 && seq != prev + 1)
         {
             DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order \n", seq);
             continue;
@@ -306,7 +306,7 @@ void gbn_client(char *host, long port, FILE *fp)
         int j = 1;
         // send 5 packets
         DEBUGMSG("SENDING 5 PACKETS \n");
-        while (j <= windowsize && (i+j)<=totalpackets)
+        while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
             packet = current->pk;
@@ -328,8 +328,8 @@ void gbn_client(char *host, long port, FILE *fp)
         // check if acknowledgment has been recieved for all the files
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
-        j=1;
-        while (j <= windowsize )
+        j = 1;
+        while (j <= windowsize)
         {
             memset(&r_ack, 0, sizeof(r_ack));
             memset(&packet, 0, sizeof(packet));
@@ -348,9 +348,7 @@ void gbn_client(char *host, long port, FILE *fp)
             else if (r_ack.ack == packet.seq)
             {
                 head = current;
-                            {
-                DEBUGMSG("RECIVED acknowledgment for the packet with  seq number %ld\n", packet.seq);
-
+                DEBUGMSG("RECEIVED acknowledgment for the packet with  seq number %ld\n", packet.seq);
                 i++;
             }
             current = current->next;
