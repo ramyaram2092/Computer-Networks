@@ -261,7 +261,7 @@ void gbn_client(char *host, long port, FILE *fp)
 
     // set the timeout for socket
     struct timeval read_timeout;
-    read_timeout.tv_sec = 1;
+    read_timeout.tv_sec = 3;
     read_timeout.tv_usec = 0;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
@@ -349,6 +349,11 @@ void gbn_client(char *host, long port, FILE *fp)
             if (recivedbytes < 0 || r_ack.ack != packet.seq)
             {
                 DEBUGMSG("OOPSSS didnt recieve acknowledgment for the packet with  seq number %ld\n", packet.seq);
+                // if the seq number received is greater than the current pack seq number
+                while(current->pk.seq<=r_ack.ack)
+                {
+                    current=current->next;
+                }
                 head = current;
                 break;
             }
