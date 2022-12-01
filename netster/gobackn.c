@@ -283,7 +283,7 @@ void gbn_client(char *host, long port, FILE *fp)
      seq = 0;
     struct senderPacket packet;
 
-    // printf("ENTERING THE INFINITE LOOP \n");
+    printf("ENTERING THE INFINITE LOOP \n");
     int windowsize = 5;
 
     struct node *head = (struct node *)malloc(sizeof(struct node));
@@ -299,7 +299,6 @@ void gbn_client(char *host, long port, FILE *fp)
         {
             // clear buffers
             memset(&packet, 0, sizeof(packet));
-            memset(&r_ack, 0, sizeof(r_ack));
             bzero(filedata, bufferSize);
             r_ack.ack = -1;
 
@@ -328,43 +327,56 @@ void gbn_client(char *host, long port, FILE *fp)
             current->next = (struct node *)malloc(sizeof(struct node));
             current = current->next;
             i++;
+            printf("Packed %d bytes of data \n",ret);
         }
+
+        current=head;
 
         // send those 5 packets
         while (current->next != NULL)
         {
-            // sending the chunk of data read from the file to server
+            memset(&packet, 0, sizeof(packet));
+            packet=current->pk;
+
+            // sending the chunk of data read from the file to 
+            
 
             int dataSent = sendto(clientSocket, (void *)(&packet), sizeof(packet), 0, (const struct sockaddr *)&server, serverSize);
 
             if (dataSent < 0)
             {
-                perror("UDP: Unable to send message to the server\n ");
+                perror("UDP: Unable to send message to the server\n");
                 exit(1);
             }
             current=current->next;
             seq++;
+            printf("Sent %d bytes of data \n",dataSent);
+
         }
 
         // check if acknowledgment has been recieved for all the files
         current= head;
-
         int j=0;
+        printf(" Waiting for acknowledgement from reciever\n");
         while(current->next!=NULL)
         {
+            memset(&r_ack, 0, sizeof(r_ack));
+            memset(&packet, 0, sizeof(packet));
+            packet=current->pk;
 
             int recivedbytes = 0;
 
-            // printf("Waiting for acknowledgement from reciever\n");
             recivedbytes = recvfrom(clientSocket, (void *)(&r_ack), sizeof(r_ack), MSG_WAITALL, (struct sockaddr *)&server, &serverSize);
 
-            if (recivedbytes < 0 || r_ack.ack != seq)
+            if (recivedbytes < 0 || r_ack.ack != packet.seq)
             {
+                printf(" OOPSSS didnt recieve acknowledgment for the packet  with seq number %d\n",packet.seq);
+
                 i=j;
                 head=current;
                 break;
             }
-            else if (r_ack.ack == seq)
+            else if (r_ack.ack ==  packet.seq)
             {
                 // printf("Recieved acknowledgment\n");
                 continue;
