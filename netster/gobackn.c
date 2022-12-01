@@ -176,6 +176,13 @@ void gbn_server(char *iface, long port, FILE *fp)
         else if (seq != 0 && seq != prev + 1)
         {
             DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order \n", seq);
+            int dataSent = 0;
+            while (dataSent <= 0)
+            {
+                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", seq);
+                nack.ack = prev;
+                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+            }
             continue;
         }
 
