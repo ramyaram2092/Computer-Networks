@@ -173,10 +173,9 @@ void gbn_server(char *iface, long port, FILE *fp)
         }
 
         // check if the seq number is same as the last recieved packet
-        else if (seq != 0 && seq == prev)
+        else if (seq != 0 && seq != prev+1)
         {
-            DEBUGMSG("Skipping the  sequence no %ld  as it is redundant \n", seq);
-
+            DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order \n", seq);
             continue;
         }
 
