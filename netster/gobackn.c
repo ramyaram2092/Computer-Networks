@@ -342,7 +342,7 @@ void gbn_client(char *host, long port, FILE *fp)
             if (recivedbytes < 0 || r_ack.ack != packet.seq)
             {
                 DEBUGMSG("OOPSSS didnt recieve acknowledgment for the packet with  seq number %ld\n", packet.seq);
-
+                head = current;
                 break;
             }
             else if (r_ack.ack == packet.seq)
