@@ -306,7 +306,7 @@ void gbn_client(char *host, long port, FILE *fp)
         int j = 1;
         // send 5 packets
         DEBUGMSG("SENDING 5 PACKETS \n");
-        while (j <= windowsize && i+j<=totalpackets)
+        while (j <= windowsize && (i+(windowsize-j))<=totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
             packet = current->pk;
