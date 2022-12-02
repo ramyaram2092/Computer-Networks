@@ -302,7 +302,7 @@ void gbn_client(char *host, long port, FILE *fp)
     struct senderPacket packet;
 
     DEBUGMSG("FILE TRANSFER BEGINS \n");
-    int windowsize = 2;
+    int windowsize = 1;
     int totalpackets = 0;
     struct node *head = constructLinkedList(fp, &totalpackets);
     int i = 0;
@@ -311,7 +311,7 @@ void gbn_client(char *host, long port, FILE *fp)
         struct node *current = head;
         int j = 1;
         // send 5 packets
-        DEBUGMSG("SENDING 5 PACKETS \n");
+        DEBUGMSG("SENDING %d PACKETS \n",windowsize);
         DEBUGMSG("starting to send from packet %d \n",i+j);
         int sent=0;
         while (j <= windowsize && (i + j) <= totalpackets)
