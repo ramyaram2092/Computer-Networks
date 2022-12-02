@@ -313,7 +313,6 @@ void gbn_client(char *host, long port, FILE *fp)
         // send 5 packets
         DEBUGMSG("SENDING %d PACKETS \n",windowsize);
         DEBUGMSG("starting to send from packet %d \n",i+j);
-        int sent=0;
         while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
@@ -332,10 +331,9 @@ void gbn_client(char *host, long port, FILE *fp)
             j++;
             DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
-        sent=j-1;
+        int sent=j-1;
 
         // check if acknowledgment has been recieved for all the files
-        int ackrecvd=0;
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
         j = 1;
@@ -369,7 +367,7 @@ void gbn_client(char *host, long port, FILE *fp)
             current = current->next;
             j++;
         }
-        ackrecvd=j-1;
+        int ackrecvd=j-1;
         if(sent==ackrecvd)
         {
             windowsize+=1;
