@@ -355,7 +355,7 @@ void gbn_client(char *host, long port, FILE *fp)
         }
         else
         {
-            windowsize -= 1;
+            windowsize =windowsize==1?1:windowsize-1;
         }
     }
 
