@@ -331,7 +331,7 @@ void gbn_client(char *host, long port, FILE *fp)
             j++;
             DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
-
+        //
         // check if acknowledgment has been recieved for all the files
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
