@@ -9,7 +9,7 @@
 #include <netdb.h>
 #include <sys/time.h>
 #define bufferSize 256
-#define DEBUGLOGS
+// #define DEBUGLOGS
 
 #ifdef DEBUGLOGS
 #define DEBUGMSG(...) printf(__VA_ARGS__)
@@ -374,7 +374,7 @@ void gbn_client(char *host, long port, FILE *fp)
         }
         else
         {
-            windowsize=ackrecvd;
+            windowsize=ackrecvd==0?1:ackrecvd;
         }
     }
 
