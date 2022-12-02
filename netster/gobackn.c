@@ -332,7 +332,7 @@ void gbn_client(char *host, long port, FILE *fp)
             j++;
             DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
-        sent=j;
+        sent=j-1;
 
         // check if acknowledgment has been recieved for all the files
         int ackrecvd=0;
@@ -369,7 +369,7 @@ void gbn_client(char *host, long port, FILE *fp)
             current = current->next;
             j++;
         }
-        ackrecvd=j;
+        ackrecvd=j-1;
         if(sent==ackrecvd)
         {
             windowsize+=1;
