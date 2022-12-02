@@ -162,13 +162,11 @@ void gbn_server(char *iface, long port, FILE *fp)
         // int flag =-1;
 
         // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again  or if the seq number is same as the last recieved packet
-        if (recivedbytes < 0 || payloadSize < data_length || seq != prev + 1)
+        if (seq != prev + 1||recivedbytes < 0 || payloadSize < data_length)
         {
             DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order or data is corrupted \n", seq);
-            nack.ack = prev;
-             
+            nack.ack = prev;         
         }
-
         // write the data to file
         else
         {
@@ -243,7 +241,7 @@ void gbn_client(char *host, long port, FILE *fp)
     // set the timeout for socket
     struct timeval read_timeout;
     read_timeout.tv_sec = 0;
-    read_timeout.tv_usec = 1000;
+    read_timeout.tv_usec = 50000;
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
     // send filesize to server before sending the entire file content
@@ -335,6 +333,7 @@ void gbn_client(char *host, long port, FILE *fp)
                 while (current->pk.seq <= r_ack.ack)
                 {
                     current = current->next;
+                    i++;
                 }
                 head = current;
                 break;
