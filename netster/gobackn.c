@@ -159,6 +159,7 @@ void gbn_server(char *iface, long port, FILE *fp)
         int payloadSize = recivedbytes - 2 * (sizeof(long));
         DEBUGMSG("Expected payload size: %d\n", data_length);
         DEBUGMSG("Recived payload size: %d with seq number %ld\n", payloadSize, seq);
+        // int flag =-1;
 
         // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
         if (recivedbytes < 0 || payloadSize < data_length)
@@ -204,6 +205,7 @@ void gbn_server(char *iface, long port, FILE *fp)
             }
             prev = seq;
         }
+        
     }
 
     DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
@@ -370,11 +372,11 @@ void gbn_client(char *host, long port, FILE *fp)
         int ackrecvd=j-1;
         if(sent==ackrecvd)
         {
-            windowsize+=1;
+            windowsize*=2;
         }
         else
         {
-            windowsize=ackrecvd==0?1:ackrecvd;
+            windowsize-=1;
         }
     }
 
