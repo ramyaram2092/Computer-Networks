@@ -302,7 +302,7 @@ void gbn_client(char *host, long port, FILE *fp)
     struct senderPacket packet;
 
     DEBUGMSG("FILE TRANSFER BEGINS \n");
-    int windowsize = 5;
+    int windowsize = 2;
     int totalpackets = 0;
     struct node *head = constructLinkedList(fp, &totalpackets);
     int i = 0;
@@ -313,6 +313,7 @@ void gbn_client(char *host, long port, FILE *fp)
         // send 5 packets
         DEBUGMSG("SENDING 5 PACKETS \n");
         DEBUGMSG("starting to send from packet %d \n",i+j);
+        int sent=0;
         while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
@@ -331,8 +332,10 @@ void gbn_client(char *host, long port, FILE *fp)
             j++;
             DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
-        //
+        sent=j;
+
         // check if acknowledgment has been recieved for all the files
+        int ackrecvd=0;
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
         j = 1;
@@ -365,6 +368,15 @@ void gbn_client(char *host, long port, FILE *fp)
             }
             current = current->next;
             j++;
+        }
+        ackrecvd=j;
+        if(sent==ackrecvd)
+        {
+            windowsize+=1;
+        }
+        else
+        {
+            windowsize-=1;
         }
     }
 
