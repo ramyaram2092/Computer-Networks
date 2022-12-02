@@ -351,7 +351,7 @@ void gbn_client(char *host, long port, FILE *fp)
         int ackrecvd = j - 1;
         if (sent == ackrecvd)
         {
-            windowsize *= 2;
+            windowsize += 1;
         }
         else
         {
