@@ -161,51 +161,30 @@ void gbn_server(char *iface, long port, FILE *fp)
         DEBUGMSG("Recived payload size: %d with seq number %ld\n", payloadSize, seq);
         // int flag =-1;
 
-        // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again
-        if (recivedbytes < 0 || payloadSize < data_length)
+        // if the payload is corrupted or recieve wasnt successfull ask the sender to send the message again  or if the seq number is same as the last recieved packet
+        if (recivedbytes < 0 || payloadSize < data_length || seq != prev + 1)
         {
-            int dataSent = 0;
-            while (dataSent <= 0)
-            {
-                DEBUGMSG("Asking the client to resend the data \n");
-                nack.ack = -1;
-                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
-            }
-        }
-
-        // check if the seq number is same as the last recieved packet
-        else if (seq != 0 && seq != prev + 1)
-        {
-            DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order \n", seq);
-            int dataSent = 0;
-            while (dataSent <= 0)
-            {
-                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", prev);
-                nack.ack = prev;
-                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
-            }
-            continue;
+            DEBUGMSG("Skipping the  sequence no %ld  as it is redundant or not in order or data is corrupted \n", seq);
+            nack.ack = prev;
+             
         }
 
         // write the data to file
         else
         {
             DEBUGMSG("WRITING DATA TO THE FILE\n");
-            // DEBUGMSG("Writing the data to the file  \n");
-
             fwrite(filedata, sizeof(char), data_length, fp);
             fflush(fp);
             count += data_length;
-            int dataSent = 0;
-            while (dataSent <= 0)
-            {
-                DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", seq);
-                nack.ack = seq;
-                dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
-            }
+            nack.ack = seq;
             prev = seq;
         }
-        
+        int dataSent = 0;
+        while (dataSent <= 0)
+        {
+            DEBUGMSG("SENDING ACKNOWLEDGEMENT  for packet with sequence no %ld\n", seq);
+            dataSent = sendto(serverSocket, (void *)(&nack), sizeof(nack), 0, (const struct sockaddr *)&client, clientSize);
+        }
     }
 
     DEBUGMSG("\nTOTAL DATA RECIEVED :%ld", count);
@@ -268,7 +247,7 @@ void gbn_client(char *host, long port, FILE *fp)
     setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
     // send filesize to server before sending the entire file content
-//  
+    //
     struct header hdr;
     hdr.data_length = filesize;
     // int count = 0; // chunks of data sent
@@ -313,8 +292,8 @@ void gbn_client(char *host, long port, FILE *fp)
         struct node *current = head;
         int j = 1;
         // send 5 packets
-        DEBUGMSG("SENDING %d PACKETS \n",windowsize);
-        DEBUGMSG("starting to send from packet %d \n",i+j);
+        DEBUGMSG("SENDING %d PACKETS \n", windowsize);
+        DEBUGMSG("starting to send from packet %d \n", i + j);
         while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&packet, 0, sizeof(packet));
@@ -333,13 +312,13 @@ void gbn_client(char *host, long port, FILE *fp)
             j++;
             DEBUGMSG("Sent %d bytes of data  with sequence number %ld \n", dataSent, packet.seq);
         }
-        int sent=j-1;
+        int sent = j - 1;
 
         // check if acknowledgment has been recieved for all the files
         current = head;
         DEBUGMSG(" WAITING FOR ACKNOWLEDGEMENT FROM RECIEVER \n");
         j = 1;
-        while (j <= windowsize  && (i + j) <= totalpackets)
+        while (j <= windowsize && (i + j) <= totalpackets)
         {
             memset(&r_ack, 0, sizeof(r_ack));
             memset(&packet, 0, sizeof(packet));
@@ -353,9 +332,9 @@ void gbn_client(char *host, long port, FILE *fp)
             {
                 DEBUGMSG("OOPSSS didnt recieve acknowledgment for the packet with  seq number %ld\n", packet.seq);
                 // if the seq number received is greater than the current pack seq number
-                while(current->pk.seq<=r_ack.ack)
+                while (current->pk.seq <= r_ack.ack)
                 {
-                    current=current->next;
+                    current = current->next;
                 }
                 head = current;
                 break;
@@ -369,14 +348,14 @@ void gbn_client(char *host, long port, FILE *fp)
             current = current->next;
             j++;
         }
-        int ackrecvd=j-1;
-        if(sent==ackrecvd)
+        int ackrecvd = j - 1;
+        if (sent == ackrecvd)
         {
-            windowsize*=2;
+            windowsize *= 2;
         }
         else
         {
-            windowsize-=1;
+            windowsize -= 1;
         }
     }
 
