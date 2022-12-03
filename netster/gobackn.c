@@ -9,7 +9,7 @@
 #include <netdb.h>
 #include <sys/time.h>
 #define bufferSize 256
-// #define DEBUGLOGS
+#define DEBUGLOGS
 
 #ifdef DEBUGLOGS
 #define DEBUGMSG(...) printf(__VA_ARGS__)
@@ -354,7 +354,7 @@ void gbn_client(char *host, long port, FILE *fp)
         }
         else
         {
-            windowsize =windowsize==1?1:windowsize-1;
+            windowsize =windowsize==1?1:windowsize/2;
         }
     }
 
@@ -391,6 +391,8 @@ struct node *constructLinkedList(FILE *fp, int *totalpackets)
         if (ret == 0)
         {
             fprintf(stderr, "fread() failed: %d\n", ret);
+            perror("fread() failed: %d\n \n");
+
             exit(1);
         }
 
